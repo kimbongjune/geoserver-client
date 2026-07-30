@@ -31,4 +31,11 @@ Standalone Maven project — not a module of the root build, not packaged into t
    ```
 4. Open http://localhost:8090 — create/delete workspaces from the browser.
 
-Connection settings are in `src/main/resources/application.properties`.
+Connection settings are in `src/main/resources/application.properties`, defaulting to this repo's
+`docker-compose.yml` credentials. Override without editing the file via env vars:
+```bash
+GEOSERVER_URL=http://your-geoserver/geoserver \
+GEOSERVER_USERNAME=admin \
+GEOSERVER_PASSWORD=your-real-password \
+mvn spring-boot:run
+```
