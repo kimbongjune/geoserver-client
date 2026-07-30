@@ -1,0 +1,19 @@
+/.classpath
+/.project
+/.settings
+target/
+.agent
+
+# IDE project files — user-specific, should not be version controlled
+.idea/
+.vscode/
+*.iml
+
+# Ad-hoc debug/log output accidentally left at repo root during development
+/*.txt
+/*.log
+/org/
+
+# Maintainer-only operational notes — not meant for the public repo
+/docs/RELEASE_PREPARATION.md
+/docs/BRANCH_PROTECTION.md

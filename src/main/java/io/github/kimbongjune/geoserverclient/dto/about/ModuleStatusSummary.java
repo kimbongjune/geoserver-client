@@ -1,0 +1,49 @@
+package io.github.kimbongjune.geoserverclient.dto.about;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import java.util.Objects;
+
+/**
+ * DTO for a single entry in {@code GET /rest/about/status} or
+ * {@code GET /rest/about/status/{module}} responses.
+ *
+ * <p>Contains the module display name and a link to the detailed resource.</p>
+ */
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class ModuleStatusSummary {
+
+    private String name;
+    private String href;
+
+    public String getName() {
+        return name;
+    }
+
+    public String getHref() {
+        return href;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ModuleStatusSummary that = (ModuleStatusSummary) o;
+        return Objects.equals(name, that.name)
+                && Objects.equals(href, that.href);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, href);
+    }
+
+    @Override
+    public String toString() {
+        return "ModuleStatusSummary{" +
+                "name=" + name +
+                ", href=" + href +
+                '}';
+    }
+}
