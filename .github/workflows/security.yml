@@ -60,10 +60,10 @@ jobs:
           cache: maven
 
       - name: Run OWASP Dependency-Check
-        # NVD_API_KEY is optional but strongly recommended — without it the NVD feed download is
-        # aggressively rate-limited and this step can take 10x longer or fail intermittently.
-        # Get a free key at https://nvd.nist.gov/developers/request-an-api-key and add it as a
-        # repo secret named NVD_API_KEY (Settings > Secrets and variables > Actions).
+        # NVD_API_KEY is required in practice, not just "recommended" — without it the NVD feed
+        # update reliably fails outright (403/404, confirmed on this repo's first run) rather than
+        # just being slow. The secret is now configured (Settings > Secrets and variables >
+        # Actions), so this runs for real and a genuine high-severity finding fails the build.
         env:
           NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
         run: |
@@ -73,13 +73,13 @@ jobs:
             -DfailBuildOnCVSS=9
 
       - name: Upload Dependency-Check SARIF to code scanning
-        if: always()
+        if: always() && hashFiles('target/dependency-check-report.sarif') != ''
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: target/dependency-check-report.sarif
 
       - name: Upload Dependency-Check HTML report
-        if: always()
+        if: always() && hashFiles('target/dependency-check-report.html') != ''
         uses: actions/upload-artifact@v4
         with:
           name: dependency-check-report

@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [Unreleased] - 2026-07-30
+## [1.0.0] - 2026-07-30
 
 ### Fixed (breaking — pre-release quality pass)
 
@@ -161,7 +161,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [1.0.0] - 2025-04-02
+## [0.1.0] - 2025-04-02 (initial development milestone, never published to Maven Central)
 
 ### Added
 
