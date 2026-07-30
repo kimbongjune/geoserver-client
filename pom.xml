@@ -326,6 +326,18 @@
                         <configuration>
                             <publishingServerId>central</publishingServerId>
                             <tokenAuth>true</tokenAuth>
+                            <!--
+                              Without this, every deploy lands on Central Portal in "pending
+                              manual publish" state (confirmed: this repo's first real deploy of
+                              1.0.0 required a manual click to go live), which is fine for a human
+                              running mvn deploy locally, but release.yml (triggered by a vX.Y.Z
+                              tag push) has no one watching to click it. autoPublish=true makes a
+                              validated deployment go live immediately once it passes Central's
+                              checks (signature validity, POM completeness, etc); those checks
+                              still run and can still fail the deploy, this only skips the
+                              additional human review step after they pass.
+                            -->
+                            <autoPublish>true</autoPublish>
                         </configuration>
                     </plugin>
                 </plugins>
