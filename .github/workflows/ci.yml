@@ -31,17 +31,10 @@ jobs:
         run: docker compose up -d
 
       - name: Wait for GeoServer to be ready
-        # Checking /rest/about/version isn't enough: kartoza's image answers that as soon as
-        # Tomcat deploys the webapp, but its background recipe scripts that set up the default
-        # workspace/namespace can still be running for a bit after — WorkspaceManagerIntegrationTest
-        # / NamespaceManagerIntegrationTest call getDefault() in their @BeforeAll and 404 if that
-        # hasn't finished yet (confirmed on this repo's first CI run: 616/618 passed, only the two
-        # setUp*() calls capturing the original default failed). Wait on /rest/workspaces/default
-        # specifically instead.
         run: |
           for i in $(seq 1 60); do
-            if curl -sf -u admin:geoserver http://localhost:8100/geoserver/rest/workspaces/default.json > /dev/null; then
-              echo "GeoServer is up (default workspace configured)"
+            if curl -sf -u admin:geoserver http://localhost:8100/geoserver/rest/about/version.json > /dev/null; then
+              echo "GeoServer is up"
               exit 0
             fi
             echo "Waiting for GeoServer... ($i/60)"
@@ -50,6 +43,27 @@ jobs:
           echo "GeoServer did not become ready in time"
           docker compose logs
           exit 1
+
+      - name: Ensure a default workspace exists
+        # A truly fresh kartoza/geoserver instance (this repo's docker-compose.yml, no RECIPE/
+        # sample-data env vars set) has zero workspaces out of the box — GET /rest/workspaces/default
+        # 404s indefinitely, it's not a startup-timing thing (confirmed: still 404 after 60
+        # attempts / 5 minutes on this repo's first CI run). WorkspaceManagerIntegrationTest and
+        # NamespaceManagerIntegrationTest both call getDefault() in @BeforeAll to remember-and-restore
+        # whatever was already default, which only makes sense once at least one workspace exists.
+        # Every local dev setup that's actually been used for a while already has one lying around
+        # (that's why this never surfaced outside a brand-new CI runner); create one here so CI
+        # matches that same "already-used-at-least-once" baseline instead of a true day-zero install.
+        run: |
+          if ! curl -sf -u admin:geoserver http://localhost:8100/geoserver/rest/workspaces/default.json > /dev/null; then
+            echo "No default workspace yet — creating one"
+            curl -sf -u admin:geoserver -X POST -H "Content-Type: application/json" \
+              -d '{"workspace":{"name":"bootstrap"}}' \
+              http://localhost:8100/geoserver/rest/workspaces
+            curl -sf -u admin:geoserver -X PUT -H "Content-Type: application/json" \
+              -d '{"workspace":{"name":"bootstrap"}}' \
+              http://localhost:8100/geoserver/rest/workspaces/default
+          fi
 
       - name: mvn clean verify
         run: mvn --batch-mode --no-transfer-progress clean verify
