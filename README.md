@@ -172,10 +172,6 @@ mvn clean verify
 # Report: target/site/jacoco/index.html
 ```
 
-### Releasing to Maven Central
-
-See [docs/RELEASE_PREPARATION.md](docs/RELEASE_PREPARATION.md) for the full, step-by-step release workflow.
-
 ## Project Structure
 
 ```
@@ -204,7 +200,7 @@ docs/                              # Release/API-research reference docs
 
 ## Contributing
 
-Issues and pull requests are welcome. Please run `mvn clean verify` against a local GeoServer (via `docker-compose up -d`) before submitting, and add a `CHANGELOG.md` entry describing the *why* behind your change.
+Issues and pull requests are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md) for setup, coding conventions, and the PR checklist.
 
 ## License
 
