@@ -11,67 +11,94 @@ import io.github.kimbongjune.geoserverclient.exception.WorkspaceNotFoundExceptio
 import io.github.kimbongjune.geoserverclient.serialization.DataFormat;
 
 /**
- * Workspace + Namespace CRUD: the two most fundamental resources in GeoServer — every store,
- * layer, and style belongs to a workspace, and creating a workspace auto-creates a matching
- * namespace.
+ * <h2>What this covers</h2>
+ * Workspace and Namespace CRUD — the two most fundamental resources in GeoServer. Every store,
+ * layer, and (workspace-scoped) style lives inside a workspace, so this is usually the very first
+ * thing any GeoServer client does.
  *
- * Run against a local GeoServer (see ../README.md): {@code docker-compose up -d} from the repo
- * root, then run this class's main method.
+ * <h2>Key things to notice</h2>
+ * <ul>
+ *   <li>Creating a workspace <b>auto-creates a matching namespace</b> with the same prefix —
+ *       GeoServer does this for you, you don't call {@code namespaces().create(...)} separately
+ *       for the workspace's own namespace.</li>
+ *   <li>Every {@code Create}/{@code Update}/{@code Publish} DTO in this library supports two
+ *       equivalent spellings: {@code Xxx.of(...)} and {@code Xxx.builder(...).build()} — this
+ *       example uses {@code builder(...)} throughout, but {@code of(...)} does exactly the same
+ *       thing if you prefer that style.</li>
+ *   <li>Updates are <b>partial</b>: {@code UpdateWorkspaceRequest.builder().isolated(true).build()}
+ *       only touches the {@code isolated} field — anything you don't set is left alone.</li>
+ *   <li>Every "not found" is a specific typed exception ({@link WorkspaceNotFoundException}),
+ *       never a generic {@code RuntimeException} you'd have to inspect a message string to
+ *       understand.</li>
+ * </ul>
+ *
+ * <h2>Prerequisites</h2>
+ * A local GeoServer running at {@code http://localhost:8100/geoserver} — from the repo root:
+ * {@code docker-compose up -d}. See {@code examples/README.md} for the full setup.
+ *
+ * <h2>What you'll see</h2>
+ * This example is fully self-contained: it creates a workspace and a namespace, exercises every
+ * operation, and deletes everything it created before exiting — safe to run over and over.
  */
 public class Ex01_WorkspaceAndNamespace {
 
     public static void main(String[] args) throws Exception {
+        System.out.println("=== Ex01: Workspace + Namespace ===\n");
+
         GeoServerClient client = GeoServerClient.builder()
                 .url("http://localhost:8100/geoserver")
                 .credentials("admin", "geoserver")
-                .defaultFormat(DataFormat.JSON)
+                .defaultFormat(DataFormat.JSON) // JSON is the only supported client-wide default today
                 .build();
 
         String wsName = "example_ws";
 
+        System.out.println("[1/6] Creating workspace '" + wsName + "'...");
         try {
-            // Create — every Create/Update/Publish DTO in the library supports both
-            // Xxx.of(...) and the equivalent Xxx.builder(...).build() spelling.
             Workspace created = client.workspaces().create(
                     CreateWorkspaceRequest.builder(wsName).isolated(false).build());
-            System.out.println("Created workspace: " + created.getName());
+            System.out.println("      -> created: " + created.getName());
         } catch (ResourceAlreadyExistsException e) {
-            System.out.println("Workspace already existed, continuing: " + e.getMessage());
+            // Left over from a previous run that didn't clean up (e.g. you Ctrl+C'd it) — fine,
+            // just keep going with the existing one.
+            System.out.println("      -> already existed from a previous run, continuing: " + e.getMessage());
         }
 
-        // Read
+        System.out.println("[2/6] Fetching it back with get(name)...");
         Workspace fetched = client.workspaces().get(wsName);
-        System.out.println("Fetched: " + fetched);
+        System.out.println("      -> " + fetched);
 
-        // Creating the workspace auto-created a namespace with the same prefix + a default URI
+        System.out.println("[3/6] Checking the namespace GeoServer auto-created for us...");
         Namespace ns = client.namespaces().get(wsName);
-        System.out.println("Auto-created namespace: prefix=" + ns.getPrefix() + " uri=" + ns.getUri());
+        System.out.println("      -> prefix=" + ns.getPrefix() + ", uri=" + ns.getUri()
+                + " (same prefix as the workspace name, created automatically)");
 
-        // Update — partial: only fields you set are sent
+        System.out.println("[4/6] Partially updating the workspace (isolated=true only)...");
         Workspace updated = client.workspaces().update(wsName,
                 UpdateWorkspaceRequest.builder().isolated(true).build());
-        System.out.println("Updated isolated flag: " + updated.getIsolated());
+        System.out.println("      -> isolated is now: " + updated.getIsolated());
 
-        // A second, independent namespace not tied to a workspace
         String nsPrefix = "example_ns";
+        System.out.println("[5/6] Creating a second, standalone namespace (not tied to a workspace)...");
         try {
             client.namespaces().create(CreateNamespaceRequest.builder(nsPrefix, "http://example.com/ns").build());
-            System.out.println("Created standalone namespace: " + nsPrefix);
+            System.out.println("      -> created: " + nsPrefix);
         } catch (ResourceAlreadyExistsException e) {
-            System.out.println("Namespace already existed, continuing: " + e.getMessage());
+            System.out.println("      -> already existed, continuing: " + e.getMessage());
         }
 
-        // Typed exceptions: no bare RuntimeException — every "not found" is resource-specific
+        System.out.println("[6/6] Confirming a lookup on a nonexistent workspace throws the right typed exception...");
         try {
             client.workspaces().get("does-not-exist");
+            System.out.println("      -> unexpected: no exception was thrown!");
         } catch (WorkspaceNotFoundException e) {
-            System.out.println("Correctly caught: " + e.getMessage());
+            System.out.println("      -> correctly caught WorkspaceNotFoundException: " + e.getMessage());
         }
 
-        // Cleanup
+        System.out.println("\nCleaning up everything this example created...");
         client.namespaces().delete(nsPrefix);
         client.workspaces().delete(wsName, true); // recurse=true also removes the auto-created namespace
-        System.out.println("Cleaned up.");
+        System.out.println("Done — nothing left behind. Re-run this anytime.");
 
         client.close();
     }

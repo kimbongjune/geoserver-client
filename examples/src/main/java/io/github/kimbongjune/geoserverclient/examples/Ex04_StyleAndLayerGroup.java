@@ -10,15 +10,38 @@ import io.github.kimbongjune.geoserverclient.dto.workspace.CreateWorkspaceReques
 import io.github.kimbongjune.geoserverclient.serialization.DataFormat;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Collections;
 import java.util.List;
 
 /**
- * Creating an SLD style from raw XML and grouping a layer into a LayerGroup.
- * Uploads a GeoTIFF (pass its path as the program argument) to have a real layer to group.
+ * <h2>What this covers</h2>
+ * Creating an SLD style from raw XML, and grouping a real layer into a LayerGroup.
+ *
+ * <h2>Key things to notice</h2>
+ * <ul>
+ *   <li>{@code StyleContent.of(sldXml)} is how raw SLD text enters the library — see
+ *       {@code CONTRIBUTING.md} for why styles are the one place a text document (not a fully
+ *       structured DTO) is unavoidable: SLD <em>is</em> a stylesheet grammar, and modeling that
+ *       grammar as Java objects is out of scope for a REST client library.</li>
+ *   <li>A global style (created via {@code styles().create(...)}, no workspace argument) is not
+ *       tied to any workspace — contrast with the layer group below, which <em>is</em>
+ *       workspace-scoped ({@code createByWorkspace}).</li>
+ *   <li>{@code styles(Collections.singletonList(""))} — an empty string means "use that layer's
+ *       own default style" rather than naming a specific style explicitly.</li>
+ * </ul>
+ *
+ * <h2>Prerequisites</h2>
+ * A local GeoServer at {@code http://localhost:8100/geoserver}. Runs out of the box with no
+ * arguments (uses the same tiny bundled {@code sample.tif} as Ex03 to have a real layer to group).
+ * Pass your own GeoTIFF path as the program argument to use real imagery instead.
  */
 public class Ex04_StyleAndLayerGroup {
 
+    // A minimal-but-valid SLD document. Real styles usually have far more rules/symbolizers —
+    // this one just needs to be valid enough for GeoServer to accept and store.
     private static final String SLD =
             "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
             + "<StyledLayerDescriptor version=\"1.0.0\" xmlns=\"http://www.opengis.net/sld\">"
@@ -27,10 +50,11 @@ public class Ex04_StyleAndLayerGroup {
             + "</FeatureTypeStyle></UserStyle></NamedLayer></StyledLayerDescriptor>";
 
     public static void main(String[] args) throws Exception {
-        if (args.length == 0) {
-            System.out.println("Usage: java ... Ex04_StyleAndLayerGroup /path/to/file.tif");
-            return;
-        }
+        System.out.println("=== Ex04: Style + LayerGroup ===\n");
+
+        File tif = args.length > 0 ? new File(args[0]) : extractBundledSample();
+        System.out.println("Using GeoTIFF for the layer group's member layer: " + tif.getAbsolutePath()
+                + (args.length > 0 ? "" : " (bundled sample)"));
 
         GeoServerClient client = GeoServerClient.builder()
                 .url("http://localhost:8100/geoserver")
@@ -38,36 +62,56 @@ public class Ex04_StyleAndLayerGroup {
                 .defaultFormat(DataFormat.JSON)
                 .build();
 
-        // Global style — not tied to any workspace
+        System.out.println("[1/3] Creating a global style from raw SLD XML...");
         String styleName = "example_style";
         client.styles().create(StyleContent.of(SLD), styleName);
         Style style = client.styles().get(styleName);
-        System.out.println("Created style: " + style.getName());
+        System.out.println("      -> created: " + style.getName() + " (global — not tied to any workspace)");
 
-        // Set up a real layer to put in the group
+        System.out.println("[2/3] Setting up a real layer to put in the group (same recipe as Ex03)...");
         String ws = "example_lg_ws";
         client.workspaces().create(CreateWorkspaceRequest.builder(ws).build());
         String storeName = "example_geotiff";
-        client.coverageStores().uploadFile(ws, storeName, "file", "geotiff", new File(args[0]), "first", null, null);
+        client.coverageStores().uploadFile(ws, storeName, "file", "geotiff", tif, "first", null, null);
         List<CoverageSummary> coverages = client.coverages().list(ws, storeName);
         String layerFullName = ws + ":" + coverages.get(0).getName();
+        System.out.println("      -> layer ready: " + layerFullName);
 
-        // LayerGroup with a single layer, using the default style for it ("" = default)
+        System.out.println("[3/3] Creating a workspace-scoped LayerGroup containing that one layer...");
         String groupName = "example_group";
         client.layerGroups().createByWorkspace(ws, CreateLayerGroupRequest.builder(groupName)
                 .layer(layerFullName)
-                .styles(Collections.singletonList(""))
+                .styles(Collections.singletonList("")) // "" = use the layer's own default style
                 .title("Example Group")
                 .build());
 
         LayerGroup group = client.layerGroups().getByWorkspace(ws, groupName);
-        System.out.println("Created layer group: " + group.getName()
+        System.out.println("      -> created: " + group.getName()
                 + " with " + group.getPublishables().getPublished().size() + " publishable(s)");
 
-        // Cleanup
+        System.out.println("\nCleaning up...");
         client.layerGroups().deleteByWorkspace(ws, groupName);
         client.workspaces().delete(ws, true);
         client.styles().delete(styleName);
+        System.out.println("Done.");
+
         client.close();
+    }
+
+    private static File extractBundledSample() throws Exception {
+        File tmp = File.createTempFile("geoserver-client-example-sample", ".tif");
+        tmp.deleteOnExit();
+        try (InputStream in = Ex04_StyleAndLayerGroup.class.getClassLoader().getResourceAsStream("sample.tif");
+             OutputStream out = new FileOutputStream(tmp)) {
+            if (in == null) {
+                throw new IllegalStateException("sample.tif not found on classpath — did the examples build correctly?");
+            }
+            byte[] buf = new byte[4096];
+            int n;
+            while ((n = in.read(buf)) != -1) {
+                out.write(buf, 0, n);
+            }
+        }
+        return tmp;
     }
 }
