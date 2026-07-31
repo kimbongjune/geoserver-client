@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>geoserver-client explorer</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header th:replace="~{fragments/nav :: nav}"></header>
+<main>
+    <h1>geoserver-client explorer</h1>
+    <p class="sub">A real, clickable Spring Boot app exercising every feature of the geoserver-client
+        library against a live GeoServer + PostGIS instance — not a generic API console.</p>
+
+    <div class="cards">
+        <a class="card" th:href="@{/workspaces}">
+            <div class="title">Workspaces &amp; Namespaces</div>
+            <div class="desc">Create, update, set defaults</div>
+        </a>
+        <a class="card" th:href="@{/vector}">
+            <div class="title">Vector Data</div>
+            <div class="desc">PostGIS, Shapefile, GeoPackage, FeatureTypes</div>
+        </a>
+        <a class="card" th:href="@{/raster}">
+            <div class="title">Raster Data</div>
+            <div class="desc">GeoTIFF, ArcGrid, WorldImage, GeoPackage, ImageMosaic</div>
+        </a>
+        <a class="card" th:href="@{/styles}">
+            <div class="title">Styles</div>
+            <div class="desc">Raw SLD upload + SldBuilder-generated styles</div>
+        </a>
+        <a class="card" th:href="@{/layers}">
+            <div class="title">Layers</div>
+            <div class="desc">Browse, edit, style assignment</div>
+        </a>
+        <a class="card" th:href="@{/layergroups}">
+            <div class="title">Layer Groups</div>
+            <div class="desc">Compose multiple layers into one</div>
+        </a>
+        <a class="card" th:href="@{/security}">
+            <div class="title">Security</div>
+            <div class="desc">Roles, Users, Groups, Filter Chains</div>
+        </a>
+        <a class="card" th:href="@{/settings}">
+            <div class="title">Settings</div>
+            <div class="desc">Global/workspace settings, Logging</div>
+        </a>
+        <a class="card" th:href="@{/gwc}">
+            <div class="title">GeoWebCache</div>
+            <div class="desc">GridSets, seeding, truncating, blob stores</div>
+        </a>
+        <a class="card" th:href="@{/importer}">
+            <div class="title">Importer</div>
+            <div class="desc">Upload arbitrary files (GeoJSON, ...) with target/transform control</div>
+        </a>
+        <a class="card" th:href="@{/cascading}">
+            <div class="title">WMS/WMTS Cascading</div>
+            <div class="desc">Publish layers backed by a remote WMS/WMTS</div>
+        </a>
+        <a class="card" th:href="@{/templates}">
+            <div class="title">Templates &amp; URL Checks</div>
+            <div class="desc">Freemarker templates, outbound URL allow-list</div>
+        </a>
+        <a class="card" th:href="@{/about}">
+            <div class="title">About &amp; Resources</div>
+            <div class="desc">Server info, data directory browser, monitoring</div>
+        </a>
+        <a class="card" th:href="@{/map}">
+            <div class="title">Map Viewer</div>
+            <div class="desc">See your published layers rendered live via OpenLayers</div>
+        </a>
+    </div>
+</main>
+</body>
+</html>

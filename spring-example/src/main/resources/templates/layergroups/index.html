@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Layer Groups — geoserver-client explorer</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header th:replace="~{fragments/nav :: nav}"></header>
+<main>
+    <h1>Layer Groups</h1>
+    <div class="flash ok" th:if="${ok}" th:text="${ok}"></div>
+    <div class="flash err" th:if="${err}" th:text="${err}"></div>
+
+    <form action="/layergroups" method="get" style="margin-bottom:16px">
+        <label style="color:#9aa0a6;font-size:13px">Workspace scope (optional):</label>
+        <select name="ws" onchange="this.form.submit()">
+            <option value="">-- global --</option>
+            <option th:each="w : ${workspaces}" th:value="${w.name}" th:text="${w.name}"
+                    th:selected="${w.name == selectedWs}"></option>
+        </select>
+    </form>
+
+    <div class="form-panel">
+        <h3>Create layer group</h3>
+        <form action="/layergroups/create" method="post">
+            <input type="hidden" name="ws" th:value="${selectedWs}"/>
+            <div class="field">
+                <label>Name</label>
+                <input type="text" name="name" required placeholder="my_group"/>
+            </div>
+            <div class="field">
+                <label>Title</label>
+                <input type="text" name="title" required placeholder="My Group"/>
+            </div>
+            <div class="field wide">
+                <label>Layers (ctrl/cmd-click to select multiple)</label>
+                <select name="layerNames" multiple size="6" style="min-width:320px">
+                    <option th:each="l : ${layers}" th:value="${l.name}" th:text="${l.name}"></option>
+                </select>
+            </div>
+            <button class="btn" type="submit">Create</button>
+        </form>
+    </div>
+
+    <h2>Global groups</h2>
+    <table class="datatable">
+        <thead><tr><th>Name</th><th></th></tr></thead>
+        <tbody>
+        <tr th:each="g : ${globalGroups}">
+            <td th:text="${g.name}"></td>
+            <td class="actions">
+                <form th:action="@{'/layergroups/' + ${g.name} + '/delete'}" method="post">
+                    <button class="btn small danger" type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div th:if="${selectedWs != null and !selectedWs.isEmpty()}">
+        <h2>Workspace groups (<span th:text="${selectedWs}"></span>)</h2>
+        <table class="datatable">
+            <thead><tr><th>Name</th><th></th></tr></thead>
+            <tbody>
+            <tr th:each="g : ${wsGroups}">
+                <td th:text="${g.name}"></td>
+                <td class="actions">
+                    <form th:action="@{'/layergroups/' + ${g.name} + '/delete'(ws=${selectedWs})}" method="post">
+                        <button class="btn small danger" type="submit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${layerName} + ' — geoserver-client explorer'"></title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header th:replace="~{fragments/nav :: nav}"></header>
+<main>
+    <h1 th:text="${layerName}"></h1>
+    <p class="sub">Type: <span th:text="${layer.type}"></span> —
+        Default style: <code th:text="${layer.defaultStyle != null ? layer.defaultStyle.name : '(none)'}"></code> —
+        Queryable: <span th:text="${layer.queryable}"></span> —
+        Opaque: <span th:text="${layer.opaque}"></span></p>
+    <div class="flash ok" th:if="${ok}" th:text="${ok}"></div>
+    <div class="flash err" th:if="${err}" th:text="${err}"></div>
+
+    <div class="form-panel">
+        <h3>Resource details</h3>
+        <p class="sub" th:if="${layer.resource != null}">
+            Resource: <code th:text="${layer.resource.resourceClass} + ' — ' + ${layer.resource.name}"></code>
+        </p>
+        <p class="sub" th:if="${resourceSrs != null}">SRS: <code th:text="${resourceSrs}"></code></p>
+        <p class="sub" th:if="${resourceBbox != null}">
+            LatLon bbox:
+            <code th:text="'[' + ${resourceBbox.minx} + ', ' + ${resourceBbox.miny} + '] – [' + ${resourceBbox.maxx} + ', ' + ${resourceBbox.maxy} + ']'"></code>
+        </p>
+        <p class="sub">Path: <code th:text="${layer.path}"></code> —
+            Created: <code th:text="${layer.dateCreated}"></code> —
+            Modified: <code th:text="${layer.dateModified}"></code></p>
+    </div>
+
+    <div class="form-panel">
+        <h3>Queryable</h3>
+        <form th:action="@{'/layers/' + ${layerName} + '/queryable'}" method="post">
+            <input type="hidden" name="queryable" th:value="${layer.queryable == null or !layer.queryable}"/>
+            <button class="btn" type="submit"
+                    th:text="${layer.queryable != null and layer.queryable} ? 'Disable queryable' : 'Enable queryable'"></button>
+        </form>
+    </div>
+
+    <div class="form-panel">
+        <h3>Update layer</h3>
+        <form th:action="@{'/layers/' + ${layerName} + '/update'}" method="post">
+            <div class="field">
+                <label>Default style name</label>
+                <input type="text" name="defaultStyleName" th:value="${layer.defaultStyle != null ? layer.defaultStyle.name : ''}"/>
+            </div>
+            <div class="field">
+                <label>Path</label>
+                <input type="text" name="path" th:value="${layer.path}"/>
+            </div>
+            <div class="field">
+                <label>Attribution title</label>
+                <input type="text" name="attributionTitle" th:value="${layer.attribution != null ? layer.attribution.title : ''}"/>
+            </div>
+            <div class="field">
+                <label>Attribution href</label>
+                <input type="text" name="attributionHref" th:value="${layer.attribution != null ? layer.attribution.href : ''}"/>
+            </div>
+            <div class="field">
+                <label>Default WMS interpolation method</label>
+                <input type="text" name="defaultWMSInterpolationMethod" th:value="${layer.defaultWMSInterpolationMethod}" placeholder="Nearest / Bilinear / Bicubic"/>
+            </div>
+            <div class="checkline">
+                <input type="checkbox" name="enabled" value="true" id="layer_enabled" checked/>
+                <label for="layer_enabled">Enabled</label>
+            </div>
+            <div class="checkline">
+                <input type="checkbox" name="advertised" value="true" id="layer_advertised" checked/>
+                <label for="layer_advertised">Advertised</label>
+            </div>
+            <div class="checkline">
+                <input type="checkbox" name="opaque" value="true" id="layer_opaque" th:checked="${layer.opaque}"/>
+                <label for="layer_opaque">Opaque</label>
+            </div>
+            <button class="btn" type="submit">Save</button>
+        </form>
+    </div>
+
+    <div class="form-panel">
+        <h3>Add an available style to this layer</h3>
+        <form th:action="@{'/layers/' + ${layerName} + '/add-style'}" method="post">
+            <div class="field">
+                <label>Style name</label>
+                <input type="text" name="styleName" required placeholder="my_style"/>
+            </div>
+            <div class="checkline">
+                <input type="checkbox" name="setDefault" value="true" id="setdef"/>
+                <label for="setdef">Set as default style</label>
+            </div>
+            <button class="btn" type="submit">Add</button>
+        </form>
+    </div>
+
+    <h2>Currently available styles</h2>
+    <table class="datatable">
+        <thead><tr><th>Name</th></tr></thead>
+        <tbody>
+        <tr th:each="s : ${availableStyles}"><td th:text="${s.name}"></td></tr>
+        </tbody>
+    </table>
+</main>
+</body>
+</html>

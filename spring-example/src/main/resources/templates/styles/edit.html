@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit style — geoserver-client explorer</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header th:replace="~{fragments/nav :: nav}"></header>
+<main>
+    <h1>Edit style: <span th:text="${name}"></span></h1>
+    <p class="sub" th:if="${selectedWs != null and !selectedWs.isEmpty()}">Workspace-scoped: <code th:text="${selectedWs}"></code></p>
+
+    <div class="form-panel">
+        <form th:action="@{'/styles/' + ${name} + '/update-raw'}" method="post">
+            <input type="hidden" name="ws" th:value="${selectedWs}"/>
+            <div class="field wide">
+                <label>SLD body</label>
+                <textarea name="sld" rows="20" required th:text="${sldBody}" style="width:100%;min-width:600px"></textarea>
+            </div>
+            <button class="btn" type="submit">Save</button>
+            <a class="btn secondary" th:href="@{/styles(ws=${selectedWs})}" style="text-decoration:none">Cancel</a>
+        </form>
+    </div>
+</main>
+</body>
+</html>
