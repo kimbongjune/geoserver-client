@@ -2,13 +2,17 @@
 
 [![CI](https://github.com/kimbongjune/geoserver-client/actions/workflows/ci.yml/badge.svg)](https://github.com/kimbongjune/geoserver-client/actions/workflows/ci.yml)
 [![Security](https://github.com/kimbongjune/geoserver-client/actions/workflows/security.yml/badge.svg)](https://github.com/kimbongjune/geoserver-client/actions/workflows/security.yml)
+[![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=kimbongjune_geoserver-client&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=kimbongjune_geoserver-client)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=kimbongjune_geoserver-client&metric=coverage)](https://sonarcloud.io/summary/new_code?id=kimbongjune_geoserver-client)
+[![Codecov](https://codecov.io/gh/kimbongjune/geoserver-client/branch/main/graph/badge.svg)](https://codecov.io/gh/kimbongjune/geoserver-client)
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.kimbongjune/geoserver-client.svg)](https://central.sonatype.com/artifact/io.github.kimbongjune/geoserver-client)
 [![Java](https://img.shields.io/badge/Java-8%2B-blue)](#requirements)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+[![Javadoc](https://img.shields.io/badge/javadoc-1.0.0-blue)](https://kimbongjune.github.io/geoserver-client/apidocs/)
 
 A modern Java 8+ client library for the GeoServer REST API — a complete, actively-tested replacement for the legacy `geoserver-manager` library.
 
-Covers **44 API groups** across Core, Data, Security, GWC (GeoWebCache), Importer, and Monitoring, verified against a live GeoServer 2.28.2 instance with 640+ automated tests (0 failures, 0 skipped).
+Covers **44 API groups** across Core, Data, Security, GWC (GeoWebCache), Importer, and Monitoring, verified against a live GeoServer 2.28.2 instance with 1,234 automated tests (0 failures, 0 skipped).
 
 ## Table of Contents
 
@@ -114,6 +118,65 @@ try {
 
 See [Examples](#examples) for full runnable programs covering every major manager group.
 
+## SLD Style Builder
+
+`SldBuilder` generates SLD 1.0 (OGC 02-070) XML via a fluent builder API — no raw XML string concatenation.
+
+### Point symbolizer with OGC filter
+```java
+StyleContent sld = SldBuilder.create("roads")
+    .styleName("my-point-style")
+    .rule("important-cities")
+        .filter(OgcFilters.and(
+            OgcFilters.greaterThan("population", SldExpression.literal(1_000_000)),
+            OgcFilters.equalTo("type", SldExpression.literal("city"))
+        ))
+        .minScale(50_000).maxScale(500_000)
+        .point()
+            .wellKnownName(WellKnownName.CIRCLE)
+            .size(SldExpression.literal(10))
+            .fillColor("#FF6B35").fillOpacity(0.9)
+            .strokeColor("#FFFFFF").strokeWidth(2.0)
+        .end()
+    .end()
+    .build();
+
+client.styles().createByWorkspace("my-workspace", sld, "my-point-style");
+```
+
+### Polygon symbolizer
+```java
+StyleContent sld = SldBuilder.create("polygons")
+    .styleName("land-use")
+    .rule("residential")
+        .filter(OgcFilters.equalTo("land_use", SldExpression.literal("residential")))
+        .polygon()
+            .fillColor("#E8F5E9").fillOpacity(0.8)
+            .strokeColor("#4CAF50").strokeWidth(1.5)
+        .end()
+    .end()
+    .build();
+```
+
+### Raster symbolizer with color map
+```java
+StyleContent sld = SldBuilder.create("elevation")
+    .styleName("dem-colors")
+    .rule("dem")
+        .raster()
+            .opacity(1.0)
+            .colorMap(SldColorMapType.RAMP,
+                SldColorMapEntry.of("#313695", 0, 1.0, "sea level"),
+                SldColorMapEntry.of("#74ADD1", 500, 1.0, "low"),
+                SldColorMapEntry.of("#FEE090", 2000, 1.0, "mid"),
+                SldColorMapEntry.of("#FFFFFF", 4000, 1.0, "high"))
+        .end()
+    .end()
+    .build();
+```
+
+All OGC Filter predicates (`equalTo`, `greaterThan`, `bbox`, `intersects`, etc.), SLD geometry types, and expression functions (`SldExpression.property()`, `SldExpression.function()`) are available via `OgcFilters` and `SldExpression` static factories.
+
 ## API Coverage
 
 | Group | Managers |
@@ -137,6 +200,8 @@ Full API reference, usage guides, architecture diagrams, and known-quirks per ma
 mvn javadoc:javadoc
 # open target/site/apidocs/index.html
 ```
+
+Javadoc is automatically published to **[GitHub Pages](https://kimbongjune.github.io/geoserver-client/apidocs/)** on every push to main.
 
 ## Examples
 

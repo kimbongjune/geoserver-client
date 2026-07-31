@@ -84,6 +84,13 @@ jobs:
           path: target/site/jacoco/
           retention-days: 14
 
+      - name: Upload coverage to Codecov
+        if: matrix.java == '17'
+        uses: codecov/codecov-action@v4
+        with:
+          files: target/site/jacoco/jacoco.xml
+          fail_ci_if_error: false
+
       - name: Stop docker-compose
         if: always()
         run: docker compose down -v
