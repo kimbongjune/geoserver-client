@@ -167,10 +167,10 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>3.6.3</version>
                 <configuration>
-                    <doclint>html,syntax</doclint>
+                    <doclint>none</doclint>
                     <source>8</source>
-                    <windowtitle>GeoServer Client 1.0.0 API</windowtitle>
-                    <doctitle>GeoServer Client 1.0.0 API</doctitle>
+                    <windowtitle>GeoServer Client 1.0.1 API</windowtitle>
+                    <doctitle>GeoServer Client 1.0.1 API</doctitle>
                     <author>false</author>
                     <version>false</version>
                     <detectOfflineLinks>false</detectOfflineLinks>
