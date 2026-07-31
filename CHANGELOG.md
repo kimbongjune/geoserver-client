@@ -7,6 +7,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.1] - 2026-07-31
+
+### Added
+
+- **Maven Central Portal `autoPublish` enabled**: releases now go live automatically after
+  validation instead of requiring a manual click in the Central Portal UI (1.0.0's release
+  needed that manual step).
+- **`examples/` expanded**: rewritten in a friendlier walkthrough style, plus 5 new example
+  classes covering previously-untested areas — `Ex13_SecurityAdvanced` (auth filters/providers,
+  filter chains, user/group services) and `Ex14_ImageMosaicAndStructuredCoverage`
+  (ImageMosaic harvest + granule management via `StructuredCoverageManager`) — along with real
+  downloadable sample files (Shapefile, GeoPackage, ArcGrid, WorldImage) so every example runs
+  against real data instead of only the one GeoTIFF used before.
+- `CONTRIBUTING.md` and `SECURITY.md` added.
+- SonarCloud static analysis and Codecov coverage upload wired into CI.
+
+### Changed
+
+- **Removed 44 `*CrossCheckTest` classes**: these existed to cross-validate the library's HTTP
+  behavior against raw REST calls during initial development; with 552 integration tests already
+  covering the same ground and passing consistently, the duplicate cross-check layer was pure
+  maintenance overhead with no remaining signal.
+- Javadoc cleanup for Central/javadoc.io rendering: fixed a stray `</p>` after `</ul>` in
+  `LayerGroupManager`'s Javadoc, set `doclint=none` so pre-existing minor tag issues don't fail
+  the build, updated the Javadoc title for 1.0.1.
+
+### Fixed
+
+- CI: Java 8 baseline build was broken by `--release` flag usage the real JDK 8 `javac` doesn't
+  support, and by `mockito-core` 5.4.0 requiring JDK 11+ just to load — both fixed so the CI
+  matrix's Java 8 leg actually builds again.
+- CI: integration tests now bootstrap a default workspace before running, fixing failures on a
+  fresh GeoServer instance that has none configured yet.
+- Removed a `geotools` subdirectory that had been accidentally staged into git; added to
+  `.gitignore` so it can't happen again.
+
+---
+
 ## [1.0.0] - 2026-07-30
 
 ### Fixed (breaking — pre-release quality pass)

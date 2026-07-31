@@ -38,33 +38,43 @@ mvn exec:java -Dexec.mainClass="io.github.kimbongjune.geoserverclient.examples.E
     -Dexec.args="/path/to/your/real.tif"
 ```
 
-`Ex02_DataStoreAndFeatureType`'s Shapefile-upload step is the one exception that's skipped without
-an argument (a real Shapefile ZIP is too large to bundle) — it prints a clear note when this
-happens rather than failing.
+All bundled sample data under `src/main/resources/` is either genuinely public-domain (Natural
+Earth vector data) or a small, permissively-licensed test fixture from GDAL's own autotest suite —
+see the comment at the top of each example for which one it uses and why.
 
 ## Index
 
 | Example | Demonstrates | Needs a file? |
 |---------|--------------|:---:|
-| `Ex01_WorkspaceAndNamespace` | Workspace/Namespace CRUD, partial updates, typed exceptions | no |
-| `Ex02_DataStoreAndFeatureType` | PostGIS datastore config, Shapefile ZIP upload with `configure=first` | optional |
-| `Ex03_CoverageUploadAndLayer` | GeoTIFF upload, auto-created Coverage + Layer, Layer partial update | bundled |
-| `Ex04_StyleAndLayerGroup` | SLD style creation from raw XML, LayerGroup with a real layer | bundled |
-| `Ex05_SecurityRolesAndUsers` | Role/User/Group CRUD and assignment | no |
-| `Ex06_GwcAndMonitoring` | Custom GWC GridSet, GWC global config, Monitoring request history | no |
-| `Ex07_SettingsAndLogging` | Global/workspace Settings (REPLACE semantics), Logging config | no |
-| `Ex08_WmsAndWmtsCascading` | WMS + WMTS cascaded layer publishing (self-cascade against GeoServer's own capabilities) | bundled |
-| `Ex09_AboutAndResource` | Version/module status, browsing the data directory (read-only) | no |
-| `Ex10_Importer` | Import context lifecycle (create/list/delete) | no |
-| `Ex11_TemplateAndUrlCheck` | Freemarker template CRUD, URL Check rule CRUD | no |
+| `Ex01_WorkspaceAndNamespace` | Workspace/Namespace CRUD, partial updates, default workspace/namespace, typed exceptions | no |
+| `Ex02_DataStoreAndFeatureType` | Real live PostGIS datastore + publish, Shapefile ZIP, GeoPackage upload, `listAvailable`/`reset`/`downloadFile` | bundled |
+| `Ex03_CoverageUploadAndLayer` | GeoTIFF, ArcGrid, WorldImage, and GeoPackage raster uploads, auto-created Coverage + Layer, `reset`/`listNative` | bundled |
+| `Ex04_StyleAndLayerGroup` | SLD style creation (global + workspace-scoped), `getSld`/`listByLayer`/`addStyleToLayer`, LayerGroup, Layer/LayerGroup workspace-scoped variants | bundled |
+| `Ex05_SecurityRolesAndUsers` | Role/User/Group CRUD, assignment, and every `*ByService` twin | no |
+| `Ex06_GwcAndMonitoring` | All 10 GWC managers (GridSet, Global, Layer, Bounds, BlobStore, DiskQuota, MassTruncate, Reload, Seed, FilterUpdate) + Monitoring incl. CSV/XML/Excel/ZIP export | bundled |
+| `Ex07_SettingsAndLogging` | Global/Contact/workspace Settings, Service settings (WMS/WFS/WCS/WMTS, global + workspace-scoped), Logging | no |
+| `Ex08_WmsAndWmtsCascading` | WMS + WMTS cascaded layer publishing incl. `listAvailable` (self-cascade against GeoServer's own capabilities) | bundled |
+| `Ex09_AboutAndResource` | Version/manifest/module/system status, full Resource API (create/copy/move/read/metadata/delete), Reset/Reload, fonts/templates, Transform availability | no |
+| `Ex10_Importer` | Full Importer task/transform lifecycle — real GeoJSON import into a real PostGIS store | bundled |
+| `Ex11_TemplateAndUrlCheck` | Freemarker templates at every scope (global/workspace/datastore/featuretype/coveragestore/coverage), URL Check CRUD | bundled |
 | `Ex12_SldBuilder` | `SldBuilder` — all 5 symbolizer types (Point, Line, Polygon, Text, Raster), OGC filters, `SldExpression`, multi-scale rules | no |
+| `Ex13_SecurityAdvanced` | Catalog/Service/REST ACL, master + self password, FilterChain (incl. reordering), AuthFilter/AuthProvider/UserGroupService CRUD | no |
+| `Ex14_ImageMosaicAndStructuredCoverage` | ImageMosaic upload + `harvest()`, full StructuredCoverage granule index API | bundled |
 
-Not covered yet by a dedicated example (see the [API Reference wiki page](https://github.com/kimbongjune/geoserver-client/wiki/API-Reference)
-for their full method lists): `ServiceManager` (WMS/WFS/WCS/WMTS service settings — the workspace-scoped
-variant needs Admin-UI pre-initialization, see its Javadoc), `AuthFilterManager`/`AuthProviderManager`/
-`FilterChainManager`/`UserGroupServiceManager` (security config, mostly read-only listing), the
-remaining GWC managers beyond GridSet/Global (BlobStore, DiskQuota, Seed, MassTruncate, Reload,
-FilterUpdate, Bounds — see `docs/GEOSERVER_BUG_WMS_LAYER_PUT.md`-style Javadoc notes on each for
-known quirks), `TransformManager` (plugin-dependent, `isAvailable()` only), and
-`StructuredCoverageManager` (ImageMosaic granule management — needs a multi-file mosaic to demo
-meaningfully). Contributions adding examples for these are welcome — see `CONTRIBUTING.md`.
+Every method across all 44 managers is exercised somewhere in this list except
+`GwcFilterUpdateManager.updateFilterZip` — it requires a pre-registered `WMSRasterFilter` parameter
+filter pointing at a real *external* WMS server's capabilities (self-cascading it against this same
+GeoServer risks the Tomcat deadlock documented on that manager), which doesn't fit a self-contained,
+disposable-Docker-only example. `updateFilterXml` (the sibling call) is exercised via its documented
+error path in Ex06.
+
+Along the way, several genuine GeoServer 2.28.2 bugs/quirks were found and are documented with a
+`[GeoServer 2.28.2 bug/quirk]` comment at their call site rather than worked around silently:
+directory-backed Shapefile stores 500 on `downloadFile()`; REST ACL rule keys containing `/` can't
+be deleted by the single-rule DELETE endpoint; `reloadAcl()`/`postReloadAcl()` can silently revive a
+rule deleted immediately beforehand; a REST ACL delete right after an update to the same key can
+silently no-op once; `GwcDiskQuotaConfig` round-trips fail through XStream unless `globalQuota` is
+omitted; `GwcSeedRequest` NPEs server-side if `threadCount` isn't set explicitly; uploading a
+`.geojson`/`.json` file to the Importer's task endpoint with `Content-Type: application/json` 400s
+(use `application/octet-stream`); and `CoverageStoreManager.harvest()` 500s for a raw (non-zip) file
+when passed `format="imagemosaic"` (pass the file's own format, e.g. `"geotiff"`, instead).

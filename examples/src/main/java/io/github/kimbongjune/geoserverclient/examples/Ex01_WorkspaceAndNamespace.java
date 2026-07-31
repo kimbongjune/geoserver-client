@@ -87,13 +87,29 @@ public class Ex01_WorkspaceAndNamespace {
             System.out.println("      -> already existed, continuing: " + e.getMessage());
         }
 
-        System.out.println("[6/6] Confirming a lookup on a nonexistent workspace throws the right typed exception...");
+        System.out.println("[6/8] Confirming a lookup on a nonexistent workspace throws the right typed exception...");
         try {
             client.workspaces().get("does-not-exist");
             System.out.println("      -> unexpected: no exception was thrown!");
         } catch (WorkspaceNotFoundException e) {
             System.out.println("      -> correctly caught WorkspaceNotFoundException: " + e.getMessage());
         }
+
+        System.out.println("[7/8] Reading and temporarily changing the server-wide default workspace/namespace...");
+        Workspace originalDefaultWs = client.workspaces().getDefault();
+        System.out.println("      -> current default workspace: " + originalDefaultWs.getName());
+        client.workspaces().setDefault(wsName);
+        System.out.println("      -> default workspace is now '" + client.workspaces().getDefault().getName() + "'");
+        System.out.println("      -> NOTE: GeoServer keeps a single default-workspace setting under the hood —"
+                + " namespaces().setDefault(prefix) below changes that *same* setting (by namespace prefix"
+                + " instead of workspace name), it does not track an independent value:");
+        client.namespaces().setDefault(nsPrefix);
+        System.out.println("      -> default namespace is now '" + client.namespaces().getDefault().getPrefix()
+                + "', which also flipped the default workspace back to '"
+                + client.workspaces().getDefault().getName() + "' (same underlying setting)");
+        System.out.println("[8/8] Restoring the original default (one call restores both, since they're the same setting)...");
+        client.workspaces().setDefault(originalDefaultWs.getName());
+        System.out.println("      -> restored to '" + originalDefaultWs.getName() + "'");
 
         System.out.println("\nCleaning up everything this example created...");
         client.namespaces().delete(nsPrefix);
