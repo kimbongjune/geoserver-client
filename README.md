@@ -47,14 +47,14 @@ Covers **44 API groups** across Core, Data, Security, GWC (GeoWebCache), Importe
 <dependency>
     <groupId>io.github.kimbongjune</groupId>
     <artifactId>geoserver-client</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
 </dependency>
 ```
 
 ### Gradle
 
 ```groovy
-implementation 'io.github.kimbongjune:geoserver-client:1.0.0'
+implementation 'io.github.kimbongjune:geoserver-client:1.0.1'
 ```
 
 ## Quick Start
@@ -207,6 +207,8 @@ Javadoc is automatically published to **[GitHub Pages](https://kimbongjune.githu
 
 The [`examples/`](examples/) module contains standalone, runnable programs demonstrating real usage against a live GeoServer instance (not shipped inside the published JAR). See [examples/README.md](examples/README.md).
 
+The [`spring-example/`](spring-example/) module is a full Spring Boot admin console (Gradle project) built on top of this library — one page per API domain (workspaces, vector/raster data, styles, layers, security, GWC, importer, WMS/WMTS cascading, settings, an OpenLayers map viewer with WMS/WFS-editable modes) with real forms wired to the actual managers, not a generic REST console. Useful as a reference for wiring the library into a real web app.
+
 ## Building from Source
 
 ```bash
@@ -254,6 +256,7 @@ src/
     api/                           # Per-manager integration tests (44 classes)
 
 examples/                          # Standalone runnable usage examples (not shipped in the JAR)
+spring-example/                    # Spring Boot admin console demo app (Gradle, separate project)
 docs/                              # Release/API-research reference docs
 ```
 

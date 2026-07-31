@@ -2,8 +2,10 @@ package io.github.kimbongjune.geoserverclient.examples;
 
 import io.github.kimbongjune.geoserverclient.GeoServerClient;
 import io.github.kimbongjune.geoserverclient.dto.coverage.CoverageSummary;
+import io.github.kimbongjune.geoserverclient.dto.layer.UpdateLayerRequest;
 import io.github.kimbongjune.geoserverclient.dto.layergroup.CreateLayerGroupRequest;
 import io.github.kimbongjune.geoserverclient.dto.layergroup.LayerGroup;
+import io.github.kimbongjune.geoserverclient.dto.layergroup.UpdateLayerGroupRequest;
 import io.github.kimbongjune.geoserverclient.dto.style.Style;
 import io.github.kimbongjune.geoserverclient.dto.style.StyleContent;
 import io.github.kimbongjune.geoserverclient.dto.workspace.CreateWorkspaceRequest;
@@ -68,14 +70,40 @@ public class Ex04_StyleAndLayerGroup {
         Style style = client.styles().get(styleName);
         System.out.println("      -> created: " + style.getName() + " (global — not tied to any workspace)");
 
+        System.out.println("      -> getSld(): fetching the raw SLD body back...");
+        StyleContent fetchedSld = client.styles().getSld(styleName);
+        System.out.println("      -> got " + fetchedSld.getSldBody().length() + " chars of SLD back");
+
         System.out.println("[2/3] Setting up a real layer to put in the group (same recipe as Ex03)...");
         String ws = "example_lg_ws";
         client.workspaces().create(CreateWorkspaceRequest.builder(ws).build());
         String storeName = "example_geotiff";
         client.coverageStores().uploadFile(ws, storeName, "file", "geotiff", tif, "first", null, null);
         List<CoverageSummary> coverages = client.coverages().list(ws, storeName);
-        String layerFullName = ws + ":" + coverages.get(0).getName();
+        String coverageName = coverages.get(0).getName();
+        String layerFullName = ws + ":" + coverageName;
         System.out.println("      -> layer ready: " + layerFullName);
+
+        System.out.println("      -> existsByWorkspace()/updateByWorkspace() on that layer...");
+        System.out.println("      -> exists: " + client.layers().existsByWorkspace(ws, coverageName));
+        client.layers().updateByWorkspace(ws, coverageName,
+                UpdateLayerRequest.builder().queryable(true).build());
+        System.out.println("      -> updated queryable=true via the workspace-scoped path");
+
+        System.out.println("      -> creating a workspace-scoped style, then getSldByWorkspace()/"
+                + "existsByWorkspace()/updateByWorkspace()/addStyleToLayer()...");
+        String wsStyleName = "example_ws_style";
+        client.styles().createByWorkspace(ws, StyleContent.of(SLD), wsStyleName);
+        System.out.println("      -> existsByWorkspace: " + client.styles().existsByWorkspace(ws, wsStyleName));
+        StyleContent wsSld = client.styles().getSldByWorkspace(ws, wsStyleName);
+        System.out.println("      -> getSldByWorkspace: got " + wsSld.getSldBody().length() + " chars");
+        client.styles().updateByWorkspace(ws, wsStyleName, StyleContent.of(SLD));
+        System.out.println("      -> updateByWorkspace: re-saved the same SLD body");
+        client.styles().addStyleToLayer(layerFullName, styleName, false);
+        List<io.github.kimbongjune.geoserverclient.dto.style.StyleSummary> layerStyles =
+                client.styles().listByLayer(layerFullName);
+        System.out.println("      -> listByLayer: layer now has " + layerStyles.size()
+                + " available style(s) after addStyleToLayer()");
 
         System.out.println("[3/3] Creating a workspace-scoped LayerGroup containing that one layer...");
         String groupName = "example_group";
@@ -89,10 +117,17 @@ public class Ex04_StyleAndLayerGroup {
         System.out.println("      -> created: " + group.getName()
                 + " with " + group.getPublishables().getPublished().size() + " publishable(s)");
 
+        System.out.println("      -> existsByWorkspace()/updateByWorkspace() on the LayerGroup...");
+        System.out.println("      -> exists: " + client.layerGroups().existsByWorkspace(ws, groupName));
+        client.layerGroups().updateByWorkspace(ws, groupName,
+                UpdateLayerGroupRequest.builder().title("Example Group (updated)").build());
+        System.out.println("      -> title updated via the workspace-scoped path");
+
         System.out.println("\nCleaning up...");
         client.layerGroups().deleteByWorkspace(ws, groupName);
+        client.styles().deleteByWorkspace(ws, wsStyleName, true, true);
         client.workspaces().delete(ws, true);
-        client.styles().delete(styleName);
+        client.styles().delete(styleName, true, true);
         System.out.println("Done.");
 
         client.close();

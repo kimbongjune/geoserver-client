@@ -69,6 +69,8 @@ public class Ex08_WmsAndWmtsCascading {
         WmsStore wmsStore = client.wmsStores().create(ws,
                 CreateWmsStoreRequest.builder(wmsStoreName, wmsCapsUrl).enabled(true).build());
         System.out.println("      -> WMS store created: " + wmsStore.getName());
+        System.out.println("      -> listAvailable(): remote layers discoverable but not yet published: "
+                + client.wmsLayers().listAvailable(ws, wmsStoreName));
 
         String wmsLayerName = "example_wmslayer";
         WmsLayer wmsLayer = client.wmsLayers().publish(ws, wmsStoreName,
@@ -82,6 +84,8 @@ public class Ex08_WmsAndWmtsCascading {
         WmtsStore wmtsStore = client.wmtsStores().create(ws,
                 CreateWmtsStoreRequest.builder(wmtsStoreName, wmtsCapsUrl).enabled(true).build());
         System.out.println("      -> WMTS store created: " + wmtsStore.getName());
+        System.out.println("      -> listAvailable(): remote tile layers discoverable but not yet published: "
+                + client.wmtsLayers().listAvailable(ws, wmtsStoreName));
 
         String wmtsLayerName = "example_wmtslayer";
         WmtsLayer wmtsLayer = client.wmtsLayers().publish(ws, wmtsStoreName,

@@ -2,6 +2,8 @@ package io.github.kimbongjune.geoserverclient.examples;
 
 import io.github.kimbongjune.geoserverclient.GeoServerClient;
 import io.github.kimbongjune.geoserverclient.dto.logging.LoggingInfo;
+import io.github.kimbongjune.geoserverclient.dto.service.ServiceSettings;
+import io.github.kimbongjune.geoserverclient.dto.settings.Contact;
 import io.github.kimbongjune.geoserverclient.dto.settings.GlobalSettings;
 import io.github.kimbongjune.geoserverclient.dto.settings.WorkspaceSettings;
 import io.github.kimbongjune.geoserverclient.dto.workspace.CreateWorkspaceRequest;
@@ -40,7 +42,7 @@ public class Ex07_SettingsAndLogging {
                 .defaultFormat(DataFormat.JSON)
                 .build();
 
-        System.out.println("[1/3] Reading global settings, tweaking one field, sending the whole object back...");
+        System.out.println("[1/6] Reading global settings, tweaking one field, sending the whole object back...");
         GlobalSettings global = client.settings().getGlobal();
         int original = global.getSettings().getNumDecimals();
         System.out.println("      -> current numDecimals: " + original);
@@ -48,7 +50,20 @@ public class Ex07_SettingsAndLogging {
         client.settings().updateGlobal(global);
         System.out.println("      -> updateGlobal() sent (REPLACE semantics — the whole object, not just the diff)");
 
-        System.out.println("[2/3] Creating workspace-scoped settings (a workspace can override the global ones)...");
+        System.out.println("[2/6] Contact settings — get, update (MERGE — partial body is safe), restore...");
+        Contact originalContact = client.settings().getContact();
+        String originalOrg = originalContact.getContactOrganization();
+        System.out.println("      -> current organization: " + originalOrg);
+        Contact contactUpdate = new Contact();
+        contactUpdate.setContactOrganization("Example Org (temporary)");
+        client.settings().updateContact(contactUpdate);
+        System.out.println("      -> organization is now: " + client.settings().getContact().getContactOrganization());
+        Contact contactRestore = new Contact();
+        contactRestore.setContactOrganization(originalOrg);
+        client.settings().updateContact(contactRestore);
+        System.out.println("      -> restored to: " + client.settings().getContact().getContactOrganization());
+
+        System.out.println("[3/6] Creating workspace-scoped settings (a workspace can override the global ones)...");
         String ws = "example_settings_ws";
         client.workspaces().create(CreateWorkspaceRequest.builder(ws).build());
         client.settings().createWorkspaceSettings(ws, WorkspaceSettings.of(ws));
@@ -56,7 +71,44 @@ public class Ex07_SettingsAndLogging {
         System.out.println("      -> hasLocalSettings(): " + wsSettings.hasLocalSettings()
                 + ", charset=" + wsSettings.getCharset());
 
-        System.out.println("[3/3] Reading logging config, toggling stdOutLogging, then reverting it...");
+        System.out.println("      -> updateWorkspaceSettings(): REPLACE semantics, full object round-trip...");
+        wsSettings.setCharset("UTF-8");
+        client.settings().updateWorkspaceSettings(ws, wsSettings);
+        System.out.println("      -> charset is now: " + client.settings().getWorkspaceSettings(ws).getCharset());
+
+        System.out.println("[4/6] Service settings (WMS/WFS/WCS/WMTS) — get/update round trip on each...");
+        ServiceSettings wms = client.services().getWms();
+        Boolean originalVerbose = wms.getVerbose();
+        wms.setVerbose(originalVerbose == null || !originalVerbose);
+        client.services().updateWms(wms);
+        System.out.println("      -> WMS verbose toggled to: " + client.services().getWms().getVerbose());
+        wms.setVerbose(originalVerbose);
+        client.services().updateWms(wms);
+        System.out.println("      -> WMS verbose restored to: " + originalVerbose);
+
+        ServiceSettings wfs = client.services().getWfs();
+        client.services().updateWfs(wfs); // re-save unchanged — exercises the WFS get/update pair
+        System.out.println("      -> WFS get()/update() round trip completed");
+
+        ServiceSettings wcs = client.services().getWcs();
+        client.services().updateWcs(wcs);
+        System.out.println("      -> WCS get()/update() round trip completed");
+
+        ServiceSettings wmts = client.services().getWmts();
+        client.services().updateWmts(wmts);
+        System.out.println("      -> WMTS get()/update() round trip completed");
+
+        System.out.println("[5/6] Service settings, workspace-scoped — get/update/delete for WMS on '" + ws + "'...");
+        ServiceSettings wsWms = new ServiceSettings();
+        wsWms.setName("WMS");
+        wsWms.setEnabled(true);
+        client.services().updateWorkspaceSettings("wms", ws, wsWms);
+        System.out.println("      -> created via updateWorkspaceSettings() (also upserts): "
+                + client.services().getWorkspaceSettings("wms", ws).getEnabled());
+        client.services().deleteWorkspaceSettings("wms", ws);
+        System.out.println("      -> deleted");
+
+        System.out.println("[6/6] Reading logging config, toggling stdOutLogging, then reverting it...");
         LoggingInfo logging = client.logging().getLogging();
         Boolean originalStdOut = logging.getStdOutLogging();
         System.out.println("      -> current level=" + logging.getLevel() + ", stdOutLogging=" + originalStdOut);

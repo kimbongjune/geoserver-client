@@ -63,7 +63,7 @@ public class Ex12_SldBuilder {
             // Clean up all created styles
             List<StyleSummary> styles = client.styles().listByWorkspace(WS);
             for (StyleSummary s : styles) {
-                client.styles().deleteByWorkspace(WS, s.getName());
+                client.styles().deleteByWorkspace(WS, s.getName(), true, true);
             }
             client.workspaces().delete(WS, true);
             System.out.println("\n[cleanup] Removed workspace and all styles");
