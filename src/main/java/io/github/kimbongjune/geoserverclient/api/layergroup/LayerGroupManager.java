@@ -53,7 +53,6 @@ import java.util.Map;
  *       group returns 500 (GeoServer NPE bug). This throws {@code GeoServerResponseException}.</li>
  *   <li>{@code abstract} key: used in POST/PUT request payloads. GET responses return it as {@code abstractTxt}.</li>
  * </ul>
- * </p>
  */
 public class LayerGroupManager extends AbstractManager {
 

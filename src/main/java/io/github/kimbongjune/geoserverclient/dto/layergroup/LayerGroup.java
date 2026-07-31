@@ -32,7 +32,6 @@ import java.util.Objects;
  *   <li>{@code enabled} and {@code advertised} — not included in GET responses (unlike the Layer API).</li>
  *   <li>{@code bounds.crs} — may be a plain EPSG string or a {@code {"@class":"...","$":"EPSG:xxx"}} object.</li>
  * </ul>
- * </p>
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class LayerGroup {
