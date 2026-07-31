@@ -39,6 +39,13 @@ import io.github.kimbongjune.geoserverclient.serialization.SerializerFactory;
  */
 public class TransformManager extends AbstractManager {
 
+    /**
+     * Constructs a new TransformManager.
+     *
+     * @param httpClient        HTTP client used to communicate with GeoServer
+     * @param serializerFactory factory for JSON/XML serializers
+     * @param defaultFormat     default serialization format (typically JSON)
+     */
     public TransformManager(GeoServerHttpClient httpClient,
                             SerializerFactory serializerFactory,
                             DataFormat defaultFormat) {

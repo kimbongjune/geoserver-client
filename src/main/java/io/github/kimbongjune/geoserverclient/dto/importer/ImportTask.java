@@ -8,7 +8,7 @@ import java.util.Objects;
  * DTO for an import task (detail).
  *
  * <p>Maps the {@code "task"} object returned by
- * {@code GET /rest/imports/{id}/tasks/{taskId}}.</p>
+ * {@code GET /rest/imports/{id}/tasks/{taskId}}.
  */
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -20,18 +20,38 @@ public class ImportTask {
     private String updateMode;
     private String progress;
 
+    /** Constructs an empty {@code ImportTask} for deserialization. */
     public ImportTask() {}
 
-    public long getId()            { return id; }
-    public String getHref()        { return href; }
-    public String getState()       { return state; }
-    public String getUpdateMode()  { return updateMode; }
-    public String getProgress()    { return progress; }
+    /** @return the task ID */
+    public long getId() {
+        return id;
+    }
+    /** @return the href to this task resource */
+    public String getHref() {
+        return href;
+    }
+    /** @return the task state (e.g. {@code "READY"}, {@code "COMPLETE"}) */
+    public String getState() {
+        return state;
+    }
+    /** @return the update mode (e.g. {@code "CREATE"}, {@code "REPLACE"}) */
+    public String getUpdateMode() {
+        return updateMode;
+    }
+    /** @return the progress URL for this task */
+    public String getProgress() {
+        return progress;
+    }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         ImportTask that = (ImportTask) o;
         return Objects.equals(id, that.id)
                 && Objects.equals(href, that.href)

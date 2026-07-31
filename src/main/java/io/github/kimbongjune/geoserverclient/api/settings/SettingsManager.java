@@ -28,16 +28,37 @@ import java.util.Map;
  *       ({@code @RequestMapping} path = "/workspaces/{workspaceName}/settings")</li>
  * </ul>
  *
- * <h2>Endpoints</h2>
- * <pre>
- * GET     /rest/workspaces/{nonexistent-ws}/settings
- * PUT     /rest/workspaces/{nonexistent-ws}/settings
- * DELETE  /rest/workspaces/{ws}/settings
- * POST    /rest/workspaces/{ws}/settings.json
- * </pre>
+ * <h2>Endpoints covered</h2>
+ * <pre>{@code
+ * GET    /rest/settings
+ * PUT    /rest/settings
+ * GET    /rest/settings/contact
+ * PUT    /rest/settings/contact
+ * GET    /rest/workspaces/{ws}/settings
+ * POST   /rest/workspaces/{ws}/settings
+ * PUT    /rest/workspaces/{ws}/settings
+ * DELETE /rest/workspaces/{ws}/settings
+ * }</pre>
+ *
+ * <h2>Usage example</h2>
+ * <pre>{@code
+ * SettingsManager mgr = client.settings();
+ * GlobalSettings gs = mgr.getGlobal();
+ * gs.getSettings().setNumDecimals(6);
+ * mgr.updateGlobal(gs);
+ * }</pre>
+ *
+ * @since 1.0.0
  */
 public class SettingsManager extends AbstractManager {
 
+    /**
+     * Constructs a new SettingsManager.
+     *
+     * @param httpClient        HTTP client used to communicate with GeoServer
+     * @param serializerFactory factory for JSON/XML serializers
+     * @param defaultFormat     default serialization format (typically JSON)
+     */
     public SettingsManager(GeoServerHttpClient httpClient,
                            SerializerFactory serializerFactory,
                            DataFormat defaultFormat) {
@@ -137,7 +158,7 @@ public class SettingsManager extends AbstractManager {
      * Creates workspace-local settings.
      *
      * <p>Uses {@code Accept: text/plain} internally because the endpoint's {@code @PostMapping}
-     * declares {@code produces = "text/plain"} — appending {@code .json} causes 406.</p>
+     * declares {@code produces = "text/plain"} — appending {@code .json} causes 406.
      *
      * @param workspaceName workspace name (required)
      * @param settings      local settings (workspace.name field required)

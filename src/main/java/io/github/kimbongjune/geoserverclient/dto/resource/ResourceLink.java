@@ -17,14 +17,27 @@ public class ResourceLink {
     private String rel;
     private String type;
 
-    public String getHref() { return href; }
-    public String getRel() { return rel; }
-    public String getType() { return type; }
+    /** @return the link URL */
+    public String getHref() {
+        return href;
+    }
+    /** @return the link relation type (e.g. {@code "alternate"}) */
+    public String getRel() {
+        return rel;
+    }
+    /** @return the link MIME type */
+    public String getType() {
+        return type;
+    }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         ResourceLink that = (ResourceLink) o;
         return Objects.equals(href, that.href)
                 && Objects.equals(rel, that.rel)

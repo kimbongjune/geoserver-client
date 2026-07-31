@@ -95,6 +95,8 @@ public interface GeoServerHttpClient extends Closeable {
 
     /**
      * Returns the base URL of the GeoServer instance.
+     *
+     * @return the base URL (e.g. {@code "http://localhost:8080/geoserver"})
      */
     String getBaseUrl();
 }

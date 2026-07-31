@@ -7,7 +7,7 @@ import java.util.Objects;
 /**
  * DTO for coverage store details.
  *
- * <p>Maps the response body of {@code GET /rest/workspaces/{ws}/coveragestores/{name}}.</p>
+ * <p>Maps the response body of {@code GET /rest/workspaces/{ws}/coveragestores/{name}}.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CoverageStore {
@@ -45,35 +45,84 @@ public class CoverageStore {
     @JsonProperty("coverages")
     private String coverages;
 
+    /** Constructs an empty {@code CoverageStore} for deserialization. */
     public CoverageStore() {}
 
-    public String getName()                   { return name; }
-    public String getDescription()            { return description; }
-    public String getType()                   { return type; }
-    public Boolean getEnabled()               { return enabled; }
-    public boolean isEnabled()                { return Boolean.TRUE.equals(enabled); }
-    public Boolean getDefaultStore()          { return defaultStore; }
-    public WorkspaceLink getWorkspace()       { return workspace; }
-    public String getUrl()                    { return url; }
-    public String getDateCreated()            { return dateCreated; }
-    public String getDateModified()           { return dateModified; }
-    public Boolean getDisableOnConnFailure()  { return disableOnConnFailure; }
-    public String getCoverages()              { return coverages; }
+    /** @return the store name */
+    public String getName() {
+        return name;
+    }
+    /** @return the store description */
+    public String getDescription() {
+        return description;
+    }
+    /** @return the store type (e.g. {@code "GeoTIFF"}) */
+    public String getType() {
+        return type;
+    }
+    /** @return {@code true} if enabled */
+    public Boolean getEnabled() {
+        return enabled;
+    }
+    /** @return {@code true} if this store is enabled */
+    public boolean isEnabled() {
+        return Boolean.TRUE.equals(enabled);
+    }
+    /** @return {@code true} if this is the default store */
+    public Boolean getDefaultStore() {
+        return defaultStore;
+    }
+    /** @return the workspace link */
+    public WorkspaceLink getWorkspace() {
+        return workspace;
+    }
+    /** @return the store data URL */
+    public String getUrl() {
+        return url;
+    }
+    /** @return the date the store was created */
+    public String getDateCreated() {
+        return dateCreated;
+    }
+    /** @return the date the store was last modified */
+    public String getDateModified() {
+        return dateModified;
+    }
+    /** @return {@code true} if the store is disabled on connection failure */
+    public Boolean getDisableOnConnFailure() {
+        return disableOnConnFailure;
+    }
+    /** @return the coverages href */
+    public String getCoverages() {
+        return coverages;
+    }
 
     // Inner DTOs
 
+    /** Workspace link (name + href) embedded in coverage store responses. */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class WorkspaceLink {
         @JsonProperty("name") private String name;
         @JsonProperty("href") private String href;
+        /** Constructs an empty {@code WorkspaceLink} for deserialization. */
         public WorkspaceLink() {}
-        public String getName() { return name; }
-        public String getHref() { return href; }
+        /** @return the workspace name */
+        public String getName() {
+            return name;
+        }
+        /** @return the workspace href */
+        public String getHref() {
+            return href;
+        }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             WorkspaceLink that = (WorkspaceLink) o;
             return Objects.equals(name, that.name)
                     && Objects.equals(href, that.href);
@@ -95,8 +144,12 @@ public class CoverageStore {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         CoverageStore that = (CoverageStore) o;
         return Objects.equals(name, that.name)
                 && Objects.equals(description, that.description)

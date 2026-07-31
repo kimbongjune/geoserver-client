@@ -9,7 +9,6 @@ import java.util.Objects;
  * DTO for resource metadata returned by {@code GET /rest/resource/{path}?operation=metadata&format=json}.
  * <p>
  * Works correctly for directories. For files, GeoServer returns XML instead of JSON.
- * </p>
  */
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -21,14 +20,27 @@ public class ResourceMetadata {
     /** {@code "directory"} or {@code "resource"} */
     private String type;
 
-    public String getName() { return name; }
-    public String getLastModified() { return lastModified; }
-    public String getType() { return type; }
+    /** @return the resource name */
+    public String getName() {
+        return name;
+    }
+    /** @return the last-modified timestamp as an ISO-8601 string */
+    public String getLastModified() {
+        return lastModified;
+    }
+    /** @return the resource type ({@code "directory"} or {@code "resource"}) */
+    public String getType() {
+        return type;
+    }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         ResourceMetadata that = (ResourceMetadata) o;
         return Objects.equals(name, that.name)
                 && Objects.equals(lastModified, that.lastModified)

@@ -10,10 +10,10 @@ import java.util.Collections;
 /**
  * Request DTO for {@code POST /rest/layergroups} or {@code POST /rest/workspaces/{ws}/layergroups}.
  *
- * <p>Use {@link #builder(String)} to create instances.</p>
+ * <p>Use {@link #builder(String)} to create instances.
  *
  * <p>Note: the abstract field is sent as "abstract" on POST/PUT (not as the "abstractTxt" key
- * returned in GET responses).</p>
+ * returned in GET responses).
  */
 public class CreateLayerGroupRequest {
 
@@ -47,24 +47,69 @@ public class CreateLayerGroupRequest {
         this.metadata             = b.metadata;
     }
 
-    public String getName()                             { return name; }
-    public List<PublishableEntry> getPublishables()     { return publishables == null ? null : Collections.unmodifiableList(publishables); }
-    public List<String> getStyles()                     { return styles == null ? null : Collections.unmodifiableList(styles); }
-    public String getMode()                             { return mode; }
-    public String getTitle()                            { return title; }
-    public String getAbstractText()                     { return abstractText; }
-    public StringMap getInternationalTitle()             { return internationalTitle; }
-    public StringMap getInternationalAbstract()           { return internationalAbstract; }
-    public Boolean getEnabled()                         { return enabled; }
-    public Boolean getAdvertised()                      { return advertised; }
-    public BoundsSpec getBounds()                       { return bounds; }
-    public List<String> getKeywords()                   { return keywords == null ? null : Collections.unmodifiableList(keywords); }
-    public StringMap getMetadata()                       { return metadata; }
+    /** @return the layer group name */
+    public String getName() {
+        return name;
+    }
+    /** @return the publishable entries */
+    public List<PublishableEntry> getPublishables() {
+        return publishables == null ? null : Collections.unmodifiableList(publishables);
+    }
+    /** @return the styles list */
+    public List<String> getStyles() {
+        return styles == null ? null : Collections.unmodifiableList(styles);
+    }
+    /** @return the layer group mode */
+    public String getMode() {
+        return mode;
+    }
+    /** @return the title */
+    public String getTitle() {
+        return title;
+    }
+    /** @return the abstract text */
+    public String getAbstractText() {
+        return abstractText;
+    }
+    /** @return the international title */
+    public StringMap getInternationalTitle() {
+        return internationalTitle;
+    }
+    /** @return the international abstract */
+    public StringMap getInternationalAbstract() {
+        return internationalAbstract;
+    }
+    /** @return {@code true} if enabled */
+    public Boolean getEnabled() {
+        return enabled;
+    }
+    /** @return {@code true} if advertised */
+    public Boolean getAdvertised() {
+        return advertised;
+    }
+    /** @return the bounding box specification */
+    public BoundsSpec getBounds() {
+        return bounds;
+    }
+    /** @return the keywords */
+    public List<String> getKeywords() {
+        return keywords == null ? null : Collections.unmodifiableList(keywords);
+    }
+    /** @return the metadata map */
+    public StringMap getMetadata() {
+        return metadata;
+    }
 
+    /**
+     * Returns a new builder for a layer group with the given name.
+     * @param name the layer group name (must not be null or empty)
+     * @return a new {@code Builder}
+     */
     public static Builder builder(String name) {
         return new Builder(name);
     }
 
+    /** Builder for {@link CreateLayerGroupRequest}. */
     public static class Builder {
         private final String name;
         private List<PublishableEntry> publishables = new ArrayList<PublishableEntry>();
@@ -80,15 +125,25 @@ public class CreateLayerGroupRequest {
         private List<String> keywords;
         private StringMap metadata;
 
-        private Builder(String name) { this.name = name; }
+        private Builder(String name) {
+            this.name = name;
+        }
 
-        /** Adds a layer to publishables. Use qualified name "ws:name" for workspace-scoped layers. */
+        /**
+         * Adds a layer to publishables. Use qualified name "ws:name" for workspace-scoped layers.
+         * @param layerName the layer name, optionally qualified as "workspace:name"
+         * @return this builder
+         */
         public Builder layer(String layerName) {
             publishables.add(new PublishableEntry("layer", layerName));
             return this;
         }
 
-        /** Adds a nested layer group to publishables. */
+        /**
+         * Adds a nested layer group to publishables.
+         * @param groupName the nested layer group name
+         * @return this builder
+         */
         public Builder layerGroup(String groupName) {
             publishables.add(new PublishableEntry("layerGroup", groupName));
             return this;
@@ -97,52 +152,119 @@ public class CreateLayerGroupRequest {
         /**
          * Sets styles for publishables in 1:1 order.
          * Use {@code ""} (empty string) to use the layer's default style.
+         * @param styleNames list of style names aligned with publishables
+         * @return this builder
          */
         public Builder styles(List<String> styleNames) {
             this.styles = styleNames;
             return this;
         }
 
-        /** Layer group mode. Valid values: SINGLE | OPAQUE_CONTAINER | NAMED | EO | CONTAINER (defaults to SINGLE). */
-        public Builder mode(String mode) { this.mode = mode; return this; }
+        /**
+         * Layer group mode. Valid values: SINGLE | OPAQUE_CONTAINER | NAMED | EO | CONTAINER (defaults to SINGLE).
+         * @param mode the layer group mode
+         * @return this builder
+         */
+        public Builder mode(String mode) {
+            this.mode = mode; return this;
+        }
 
-        public Builder title(String title) { this.title = title; return this; }
+        /**
+         * Sets the title.
+         * @param title the title
+         * @return this builder
+         */
+        public Builder title(String title) {
+            this.title = title; return this;
+        }
 
-        /** Layer group abstract text. Serialized as "abstract" in POST/PUT requests. */
+        /**
+         * Layer group abstract text. Serialized as "abstract" in POST/PUT requests.
+         * @param abstractText the abstract text
+         * @return this builder
+         */
         public Builder abstractText(String abstractText) {
             this.abstractText = abstractText;
             return this;
         }
 
+        /**
+         * Sets the international title.
+         * @param internationalTitle map of locale to title
+         * @return this builder
+         */
         public Builder internationalTitle(StringMap internationalTitle) {
             this.internationalTitle = internationalTitle;
             return this;
         }
 
+        /**
+         * Sets the international abstract.
+         * @param internationalAbstract map of locale to abstract
+         * @return this builder
+         */
         public Builder internationalAbstract(StringMap internationalAbstract) {
             this.internationalAbstract = internationalAbstract;
             return this;
         }
 
-        public Builder enabled(boolean enabled) { this.enabled = enabled; return this; }
-        public Builder advertised(boolean advertised) { this.advertised = advertised; return this; }
+        /**
+         * Sets whether this layer group is enabled.
+         * @param enabled {@code true} to enable
+         * @return this builder
+         */
+        public Builder enabled(boolean enabled) {
+            this.enabled = enabled; return this;
+        }
 
+        /**
+         * Sets whether this layer group is advertised.
+         * @param advertised {@code true} to advertise
+         * @return this builder
+         */
+        public Builder advertised(boolean advertised) {
+            this.advertised = advertised; return this;
+        }
+
+        /**
+         * Sets the bounding box.
+         * @param minx minimum x coordinate
+         * @param maxx maximum x coordinate
+         * @param miny minimum y coordinate
+         * @param maxy maximum y coordinate
+         * @param crs  CRS code
+         * @return this builder
+         */
         public Builder bounds(double minx, double maxx, double miny, double maxy, String crs) {
             this.bounds = new BoundsSpec(minx, maxx, miny, maxy, crs);
             return this;
         }
 
+        /**
+         * Sets the keywords list.
+         * @param keywords list of keywords
+         * @return this builder
+         */
         public Builder keywords(List<String> keywords) {
             this.keywords = keywords;
             return this;
         }
 
-        /**   key→value . {@code entry}  . */
+        /**
+         * Sets the metadata map (key-to-value entries).
+         * @param metadata the metadata map
+         * @return this builder
+         */
         public Builder metadata(StringMap metadata) {
             this.metadata = metadata;
             return this;
         }
 
+        /**
+         * Builds the {@code CreateLayerGroupRequest}.
+         * @return a new {@code CreateLayerGroupRequest}
+         * @throws IllegalArgumentException if name is blank or publishables is empty
+         */
         public CreateLayerGroupRequest build() {
             if (name == null || name.trim().isEmpty()) {
                 throw new IllegalArgumentException("name must not be null or empty");
@@ -155,8 +277,12 @@ public class CreateLayerGroupRequest {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             Builder that = (Builder) o;
             return Objects.equals(name, that.name)
                     && Objects.equals(publishables, that.publishables)
@@ -198,21 +324,38 @@ public class CreateLayerGroupRequest {
         }
     }
 
-    /** publishables    . */
+    /** An entry in the publishables list, representing either a layer or a nested layer group. */
     public static class PublishableEntry {
         private final String type; // "layer" | "layerGroup"
         private final String name;
+
+        /**
+         * Constructs a {@code PublishableEntry}.
+         * @param type either {@code "layer"} or {@code "layerGroup"}
+         * @param name the layer or layer group name
+         */
         public PublishableEntry(String type, String name) {
             this.type = type;
             this.name = name;
         }
-        public String getType() { return type; }
-        public String getName() { return name; }
+
+        /** @return the entry type ({@code "layer"} or {@code "layerGroup"}) */
+        public String getType() {
+            return type;
+        }
+        /** @return the layer or layer group name */
+        public String getName() {
+            return name;
+        }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             PublishableEntry that = (PublishableEntry) o;
             return Objects.equals(type, that.type)
                     && Objects.equals(name, that.name);
@@ -232,25 +375,54 @@ public class CreateLayerGroupRequest {
         }
     }
 
-    /** bounds . */
+    /** Bounding box specification for a layer group. */
     public static class BoundsSpec {
         private final double minx, maxx, miny, maxy;
         private final String crs;
+
+        /**
+         * Constructs a {@code BoundsSpec}.
+         * @param minx minimum x coordinate
+         * @param maxx maximum x coordinate
+         * @param miny minimum y coordinate
+         * @param maxy maximum y coordinate
+         * @param crs  CRS code (e.g. {@code "EPSG:4326"})
+         */
         public BoundsSpec(double minx, double maxx, double miny, double maxy, String crs) {
             this.minx = minx; this.maxx = maxx;
             this.miny = miny; this.maxy = maxy;
             this.crs = crs;
         }
-        public double getMinx() { return minx; }
-        public double getMaxx() { return maxx; }
-        public double getMiny() { return miny; }
-        public double getMaxy() { return maxy; }
-        public String getCrs()  { return crs; }
+
+        /** @return the minimum x coordinate */
+        public double getMinx() {
+            return minx;
+        }
+        /** @return the maximum x coordinate */
+        public double getMaxx() {
+            return maxx;
+        }
+        /** @return the minimum y coordinate */
+        public double getMiny() {
+            return miny;
+        }
+        /** @return the maximum y coordinate */
+        public double getMaxy() {
+            return maxy;
+        }
+        /** @return the CRS code */
+        public String getCrs() {
+            return crs;
+        }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             BoundsSpec that = (BoundsSpec) o;
             return Objects.equals(minx, that.minx)
                     && Objects.equals(maxx, that.maxx)
@@ -278,8 +450,12 @@ public class CreateLayerGroupRequest {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         CreateLayerGroupRequest that = (CreateLayerGroupRequest) o;
         return Objects.equals(name, that.name)
                 && Objects.equals(publishables, that.publishables)

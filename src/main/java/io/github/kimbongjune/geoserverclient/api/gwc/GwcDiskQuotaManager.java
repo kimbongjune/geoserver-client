@@ -29,6 +29,16 @@ import io.github.kimbongjune.geoserverclient.serialization.SerializerFactory;
  * cacheCleanUpFrequency < 0  → 500 Internal Server Error
  * maxConcurrentCleanUps <= 0 → 500 Internal Server Error
  * }</pre>
+ *
+ * <h2>Usage example</h2>
+ * <pre>{@code
+ * GwcDiskQuotaManager mgr = client.gwcDiskQuota();
+ * GwcDiskQuotaConfig cfg = mgr.get();
+ * cfg.setEnabled(true);
+ * mgr.update(cfg);
+ * }</pre>
+ *
+ * @since 1.0.0
  */
 public class GwcDiskQuotaManager extends AbstractManager {
 
@@ -38,6 +48,13 @@ public class GwcDiskQuotaManager extends AbstractManager {
         public GwcDiskQuotaConfig config;
     }
 
+    /**
+     * Constructs a new GwcDiskQuotaManager.
+     *
+     * @param httpClient        HTTP client used to communicate with GeoServer
+     * @param serializerFactory factory for JSON/XML serializers
+     * @param defaultFormat     default serialization format (typically JSON)
+     */
     public GwcDiskQuotaManager(GeoServerHttpClient httpClient,
                                SerializerFactory serializerFactory,
                                DataFormat defaultFormat) {
@@ -50,6 +67,7 @@ public class GwcDiskQuotaManager extends AbstractManager {
      * Returns the GWC disk quota configuration.
      * <p>The URL extension (not the Accept header) decides the response format on this
      * endpoint [server-verified] — this method always requests {@code .json} explicitly.
+     * @return the disk quota configuration, or {@code null} if unavailable
      */
     public GwcDiskQuotaConfig get() {
         DiskQuotaEnvelope envelope = doGet("/gwc/rest/diskquota.json", DiskQuotaEnvelope.class, DataFormat.JSON);
@@ -63,6 +81,7 @@ public class GwcDiskQuotaManager extends AbstractManager {
      * an XStream 500 on this endpoint. Fields omitted from {@code request}
      * (e.g. {@code globalQuota}) are preserved by the server rather than cleared
      * [server-verified 2026-07-29].
+     * @param request the configuration to apply
      */
     public void update(GwcDiskQuotaConfig request) {
         requireNonNull(request, "request");

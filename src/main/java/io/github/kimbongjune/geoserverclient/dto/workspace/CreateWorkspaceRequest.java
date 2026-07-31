@@ -33,6 +33,7 @@ public class CreateWorkspaceRequest {
      * Creates a request with the given workspace name.
      *
      * @param name workspace name (required)
+     * @return a new request instance
      */
     public static CreateWorkspaceRequest of(String name) {
         return new CreateWorkspaceRequest(name);
@@ -42,6 +43,9 @@ public class CreateWorkspaceRequest {
      * Alias for {@link #of(String)}, for callers who prefer the {@code builder(...)...build()}
      * spelling used by every {@code UpdateXxxRequest} in this library. Returns the same fluent,
      * chainable object as {@link #of(String)} — {@link #build()} is a no-op terminal call.
+     *
+     * @param name workspace name
+     * @return a new request instance
      */
     public static CreateWorkspaceRequest builder(String name) {
         return of(name);
@@ -52,6 +56,7 @@ public class CreateWorkspaceRequest {
      * Isolated workspaces are accessible only through virtual services.
      *
      * @param isolated true for an isolated workspace (default: false)
+     * @return this request
      */
     public CreateWorkspaceRequest isolated(Boolean isolated) {
         this.isolated = isolated;
@@ -63,23 +68,42 @@ public class CreateWorkspaceRequest {
      * Corresponds to the {@code ?default=true} query parameter.
      *
      * @param setAsDefault true to make this the default workspace
+     * @return this request
      */
     public CreateWorkspaceRequest setAsDefault(boolean setAsDefault) {
         this.setAsDefault = setAsDefault;
         return this;
     }
 
-    /** Terminal no-op for {@code builder(...)...build()} chains — returns {@code this}. */
-    public CreateWorkspaceRequest build() { return this; }
+    /**
+     * Terminal no-op for {@code builder(...)...build()} chains.
+     * @return this request
+     */
+    public CreateWorkspaceRequest build() {
+        return this;
+    }
 
-    public String getName() { return name; }
-    public Boolean getIsolated() { return isolated; }
-    public boolean isSetAsDefault() { return setAsDefault; }
+    /** @return the workspace name */
+    public String getName() {
+        return name;
+    }
+    /** @return {@code true} if this is an isolated workspace */
+    public Boolean getIsolated() {
+        return isolated;
+    }
+    /** @return {@code true} if this workspace should be set as default */
+    public boolean isSetAsDefault() {
+        return setAsDefault;
+    }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         CreateWorkspaceRequest that = (CreateWorkspaceRequest) o;
         return Objects.equals(name, that.name)
                 && Objects.equals(isolated, that.isolated)

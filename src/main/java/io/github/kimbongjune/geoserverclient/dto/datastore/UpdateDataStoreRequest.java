@@ -12,7 +12,7 @@ import java.util.Collections;
  *
  * <p><b>Important:</b> including {@code connectionParameters} replaces all existing connection
  * parameters in full — partial parameter updates are not supported. Omit
- * {@code connectionParam()} calls if you do not intend to change the connection parameters.</p>
+ * {@code connectionParam()} calls if you do not intend to change the connection parameters.
  *
  * <pre>{@code
  * // Change description only
@@ -53,14 +53,28 @@ public class UpdateDataStoreRequest {
         this.connectionParams      = b.connectionParams;
     }
 
-    public static Builder builder() { return new Builder(); }
+    public static Builder builder() {
+        return new Builder();
+    }
 
-    public String getName()                      { return name; }
-    public String getDescription()               { return description; }
-    public Boolean getEnabled()                  { return enabled; }
-    public Boolean getDefaultStore()             { return defaultStore; }
-    public Boolean getDisableOnConnFailure()     { return disableOnConnFailure; }
-    public List<DataStore.Entry> getConnectionParams() { return connectionParams == null ? null : Collections.unmodifiableList(connectionParams); }
+    public String getName() {
+        return name;
+    }
+    public String getDescription() {
+        return description;
+    }
+    public Boolean getEnabled() {
+        return enabled;
+    }
+    public Boolean getDefaultStore() {
+        return defaultStore;
+    }
+    public Boolean getDisableOnConnFailure() {
+        return disableOnConnFailure;
+    }
+    public List<DataStore.Entry> getConnectionParams() {
+        return connectionParams == null ? null : Collections.unmodifiableList(connectionParams);
+    }
 
     public static class Builder {
         private String name;
@@ -100,8 +114,12 @@ public class UpdateDataStoreRequest {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             Builder that = (Builder) o;
             return Objects.equals(name, that.name)
                     && Objects.equals(description, that.description)
@@ -131,8 +149,12 @@ public class UpdateDataStoreRequest {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         UpdateDataStoreRequest that = (UpdateDataStoreRequest) o;
         return Objects.equals(name, that.name)
                 && Objects.equals(description, that.description)

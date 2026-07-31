@@ -13,7 +13,7 @@ import java.util.Collections;
  *
  * <p>Fields use {@code @}-prefixed JSON keys (XStream convention).
  * The {@link #filters} field may contain either one value or a list;
- * {@code ACCEPT_SINGLE_VALUE_AS_ARRAY} handles both cases transparently.</p>
+ * {@code ACCEPT_SINGLE_VALUE_AS_ARRAY} handles both cases transparently.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class FilterChainEntry {
@@ -52,8 +52,16 @@ public class FilterChainEntry {
     @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
     private List<String> filters;
 
+    /** Constructs an empty {@code FilterChainEntry} for deserialization. */
     public FilterChainEntry() {}
 
+    /**
+     * Constructs a {@code FilterChainEntry} with the essential fields.
+     * @param name    the chain name
+     * @param clazz   the fully-qualified RequestFilterChain class name
+     * @param path    the URL pattern(s) this chain matches (CSV)
+     * @param filters the ordered list of filter bean names
+     */
     public FilterChainEntry(String name, String clazz, String path, List<String> filters) {
         this.name = name;
         this.clazz = clazz;
@@ -61,45 +69,152 @@ public class FilterChainEntry {
         this.filters = filters;
     }
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    /** @return the chain name */
+    public String getName() {
+        return name;
+    }
+    /**
+     * Sets the chain name.
+     * @param name the chain name
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
 
-    /** Fully-qualified class name of the RequestFilterChain (e.g. {@code ServiceLoginFilterChain}). */
-    public String getClazz() { return clazz; }
-    public void setClazz(String clazz) { this.clazz = clazz; }
+    /**
+     * Fully-qualified class name of the RequestFilterChain (e.g. {@code ServiceLoginFilterChain}).
+     * @return the class name
+     */
+    public String getClazz() {
+        return clazz;
+    }
+    /**
+     * Sets the RequestFilterChain class name.
+     * @param clazz the fully-qualified class name
+     */
+    public void setClazz(String clazz) {
+        this.clazz = clazz;
+    }
 
-    /** URL pattern this chain matches (multiple patterns as CSV). */
-    public String getPath() { return path; }
-    public void setPath(String path) { this.path = path; }
+    /**
+     * URL pattern this chain matches (multiple patterns as CSV).
+     * @return the URL pattern(s)
+     */
+    public String getPath() {
+        return path;
+    }
+    /**
+     * Sets the URL pattern(s) for this chain.
+     * @param path the URL pattern (CSV for multiple)
+     */
+    public void setPath(String path) {
+        this.path = path;
+    }
 
-    public Boolean getDisabled() { return disabled; }
-    public void setDisabled(Boolean disabled) { this.disabled = disabled; }
+    /** @return {@code true} if this chain is disabled */
+    public Boolean getDisabled() {
+        return disabled;
+    }
+    /**
+     * Sets whether this chain is disabled.
+     * @param disabled {@code true} to disable
+     */
+    public void setDisabled(Boolean disabled) {
+        this.disabled = disabled;
+    }
 
-    public Boolean getAllowSessionCreation() { return allowSessionCreation; }
-    public void setAllowSessionCreation(Boolean allowSessionCreation) { this.allowSessionCreation = allowSessionCreation; }
+    /** @return {@code true} if session creation is allowed */
+    public Boolean getAllowSessionCreation() {
+        return allowSessionCreation;
+    }
+    /**
+     * Sets whether session creation is allowed.
+     * @param allowSessionCreation {@code true} to allow
+     */
+    public void setAllowSessionCreation(Boolean allowSessionCreation) {
+        this.allowSessionCreation = allowSessionCreation;
+    }
 
-    public Boolean getRequireSSL() { return requireSSL; }
-    public void setRequireSSL(Boolean requireSSL) { this.requireSSL = requireSSL; }
+    /** @return {@code true} if SSL is required */
+    public Boolean getRequireSSL() {
+        return requireSSL;
+    }
+    /**
+     * Sets whether SSL is required.
+     * @param requireSSL {@code true} to require SSL
+     */
+    public void setRequireSSL(Boolean requireSSL) {
+        this.requireSSL = requireSSL;
+    }
 
-    public Boolean getMatchHTTPMethod() { return matchHTTPMethod; }
-    public void setMatchHTTPMethod(Boolean matchHTTPMethod) { this.matchHTTPMethod = matchHTTPMethod; }
+    /** @return {@code true} if HTTP method matching is enabled */
+    public Boolean getMatchHTTPMethod() {
+        return matchHTTPMethod;
+    }
+    /**
+     * Sets whether HTTP method matching is enabled.
+     * @param matchHTTPMethod {@code true} to enable
+     */
+    public void setMatchHTTPMethod(Boolean matchHTTPMethod) {
+        this.matchHTTPMethod = matchHTTPMethod;
+    }
 
-    public String getRoleFilterName() { return roleFilterName; }
-    public void setRoleFilterName(String roleFilterName) { this.roleFilterName = roleFilterName; }
+    /** @return the role filter bean name */
+    public String getRoleFilterName() {
+        return roleFilterName;
+    }
+    /**
+     * Sets the role filter bean name.
+     * @param roleFilterName the bean name
+     */
+    public void setRoleFilterName(String roleFilterName) {
+        this.roleFilterName = roleFilterName;
+    }
 
-    public String getInterceptorName() { return interceptorName; }
-    public void setInterceptorName(String interceptorName) { this.interceptorName = interceptorName; }
+    /** @return the interceptor bean name */
+    public String getInterceptorName() {
+        return interceptorName;
+    }
+    /**
+     * Sets the interceptor bean name.
+     * @param interceptorName the bean name
+     */
+    public void setInterceptorName(String interceptorName) {
+        this.interceptorName = interceptorName;
+    }
 
-    public String getExceptionTranslationName() { return exceptionTranslationName; }
-    public void setExceptionTranslationName(String exceptionTranslationName) { this.exceptionTranslationName = exceptionTranslationName; }
+    /** @return the exception translation bean name */
+    public String getExceptionTranslationName() {
+        return exceptionTranslationName;
+    }
+    /**
+     * Sets the exception translation bean name.
+     * @param exceptionTranslationName the bean name
+     */
+    public void setExceptionTranslationName(String exceptionTranslationName) {
+        this.exceptionTranslationName = exceptionTranslationName;
+    }
 
-    public List<String> getFilters() { return filters == null ? null : Collections.unmodifiableList(filters); }
-    public void setFilters(List<String> filters) { this.filters = filters; }
+    /** @return the ordered list of filter bean names */
+    public List<String> getFilters() {
+        return filters == null ? null : Collections.unmodifiableList(filters);
+    }
+    /**
+     * Sets the ordered list of filter bean names.
+     * @param filters the filter bean names
+     */
+    public void setFilters(List<String> filters) {
+        this.filters = filters;
+    }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         FilterChainEntry that = (FilterChainEntry) o;
         return Objects.equals(name, that.name)
                 && Objects.equals(clazz, that.clazz)

@@ -34,16 +34,40 @@ import java.util.Map;
  *       ({@code @RequestMapping} path = "/services/wmts")</li>
  * </ul>
  *
- * <h2>Endpoints</h2>
- * <pre>
- * POST    /rest/services/{svc}/settings
- * DELETE  /rest/services/{svc}/settings
- * POST    /rest/services/{svc}/workspaces/{ws}/settings
- * GET     /rest/services/{svc}/workspaces/{ws}/settings
- * </pre>
+ * <h2>Endpoints covered</h2>
+ * <pre>{@code
+ * GET    /rest/services/wms/settings
+ * PUT    /rest/services/wms/settings
+ * GET    /rest/services/wfs/settings
+ * PUT    /rest/services/wfs/settings
+ * GET    /rest/services/wcs/settings
+ * PUT    /rest/services/wcs/settings
+ * GET    /rest/services/wmts/settings
+ * PUT    /rest/services/wmts/settings
+ * GET    /rest/services/{svc}/workspaces/{ws}/settings
+ * PUT    /rest/services/{svc}/workspaces/{ws}/settings
+ * DELETE /rest/services/{svc}/workspaces/{ws}/settings
+ * }</pre>
+ *
+ * <h2>Usage example</h2>
+ * <pre>{@code
+ * ServiceManager mgr = client.service();
+ * ServiceSettings wms = mgr.getWms();
+ * wms.setEnabled(false);
+ * mgr.updateWms(wms);
+ * }</pre>
+ *
+ * @since 1.0.0
  */
 public class ServiceManager extends AbstractManager {
 
+    /**
+     * Constructs a new ServiceManager.
+     *
+     * @param httpClient        HTTP client used to communicate with GeoServer
+     * @param serializerFactory factory for JSON/XML serializers
+     * @param defaultFormat     default serialization format (typically JSON)
+     */
     public ServiceManager(GeoServerHttpClient httpClient,
                           SerializerFactory serializerFactory,
                           DataFormat defaultFormat) {
@@ -70,7 +94,7 @@ public class ServiceManager extends AbstractManager {
      * Updates the global WMS settings.
      *
      * <p><b>Behavior: MERGE</b> — existing values are preserved for fields not included in the body.
-     * Send a complete body when you need to set fields to 0 or false.</p>
+     * Send a complete body when you need to set fields to 0 or false.
      *
      * @param settings updated WMS settings
      */
@@ -101,7 +125,7 @@ public class ServiceManager extends AbstractManager {
     /**
      * Updates the global WFS settings.
      *
-     * <p><b>Behavior: MERGE</b> — existing values are preserved for fields not included in the body.</p>
+     * <p><b>Behavior: MERGE</b> — existing values are preserved for fields not included in the body.
      *
      * @param settings updated WFS settings
      */
@@ -132,7 +156,7 @@ public class ServiceManager extends AbstractManager {
     /**
      * Updates the global WCS settings.
      *
-     * <p><b>Behavior: MERGE</b> — existing values are preserved for fields not included in the body.</p>
+     * <p><b>Behavior: MERGE</b> — existing values are preserved for fields not included in the body.
      *
      * @param settings updated WCS settings
      */
@@ -163,7 +187,7 @@ public class ServiceManager extends AbstractManager {
     /**
      * Updates the global WMTS settings.
      *
-     * <p><b>Behavior: MERGE</b> — existing values are preserved for fields not included in the body.</p>
+     * <p><b>Behavior: MERGE</b> — existing values are preserved for fields not included in the body.
      *
      * @param settings updated WMTS settings
      */
@@ -182,7 +206,7 @@ public class ServiceManager extends AbstractManager {
      *
      * <p>Returns 404 if the workspace does not exist or no workspace-scoped settings are configured
      * for the given service ->
-     * {@link ResourceNotFoundException}.</p>
+     * {@link ResourceNotFoundException}.
      *
      * @param svc service type ({@code wms} | {@code wfs} | {@code wcs} | {@code wmts})
      * @param ws  workspace name
@@ -209,7 +233,7 @@ public class ServiceManager extends AbstractManager {
      * ({@link GeoServerResponseException}).
      * Verified on GeoServer 2.28.2: a non-null {@code gml} field on a workspace-scoped WFS PUT does
      * <em>not</em> cause 500 (contrary to earlier notes in this codebase) — the field is simply
-     * ignored by GeoServer at this scope. No client-side workaround is needed.</p>
+     * ignored by GeoServer at this scope. No client-side workaround is needed.
      *
      * @param svc      service type ({@code wms} | {@code wfs} | {@code wcs} | {@code wmts})
      * @param ws       workspace name
@@ -234,7 +258,7 @@ public class ServiceManager extends AbstractManager {
      *
      * <p>Returns 404 if the workspace does not exist or no workspace-scoped settings are configured
      * for the given service ->
-     * {@link ResourceNotFoundException}.</p>
+     * {@link ResourceNotFoundException}.
      *
      * @param svc service type ({@code wms} | {@code wfs} | {@code wcs} | {@code wmts})
      * @param ws  workspace name

@@ -8,9 +8,9 @@ import java.util.List;
  * Request DTO for updating a layer.
  *
  * <p>Builds the request body for {@code PUT /rest/layers/{layerName}} or
- * {@code PUT /rest/workspaces/{ws}/layers/{layerName}}.</p>
+ * {@code PUT /rest/workspaces/{ws}/layers/{layerName}}.
  *
- * <p>Supports partial updates — only set the fields you want to change.</p>
+ * <p>Supports partial updates — only set the fields you want to change.
  *
  * <h2>Field notes</h2>
  * <ul>
@@ -66,17 +66,39 @@ public class UpdateLayerRequest {
         return new Builder();
     }
 
-    public String getDefaultStyleName()             { return defaultStyleName; }
-    public String getDefaultStyleWorkspace()        { return defaultStyleWorkspace; }
-    public List<String> getStyleNames()   { return styleNames; }
-    public Boolean getQueryable()                   { return queryable; }
-    public Boolean getOpaque()                      { return opaque; }
-    public Boolean getEnabled()                     { return enabled; }
-    public Boolean getAdvertised()                  { return advertised; }
-    public String getPath()                         { return path; }
-    public String getAttributionTitle()             { return attributionTitle; }
-    public String getAttributionHref()              { return attributionHref; }
-    public String getDefaultWMSInterpolationMethod(){ return defaultWMSInterpolationMethod; }
+    public String getDefaultStyleName() {
+        return defaultStyleName;
+    }
+    public String getDefaultStyleWorkspace() {
+        return defaultStyleWorkspace;
+    }
+    public List<String> getStyleNames() {
+        return styleNames;
+    }
+    public Boolean getQueryable() {
+        return queryable;
+    }
+    public Boolean getOpaque() {
+        return opaque;
+    }
+    public Boolean getEnabled() {
+        return enabled;
+    }
+    public Boolean getAdvertised() {
+        return advertised;
+    }
+    public String getPath() {
+        return path;
+    }
+    public String getAttributionTitle() {
+        return attributionTitle;
+    }
+    public String getAttributionHref() {
+        return attributionHref;
+    }
+    public String getDefaultWMSInterpolationMethod() {
+        return defaultWMSInterpolationMethod;
+    }
 
     public static class Builder {
         private String defaultStyleName;
@@ -154,8 +176,12 @@ public class UpdateLayerRequest {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             Builder that = (Builder) o;
             return Objects.equals(defaultStyleName, that.defaultStyleName)
                     && Objects.equals(defaultStyleWorkspace, that.defaultStyleWorkspace)
@@ -195,8 +221,12 @@ public class UpdateLayerRequest {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         UpdateLayerRequest that = (UpdateLayerRequest) o;
         return Objects.equals(defaultStyleName, that.defaultStyleName)
                 && Objects.equals(defaultStyleWorkspace, that.defaultStyleWorkspace)

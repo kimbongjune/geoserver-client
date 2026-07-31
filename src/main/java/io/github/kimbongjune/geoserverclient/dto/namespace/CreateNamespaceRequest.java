@@ -14,7 +14,7 @@ import java.util.Objects;
  * CreateNamespaceRequest.of("acme", "http://acme.example.com").isolated(true)
  * }</pre>
  *
- * <p>On POST, a workspace with the same prefix is automatically created alongside the namespace.</p>
+ * <p>On POST, a workspace with the same prefix is automatically created alongside the namespace.
  */
 public class CreateNamespaceRequest {
 
@@ -34,8 +34,11 @@ public class CreateNamespaceRequest {
     }
 
     /**
+     * Creates a namespace request with the given prefix and URI.
+     *
      * @param prefix namespace prefix (required) — matches the workspace name that will be created
      * @param uri    namespace URI (required)
+     * @return a new request instance
      */
     public static CreateNamespaceRequest of(String prefix, String uri) {
         return new CreateNamespaceRequest(prefix, uri);
@@ -45,6 +48,10 @@ public class CreateNamespaceRequest {
      * Alias for {@link #of(String, String)}, for callers who prefer the
      * {@code builder(...)...build()} spelling used by every {@code UpdateXxxRequest} in this
      * library. {@link #build()} is a no-op terminal call.
+     *
+     * @param prefix namespace prefix
+     * @param uri    namespace URI
+     * @return a new request instance
      */
     public static CreateNamespaceRequest builder(String prefix, String uri) {
         return of(prefix, uri);
@@ -52,23 +59,44 @@ public class CreateNamespaceRequest {
 
     /**
      * Sets whether this is an isolated namespace. Defaults to false.
+     *
+     * @param isolated {@code true} to isolate this namespace
+     * @return this request
      */
     public CreateNamespaceRequest isolated(Boolean isolated) {
         this.isolated = isolated;
         return this;
     }
 
-    /** Terminal no-op for {@code builder(...)...build()} chains — returns {@code this}. */
-    public CreateNamespaceRequest build() { return this; }
+    /**
+     * Terminal no-op for {@code builder(...)...build()} chains.
+     * @return this request
+     */
+    public CreateNamespaceRequest build() {
+        return this;
+    }
 
-    public String  getPrefix()   { return prefix; }
-    public String  getUri()      { return uri; }
-    public Boolean getIsolated() { return isolated; }
+    /** @return the namespace prefix */
+    public String  getPrefix() {
+        return prefix;
+    }
+    /** @return the namespace URI */
+    public String  getUri() {
+        return uri;
+    }
+    /** @return {@code true} if this namespace is isolated */
+    public Boolean getIsolated() {
+        return isolated;
+    }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         CreateNamespaceRequest that = (CreateNamespaceRequest) o;
         return Objects.equals(prefix, that.prefix)
                 && Objects.equals(uri, that.uri)

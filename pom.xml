@@ -6,7 +6,7 @@
 
     <groupId>io.github.kimbongjune</groupId>
     <artifactId>geoserver-client</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <packaging>jar</packaging>
 
     <name>GeoServer Client</name>
@@ -165,15 +165,37 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.5.0</version>
+                <version>3.6.3</version>
                 <configuration>
                     <doclint>none</doclint>
+                    <source>8</source>
+                    <windowtitle>GeoServer Client 1.0.1 API</windowtitle>
+                    <doctitle>GeoServer Client 1.0.1 API</doctitle>
+                    <author>false</author>
+                    <version>false</version>
+                    <detectOfflineLinks>false</detectOfflineLinks>
+                    <isOffline>true</isOffline>
+                    <notimestamp>true</notimestamp>
+                    <quiet>true</quiet>
+                    <show>public</show>
+                    <charset>UTF-8</charset>
+                    <encoding>UTF-8</encoding>
+                    <docencoding>UTF-8</docencoding>
+                    <stylesheetfile>${basedir}/src/main/javadoc/stylesheet.css</stylesheetfile>
+                    <bottom>&lt;small&gt;Copyright &amp;copy; 2025 Kim Bongjune. Licensed under the MIT License.&lt;/small&gt;</bottom>
                 </configuration>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
                         <goals>
                             <goal>jar</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>javadoc-site</id>
+                        <phase>site</phase>
+                        <goals>
+                            <goal>javadoc</goal>
                         </goals>
                     </execution>
                 </executions>

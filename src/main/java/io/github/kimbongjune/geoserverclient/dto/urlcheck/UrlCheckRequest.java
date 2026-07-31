@@ -35,20 +35,40 @@ public class UrlCheckRequest {
         this.enabled = enabled;
     }
 
-    public String getName()        { return name; }
-    public String getDescription() { return description; }
-    public String getRegex()       { return regex; }
-    public boolean isEnabled()     { return enabled; }
+    public String getName() {
+        return name;
+    }
+    public String getDescription() {
+        return description;
+    }
+    public String getRegex() {
+        return regex;
+    }
+    public boolean isEnabled() {
+        return enabled;
+    }
 
-    public void setName(String name)               { this.name = name; }
-    public void setDescription(String description) { this.description = description; }
-    public void setRegex(String regex)             { this.regex = regex; }
-    public void setEnabled(boolean enabled)        { this.enabled = enabled; }
+    public void setName(String name) {
+        this.name = name;
+    }
+    public void setDescription(String description) {
+        this.description = description;
+    }
+    public void setRegex(String regex) {
+        this.regex = regex;
+    }
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         UrlCheckRequest that = (UrlCheckRequest) o;
         return Objects.equals(name, that.name)
                 && Objects.equals(description, that.description)

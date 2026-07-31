@@ -46,8 +46,12 @@ public class UpdateWorkspaceRequest {
         return new Builder();
     }
 
-    public String getName() { return name; }
-    public Boolean getIsolated() { return isolated; }
+    public String getName() {
+        return name;
+    }
+    public Boolean getIsolated() {
+        return isolated;
+    }
 
     public static class Builder {
         private String name;
@@ -69,8 +73,12 @@ public class UpdateWorkspaceRequest {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             Builder that = (Builder) o;
             return Objects.equals(name, that.name)
                     && Objects.equals(isolated, that.isolated);
@@ -92,8 +100,12 @@ public class UpdateWorkspaceRequest {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         UpdateWorkspaceRequest that = (UpdateWorkspaceRequest) o;
         return Objects.equals(name, that.name)
                 && Objects.equals(isolated, that.isolated);

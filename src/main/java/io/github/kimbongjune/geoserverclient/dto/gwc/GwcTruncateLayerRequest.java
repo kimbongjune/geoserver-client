@@ -14,16 +14,38 @@ public class GwcTruncateLayerRequest implements GwcTruncateRequest {
 
     private String layerName;
 
+    /** Constructs an empty {@code GwcTruncateLayerRequest} for deserialization. */
     public GwcTruncateLayerRequest() {}
-    public GwcTruncateLayerRequest(String layerName) { this.layerName = layerName; }
 
-    public String getLayerName() { return layerName; }
-    public void setLayerName(String layerName) { this.layerName = layerName; }
+    /**
+     * Constructs a {@code GwcTruncateLayerRequest} for the given layer.
+     * @param layerName the GWC layer name (e.g. {@code "sf:archsites"})
+     */
+    public GwcTruncateLayerRequest(String layerName) {
+        this.layerName = layerName;
+    }
+
+    /** @return the GWC layer name */
+    public String getLayerName() {
+        return layerName;
+    }
+
+    /**
+     * Sets the GWC layer name.
+     * @param layerName the layer name to set
+     */
+    public void setLayerName(String layerName) {
+        this.layerName = layerName;
+    }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         GwcTruncateLayerRequest that = (GwcTruncateLayerRequest) o;
         return Objects.equals(layerName, that.layerName);
     }

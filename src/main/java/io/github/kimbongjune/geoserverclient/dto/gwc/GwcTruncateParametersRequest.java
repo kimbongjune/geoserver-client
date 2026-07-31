@@ -15,23 +15,53 @@ public class GwcTruncateParametersRequest implements GwcTruncateRequest {
     private String layerName;
     private StringMap parameters;
 
+    /** Constructs an empty {@code GwcTruncateParametersRequest} for deserialization. */
     public GwcTruncateParametersRequest() {}
 
+    /**
+     * Constructs a {@code GwcTruncateParametersRequest} with the given layer and parameters.
+     * @param layerName  the GWC layer name (e.g. {@code "ws:layername"})
+     * @param parameters the parameter map (e.g. STYLES)
+     */
     public GwcTruncateParametersRequest(String layerName, StringMap parameters) {
         this.layerName = layerName;
         this.parameters = parameters;
     }
 
-    public String getLayerName() { return layerName; }
-    public void setLayerName(String layerName) { this.layerName = layerName; }
+    /** @return the GWC layer name */
+    public String getLayerName() {
+        return layerName;
+    }
 
-    public StringMap getParameters() { return parameters; }
-    public void setParameters(StringMap parameters) { this.parameters = parameters; }
+    /**
+     * Sets the GWC layer name.
+     * @param layerName the layer name to set
+     */
+    public void setLayerName(String layerName) {
+        this.layerName = layerName;
+    }
+
+    /** @return the parameter map for tile truncation */
+    public StringMap getParameters() {
+        return parameters;
+    }
+
+    /**
+     * Sets the parameter map.
+     * @param parameters the parameters to set
+     */
+    public void setParameters(StringMap parameters) {
+        this.parameters = parameters;
+    }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         GwcTruncateParametersRequest that = (GwcTruncateParametersRequest) o;
         return Objects.equals(layerName, that.layerName)
                 && Objects.equals(parameters, that.parameters);

@@ -10,14 +10,14 @@ import java.util.Objects;
  * DTO for a GWC file blob store. Maps {@code GET/PUT /gwc/rest/blobstores/{name}}.
  *
  * <p>This DTO covers {@code FileBlobStore} only (the most common type in GeoServer).
- * S3 and other blob store types are not modeled here.</p>
+ * S3 and other blob store types are not modeled here.
  *
  * <p><b>Known quirk (2026-07-29):</b> In JSON the default flag appears under {@code "@default"}
  * as a <b>String</b> (e.g. {@code "@default":"false"}). In XML it is
- * {@code <FileBlobStore default="true">} as expected.</p>
+ * {@code <FileBlobStore default="true">} as expected.
  *
  * <p>PUT requires XML — JSON PUT causes an XStream "Duplicate field" 500 error
- * (see GwcBlobStoreManager).</p>
+ * (see GwcBlobStoreManager).
  */
 @JacksonXmlRootElement(localName = "FileBlobStore")
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -32,31 +32,78 @@ public class GwcFileBlobStore {
     @JsonProperty("@default")
     private String defaultFlag;
 
+    /** Constructs an empty {@code GwcFileBlobStore} for deserialization. */
     public GwcFileBlobStore() {}
 
+    /**
+     * Constructs a minimal {@code GwcFileBlobStore} with id and base directory.
+     * @param id            the blob store ID
+     * @param baseDirectory the base storage directory
+     */
     public GwcFileBlobStore(String id, String baseDirectory) {
         this.id = id;
         this.baseDirectory = baseDirectory;
         this.enabled = true;
     }
 
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
+    /** @return the blob store ID */
+    public String getId() {
+        return id;
+    }
+    /** @param id the blob store ID */
+    public void setId(String id) {
+        this.id = id;
+    }
 
-    public Boolean getEnabled() { return enabled; }
-    public void setEnabled(Boolean enabled) { this.enabled = enabled; }
+    /** @return {@code true} if the blob store is enabled */
+    public Boolean getEnabled() {
+        return enabled;
+    }
+    /** @param enabled {@code true} to enable */
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
 
-    public String getBaseDirectory() { return baseDirectory; }
-    public void setBaseDirectory(String baseDirectory) { this.baseDirectory = baseDirectory; }
+    /** @return the base storage directory path */
+    public String getBaseDirectory() {
+        return baseDirectory;
+    }
+    /** @param baseDirectory the base storage directory */
+    public void setBaseDirectory(String baseDirectory) {
+        this.baseDirectory = baseDirectory;
+    }
 
-    public Integer getFileSystemBlockSize() { return fileSystemBlockSize; }
-    public void setFileSystemBlockSize(Integer fileSystemBlockSize) { this.fileSystemBlockSize = fileSystemBlockSize; }
+    /** @return the file system block size in bytes */
+    public Integer getFileSystemBlockSize() {
+        return fileSystemBlockSize;
+    }
+    /** @param fileSystemBlockSize the block size in bytes */
+    public void setFileSystemBlockSize(Integer fileSystemBlockSize) {
+        this.fileSystemBlockSize = fileSystemBlockSize;
+    }
 
-    /**   ("true"/"false")  —  boolean    . */
-    public String getDefaultFlag() { return defaultFlag; }
-    public void setDefaultFlag(String defaultFlag) { this.defaultFlag = defaultFlag; }
+    /**
+     * Returns the default flag as a string ({@code "true"} or {@code "false"}) — stored as a string
+     * due to JSON serialization quirks in GeoWebCache.
+     * @return the default flag string
+     */
+    public String getDefaultFlag() {
+        return defaultFlag;
+    }
+    /** @param defaultFlag the default flag string ({@code "true"} or {@code "false"}) */
+    public void setDefaultFlag(String defaultFlag) {
+        this.defaultFlag = defaultFlag;
+    }
 
-    public boolean isDefault() { return Boolean.parseBoolean(defaultFlag); }
+    /** @return {@code true} if this is the default blob store */
+    public boolean isDefault() {
+        return Boolean.parseBoolean(defaultFlag);
+    }
+    /**
+     * Sets whether this is the default blob store.
+     * @param isDefault {@code true} to make this the default
+     * @return this instance for chaining
+     */
     public GwcFileBlobStore setDefault(boolean isDefault) {
         this.defaultFlag = String.valueOf(isDefault);
         return this;
@@ -64,8 +111,12 @@ public class GwcFileBlobStore {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         GwcFileBlobStore that = (GwcFileBlobStore) o;
         return Objects.equals(id, that.id)
                 && Objects.equals(enabled, that.enabled)

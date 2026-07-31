@@ -35,14 +35,24 @@ public class GwcTruncateRequestTypes {
     @JacksonXmlProperty(localName = "requestType")
     private List<String> requestTypes;
 
-    public String getHref() { return href; }
+    /** @return the WMTS layer href */
+    public String getHref() {
+        return href;
+    }
 
-    public List<String> getRequestTypes() { return requestTypes == null ? null : Collections.unmodifiableList(requestTypes); }
+    /** @return the supported truncation request types */
+    public List<String> getRequestTypes() {
+        return requestTypes == null ? null : Collections.unmodifiableList(requestTypes);
+    }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         GwcTruncateRequestTypes that = (GwcTruncateRequestTypes) o;
         return Objects.equals(href, that.href)
                 && Objects.equals(requestTypes, that.requestTypes);

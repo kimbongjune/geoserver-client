@@ -8,7 +8,7 @@ import java.util.Objects;
  *
  * <p>WMSRasterFilter XML is passed through raw (GeoWebCache XStream format),
  * analogous to {@link io.github.kimbongjune.geoserverclient.dto.style.StyleContent}.
- * Use {@link #empty()} to trigger a filter reload without providing new content.</p>
+ * Use {@link #empty()} to trigger a filter reload without providing new content.
  */
 public class GwcFilterContent {
 
@@ -18,22 +18,36 @@ public class GwcFilterContent {
         this.xmlBody = xmlBody;
     }
 
-    /** Creates a filter content holder from a raw WMSRasterFilter XML string. */
+    /**
+     * Creates a filter content holder from a raw WMSRasterFilter XML string.
+     * @param xmlBody the raw WMSRasterFilter XML, or {@code null} for empty
+     * @return a new {@code GwcFilterContent} instance
+     */
     public static GwcFilterContent of(String xmlBody) {
         return new GwcFilterContent(xmlBody != null ? xmlBody : "");
     }
 
-    /** Creates an empty update (triggers a filter reload without supplying new XML). */
+    /**
+     * Creates an empty update (triggers a filter reload without supplying new XML).
+     * @return a new empty {@code GwcFilterContent} instance
+     */
     public static GwcFilterContent empty() {
         return new GwcFilterContent("");
     }
 
-    public String getXmlBody() { return xmlBody; }
+    /** @return the raw WMSRasterFilter XML body */
+    public String getXmlBody() {
+        return xmlBody;
+    }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         GwcFilterContent that = (GwcFilterContent) o;
         return Objects.equals(xmlBody, that.xmlBody);
     }

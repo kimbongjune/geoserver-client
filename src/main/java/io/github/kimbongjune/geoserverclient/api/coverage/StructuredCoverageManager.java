@@ -16,16 +16,34 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 /**
- * GeoServer Structured Coverage REST API manager.
+ * Manager for the GeoServer Structured Coverage (granule index) REST API
+ * ({@code /rest/workspaces/{ws}/coveragestores/{cs}/coverages/{c}/index}).
  *
  * <p>The Structured Coverage API manages the internal granule index of an ImageMosaic
  * coverage store. ImageMosaic assembles multiple raster files (granules) into a single
- * virtual coverage; this API supports schema inspection and granule listing/deletion.</p>
+ * virtual coverage; this API supports schema inspection and granule listing/deletion.
  *
  * <p><b>Note:</b> This API works only with stores that implement
- * {@code StructuredGridCoverage2DReader} (primarily imagemosaic). Calling it on a
- * GeoTIFF, WorldImage, or RST store causes
- * {@code 500 Internal Server Error} (ClassCastException).</p>
+ * {@code StructuredGridCoverage2DReader} (primarily ImageMosaic). Calling it on a
+ * GeoTIFF, WorldImage, or RST store causes {@code 500 Internal Server Error}
+ * (ClassCastException in GeoServer).
+ *
+ * <h2>Endpoints covered</h2>
+ * <pre>
+ * GET     /rest/workspaces/{ws}/coveragestores/{cs}/coverages/{c}/index
+ * GET     /rest/workspaces/{ws}/coveragestores/{cs}/coverages/{c}/index/granules
+ * GET     /rest/workspaces/{ws}/coveragestores/{cs}/coverages/{c}/index/granules/{granuleId}
+ * DELETE  /rest/workspaces/{ws}/coveragestores/{cs}/coverages/{c}/index/granules
+ * DELETE  /rest/workspaces/{ws}/coveragestores/{cs}/coverages/{c}/index/granules/{granuleId}
+ * </pre>
+ *
+ * <h2>Typical usage</h2>
+ * <pre>{@code
+ * IndexSchema schema = client.structuredCoverages().getSchema("myws", "mymosaic", "dem");
+ * GranuleCollection all = client.structuredCoverages().listGranules("myws", "mymosaic", "dem");
+ * }</pre>
+ *
+ * @since 1.0.0
  */
 public class StructuredCoverageManager extends AbstractManager {
 
@@ -146,6 +164,8 @@ public class StructuredCoverageManager extends AbstractManager {
      * @param workspaceName workspace name (required)
      * @param storeName     coverage store name (required)
      * @param coverageName  coverage name (required)
+     * @throws io.github.kimbongjune.geoserverclient.exception.InvalidParameterException
+     *         if any parameter is null/empty
      */
     public void deleteGranules(String workspaceName, String storeName, String coverageName) {
         deleteGranules(workspaceName, storeName, coverageName, null, "none", false);
@@ -159,7 +179,9 @@ public class StructuredCoverageManager extends AbstractManager {
      * @param coverageName  coverage name (required)
      * @param filter        ECQL filter expression (null deletes all)
      * @param purge         file deletion policy: "none" (default), "metadata", "all"
-     * @param updateBBox    recalculate bbox after deletion
+     * @param updateBBox    when true, recalculates nativeBoundingBox after deletion
+     * @throws io.github.kimbongjune.geoserverclient.exception.InvalidParameterException
+     *         if workspaceName, storeName, or coverageName is null/empty
      */
     public void deleteGranules(String workspaceName, String storeName, String coverageName,
                                String filter, String purge, boolean updateBBox) {

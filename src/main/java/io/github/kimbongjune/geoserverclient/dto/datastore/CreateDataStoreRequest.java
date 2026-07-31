@@ -27,7 +27,7 @@ import java.util.Collections;
  * }</pre>
  *
  * <p>Connection parameters vary by store type. See the DataStoreManager Javadoc
- * for a full list of supported {@code connectionParameters} per type.</p>
+ * for a full list of supported {@code connectionParameters} per type.
  */
 public class CreateDataStoreRequest {
 
@@ -47,7 +47,10 @@ public class CreateDataStoreRequest {
     }
 
     /**
+     * Creates a data store request with the given name.
+     *
      * @param name data store name (required)
+     * @return a new request instance
      */
     public static CreateDataStoreRequest of(String name) {
         return new CreateDataStoreRequest(name);
@@ -57,31 +60,59 @@ public class CreateDataStoreRequest {
      * Alias for {@link #of(String)}, for callers who prefer the {@code builder(...)...build()}
      * spelling used by every {@code UpdateXxxRequest} in this library. {@link #build()} is a
      * no-op terminal call.
+     *
+     * @param name data store name
+     * @return a new request instance
      */
     public static CreateDataStoreRequest builder(String name) {
         return of(name);
     }
 
+    /**
+     * Sets the store description.
+     * @param description the description
+     * @return this request
+     */
     public CreateDataStoreRequest description(String description) {
         this.description = description;
         return this;
     }
 
+    /**
+     * Sets whether this store is enabled.
+     * @param enabled {@code true} to enable
+     * @return this request
+     */
     public CreateDataStoreRequest enabled(Boolean enabled) {
         this.enabled = enabled;
         return this;
     }
 
+    /**
+     * Sets whether this is the default store for the workspace.
+     * @param defaultStore {@code true} to make this the default store
+     * @return this request
+     */
     public CreateDataStoreRequest defaultStore(Boolean defaultStore) {
         this.defaultStore = defaultStore;
         return this;
     }
 
+    /**
+     * Sets the store type.
+     * @param type the store type (e.g. {@code "PostGIS"}, {@code "Shapefile"})
+     * @return this request
+     */
     public CreateDataStoreRequest type(String type) {
         this.type = type;
         return this;
     }
 
+    /**
+     * Sets whether to disable the store on connection failure.
+     * @param disableOnConnFailure {@code true} to disable on connection failure
+     * @return this request
+     */
     public CreateDataStoreRequest disableOnConnFailure(Boolean disableOnConnFailure) {
         this.disableOnConnFailure = disableOnConnFailure;
         return this;
@@ -92,27 +123,58 @@ public class CreateDataStoreRequest {
      *
      * @param key   parameter key (e.g. "url", "host", "dbtype")
      * @param value parameter value
+     * @return this request
      */
     public CreateDataStoreRequest connectionParam(String key, String value) {
         this.connectionParams.add(new DataStore.Entry(key, value));
         return this;
     }
 
-    /** Terminal no-op for {@code builder(...)...build()} chains — returns {@code this}. */
-    public CreateDataStoreRequest build() { return this; }
+    /**
+     * Terminal no-op for {@code builder(...)...build()} chains.
+     * @return this request
+     */
+    public CreateDataStoreRequest build() {
+        return this;
+    }
 
-    public String getName()                      { return name; }
-    public String getDescription()               { return description; }
-    public Boolean getEnabled()                  { return enabled; }
-    public Boolean getDefaultStore()             { return defaultStore; }
-    public String getType()                      { return type; }
-    public Boolean getDisableOnConnFailure()     { return disableOnConnFailure; }
-    public List<DataStore.Entry> getConnectionParams() { return connectionParams == null ? null : Collections.unmodifiableList(connectionParams); }
+    /** @return the store name */
+    public String getName() {
+        return name;
+    }
+    /** @return the store description */
+    public String getDescription() {
+        return description;
+    }
+    /** @return {@code true} if enabled */
+    public Boolean getEnabled() {
+        return enabled;
+    }
+    /** @return {@code true} if this is the default store */
+    public Boolean getDefaultStore() {
+        return defaultStore;
+    }
+    /** @return the store type */
+    public String getType() {
+        return type;
+    }
+    /** @return {@code true} if disabled on connection failure */
+    public Boolean getDisableOnConnFailure() {
+        return disableOnConnFailure;
+    }
+    /** @return the connection parameters */
+    public List<DataStore.Entry> getConnectionParams() {
+        return connectionParams == null ? null : Collections.unmodifiableList(connectionParams);
+    }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         CreateDataStoreRequest that = (CreateDataStoreRequest) o;
         return Objects.equals(name, that.name)
                 && Objects.equals(description, that.description)

@@ -51,16 +51,34 @@ public class UpdateFeatureTypeRequest {
         this.recalculate      = b.recalculate;
     }
 
-    public static Builder builder() { return new Builder(); }
+    public static Builder builder() {
+        return new Builder();
+    }
 
-    public String  getName()             { return name; }
-    public String  getTitle()            { return title; }
-    public String  getAbstractText()     { return abstractText; }
-    public String  getSrs()              { return srs; }
-    public String  getProjectionPolicy() { return projectionPolicy; }
-    public Boolean getEnabled()          { return enabled; }
-    public Integer getMaxFeatures()      { return maxFeatures; }
-    public String  getRecalculate()      { return recalculate; }
+    public String  getName() {
+        return name;
+    }
+    public String  getTitle() {
+        return title;
+    }
+    public String  getAbstractText() {
+        return abstractText;
+    }
+    public String  getSrs() {
+        return srs;
+    }
+    public String  getProjectionPolicy() {
+        return projectionPolicy;
+    }
+    public Boolean getEnabled() {
+        return enabled;
+    }
+    public Integer getMaxFeatures() {
+        return maxFeatures;
+    }
+    public String  getRecalculate() {
+        return recalculate;
+    }
 
     public static class Builder {
         private String  name;
@@ -72,21 +90,43 @@ public class UpdateFeatureTypeRequest {
         private Integer maxFeatures;
         private String  recalculate;
 
-        public Builder name(String name)             { this.name = name;                         return this; }
-        public Builder title(String title)           { this.title = title;                       return this; }
-        public Builder abstractText(String text)     { this.abstractText = text;                 return this; }
-        public Builder srs(String srs)               { this.srs = srs;                           return this; }
-        public Builder projectionPolicy(String p)    { this.projectionPolicy = p;                return this; }
-        public Builder enabled(Boolean enabled)      { this.enabled = enabled;                   return this; }
-        public Builder maxFeatures(Integer max)      { this.maxFeatures = max;                   return this; }
-        public Builder recalculate(String r)         { this.recalculate = r;                     return this; }
+        public Builder name(String name) {
+            this.name = name;                         return this;
+        }
+        public Builder title(String title) {
+            this.title = title;                       return this;
+        }
+        public Builder abstractText(String text) {
+            this.abstractText = text;                 return this;
+        }
+        public Builder srs(String srs) {
+            this.srs = srs;                           return this;
+        }
+        public Builder projectionPolicy(String p) {
+            this.projectionPolicy = p;                return this;
+        }
+        public Builder enabled(Boolean enabled) {
+            this.enabled = enabled;                   return this;
+        }
+        public Builder maxFeatures(Integer max) {
+            this.maxFeatures = max;                   return this;
+        }
+        public Builder recalculate(String r) {
+            this.recalculate = r;                     return this;
+        }
 
-        public UpdateFeatureTypeRequest build() { return new UpdateFeatureTypeRequest(this); }
+        public UpdateFeatureTypeRequest build() {
+            return new UpdateFeatureTypeRequest(this);
+        }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             Builder that = (Builder) o;
             return Objects.equals(name, that.name)
                     && Objects.equals(title, that.title)
@@ -120,8 +160,12 @@ public class UpdateFeatureTypeRequest {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         UpdateFeatureTypeRequest that = (UpdateFeatureTypeRequest) o;
         return Objects.equals(name, that.name)
                 && Objects.equals(title, that.title)

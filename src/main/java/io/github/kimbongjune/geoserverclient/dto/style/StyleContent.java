@@ -7,7 +7,7 @@ import java.util.Objects;
  * {@code GET /rest/styles/{name}.sld}.
  *
  * <p>When {@link #isRaw()} is true, GeoServer returns/accepts the SLD without
- * validation or format conversion (see StyleManager for POST/PUT vs GET behavior).</p>
+ * validation or format conversion (see StyleManager for POST/PUT vs GET behavior).
  */
 public class StyleContent {
 
@@ -39,15 +39,25 @@ public class StyleContent {
         return new StyleContent(sldBody, raw, true);
     }
 
-    public String getSldBody() { return sldBody; }
-    public boolean isRaw() { return raw; }
+    public String getSldBody() {
+        return sldBody;
+    }
+    public boolean isRaw() {
+        return raw;
+    }
     /** Returns true if this is SLD 1.1 (SE) content; false for SLD 1.0. */
-    public boolean isSld11() { return sld11; }
+    public boolean isSld11() {
+        return sld11;
+    }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         StyleContent that = (StyleContent) o;
         return raw == that.raw && sld11 == that.sld11
                 && Objects.equals(sldBody, that.sldBody);

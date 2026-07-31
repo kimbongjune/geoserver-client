@@ -27,9 +27,24 @@ import java.io.File;
  *
  * <p><b>Note:</b> unknown updateType returns 400 {@code "Unknow update type: {updateType}"}
  * (the typo "Unknow" instead of "Unknown" is in the upstream source code).
+ *
+ * <h2>Usage example</h2>
+ * <pre>{@code
+ * GwcFilterUpdateManager mgr = client.gwcFilterUpdate();
+ * mgr.updateFilterXml("my-wms-filter", GwcFilterContent.empty());
+ * }</pre>
+ *
+ * @since 1.0.0
  */
 public class GwcFilterUpdateManager extends AbstractManager {
 
+    /**
+     * Constructs a new GwcFilterUpdateManager.
+     *
+     * @param httpClient        HTTP client used to communicate with GeoServer
+     * @param serializerFactory factory for JSON/XML serializers
+     * @param defaultFormat     default serialization format (typically JSON)
+     */
     public GwcFilterUpdateManager(GeoServerHttpClient httpClient,
                                   SerializerFactory serializerFactory,
                                   DataFormat defaultFormat) {
@@ -62,6 +77,8 @@ public class GwcFilterUpdateManager extends AbstractManager {
      * Updates a parameter filter's allowed values from a ZIP file listing.
      * File names inside the ZIP must follow {@code {prefix}_{gridSetId}_{zoom}.{ext}}.
      *
+     * @param filterName filter name (as registered in GWC; required)
+     * @param zipFile    ZIP file containing the parameter value listing (required)
      * @return {@code "Filter update completed, no problems encountered."} on success
      */
     public String updateFilterZip(String filterName, File zipFile) {
