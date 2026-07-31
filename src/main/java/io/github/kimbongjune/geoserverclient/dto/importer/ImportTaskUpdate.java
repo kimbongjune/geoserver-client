@@ -7,26 +7,45 @@ import java.util.Objects;
  * Request DTO for updating an import task.
  *
  * <p>Maps the {@code "task"} object in the request body for
- * {@code PUT /rest/imports/{id}/tasks/{taskId}}.</p>
+ * {@code PUT /rest/imports/{id}/tasks/{taskId}}.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ImportTaskUpdate {
 
     private String updateMode;
 
+    /** Constructs an empty {@code ImportTaskUpdate} for deserialization. */
     public ImportTaskUpdate() {}
 
+    /**
+     * Constructs an {@code ImportTaskUpdate} with the given update mode.
+     * @param updateMode the update mode (e.g. {@code "CREATE"}, {@code "REPLACE"})
+     */
     public ImportTaskUpdate(String updateMode) {
         this.updateMode = updateMode;
     }
 
-    public String getUpdateMode() { return updateMode; }
-    public void setUpdateMode(String updateMode) { this.updateMode = updateMode; }
+    /** @return the update mode */
+    public String getUpdateMode() {
+        return updateMode;
+    }
+
+    /**
+     * Sets the update mode.
+     * @param updateMode the update mode to set
+     */
+    public void setUpdateMode(String updateMode) {
+        this.updateMode = updateMode;
+    }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         ImportTaskUpdate that = (ImportTaskUpdate) o;
         return Objects.equals(updateMode, that.updateMode);
     }

@@ -45,6 +45,12 @@ public class CreateFeatureTypeRequest {
         this.name = name.trim();
     }
 
+    /**
+     * Creates a feature type request with the given name.
+     *
+     * @param name the feature type name (must not be null or empty)
+     * @return a new request instance
+     */
     public static CreateFeatureTypeRequest of(String name) {
         return new CreateFeatureTypeRequest(name);
     }
@@ -53,36 +59,69 @@ public class CreateFeatureTypeRequest {
      * Alias for {@link #of(String)}, for callers who prefer the {@code builder(...)...build()}
      * spelling used by every {@code UpdateXxxRequest} in this library. {@link #build()} is a
      * no-op terminal call.
+     *
+     * @param name the feature type name
+     * @return a new request instance
      */
     public static CreateFeatureTypeRequest builder(String name) {
         return of(name);
     }
 
+    /**
+     * Sets the native feature type name.
+     * @param nativeName the native name
+     * @return this request
+     */
     public CreateFeatureTypeRequest nativeName(String nativeName) {
         this.nativeName = nativeName;
         return this;
     }
 
+    /**
+     * Sets the feature type title.
+     * @param title the title
+     * @return this request
+     */
     public CreateFeatureTypeRequest title(String title) {
         this.title = title;
         return this;
     }
 
+    /**
+     * Sets the abstract text.
+     * @param abstractText the abstract text
+     * @return this request
+     */
     public CreateFeatureTypeRequest abstractText(String abstractText) {
         this.abstractText = abstractText;
         return this;
     }
 
+    /**
+     * Sets the declared CRS code.
+     * @param srs the SRS code (e.g. {@code "EPSG:4326"})
+     * @return this request
+     */
     public CreateFeatureTypeRequest srs(String srs) {
         this.srs = srs;
         return this;
     }
 
+    /**
+     * Sets the projection policy.
+     * @param projectionPolicy the projection policy
+     * @return this request
+     */
     public CreateFeatureTypeRequest projectionPolicy(String projectionPolicy) {
         this.projectionPolicy = projectionPolicy;
         return this;
     }
 
+    /**
+     * Sets whether this feature type is enabled.
+     * @param enabled {@code true} to enable
+     * @return this request
+     */
     public CreateFeatureTypeRequest enabled(Boolean enabled) {
         this.enabled = enabled;
         return this;
@@ -93,6 +132,7 @@ public class CreateFeatureTypeRequest {
      *
      * @param attrName attribute name
      * @param binding  Java type binding (e.g. "org.locationtech.jts.geom.Point", "java.lang.String")
+     * @return this request
      */
     public CreateFeatureTypeRequest attribute(String attrName, String binding) {
         this.attributes.add(new AttributeDef(attrName, binding, null, null, null));
@@ -107,6 +147,7 @@ public class CreateFeatureTypeRequest {
      * @param minOccurs  minimum occurrences (null = server default)
      * @param maxOccurs  maximum occurrences (null = server default)
      * @param nillable   whether null is allowed (null = server default)
+     * @return this request
      */
     public CreateFeatureTypeRequest attribute(String attrName, String binding,
                                               Integer minOccurs, Integer maxOccurs, Boolean nillable) {
@@ -114,17 +155,46 @@ public class CreateFeatureTypeRequest {
         return this;
     }
 
-    /** Terminal no-op for {@code builder(...)...build()} chains — returns {@code this}. */
-    public CreateFeatureTypeRequest build() { return this; }
+    /**
+     * Terminal no-op for {@code builder(...)...build()} chains.
+     * @return this request
+     */
+    public CreateFeatureTypeRequest build() {
+        return this;
+    }
 
-    public String getName()             { return name; }
-    public String getNativeName()       { return nativeName; }
-    public String getTitle()            { return title; }
-    public String getAbstractText()     { return abstractText; }
-    public String getSrs()              { return srs; }
-    public String getProjectionPolicy() { return projectionPolicy; }
-    public Boolean getEnabled()         { return enabled; }
-    public List<AttributeDef> getAttributes() { return attributes == null ? null : Collections.unmodifiableList(attributes); }
+    /** @return the feature type name */
+    public String getName() {
+        return name;
+    }
+    /** @return the native name */
+    public String getNativeName() {
+        return nativeName;
+    }
+    /** @return the title */
+    public String getTitle() {
+        return title;
+    }
+    /** @return the abstract text */
+    public String getAbstractText() {
+        return abstractText;
+    }
+    /** @return the SRS code */
+    public String getSrs() {
+        return srs;
+    }
+    /** @return the projection policy */
+    public String getProjectionPolicy() {
+        return projectionPolicy;
+    }
+    /** @return {@code true} if enabled */
+    public Boolean getEnabled() {
+        return enabled;
+    }
+    /** @return the attribute definitions */
+    public List<AttributeDef> getAttributes() {
+        return attributes == null ? null : Collections.unmodifiableList(attributes);
+    }
 
     /** Definition of a single attribute. */
     public static class AttributeDef {
@@ -134,6 +204,14 @@ public class CreateFeatureTypeRequest {
         private final Integer maxOccurs;
         private final Boolean nillable;
 
+        /**
+         * Constructs an {@code AttributeDef} with the given parameters.
+         * @param name      attribute name
+         * @param binding   Java type binding
+         * @param minOccurs minimum occurrences, or {@code null} for server default
+         * @param maxOccurs maximum occurrences, or {@code null} for server default
+         * @param nillable  whether null is allowed, or {@code null} for server default
+         */
         public AttributeDef(String name, String binding,
                             Integer minOccurs, Integer maxOccurs, Boolean nillable) {
             this.name      = name;
@@ -143,16 +221,35 @@ public class CreateFeatureTypeRequest {
             this.nillable  = nillable;
         }
 
-        public String  getName()      { return name; }
-        public String  getBinding()   { return binding; }
-        public Integer getMinOccurs() { return minOccurs; }
-        public Integer getMaxOccurs() { return maxOccurs; }
-        public Boolean getNillable()  { return nillable; }
+        /** @return the attribute name */
+        public String  getName() {
+            return name;
+        }
+        /** @return the Java type binding */
+        public String  getBinding() {
+            return binding;
+        }
+        /** @return the minimum occurrences */
+        public Integer getMinOccurs() {
+            return minOccurs;
+        }
+        /** @return the maximum occurrences */
+        public Integer getMaxOccurs() {
+            return maxOccurs;
+        }
+        /** @return {@code true} if null is allowed */
+        public Boolean getNillable() {
+            return nillable;
+        }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             AttributeDef that = (AttributeDef) o;
             return Objects.equals(name, that.name)
                     && Objects.equals(binding, that.binding)
@@ -180,8 +277,12 @@ public class CreateFeatureTypeRequest {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         CreateFeatureTypeRequest that = (CreateFeatureTypeRequest) o;
         return Objects.equals(name, that.name)
                 && Objects.equals(nativeName, that.nativeName)

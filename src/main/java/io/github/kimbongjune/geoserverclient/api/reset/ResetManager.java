@@ -56,6 +56,13 @@ import io.github.kimbongjune.geoserverclient.serialization.SerializerFactory;
  */
 public class ResetManager extends AbstractManager {
 
+    /**
+     * Constructs a new ResetManager.
+     *
+     * @param httpClient        HTTP client used to communicate with GeoServer
+     * @param serializerFactory factory for JSON/XML serializers
+     * @param defaultFormat     default serialization format (typically JSON)
+     */
     public ResetManager(GeoServerHttpClient httpClient,
                         SerializerFactory serializerFactory,
                         DataFormat defaultFormat) {

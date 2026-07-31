@@ -32,7 +32,6 @@ import java.util.Objects;
  *   <li>{@code enabled} and {@code advertised} — not included in GET responses (unlike the Layer API).</li>
  *   <li>{@code bounds.crs} — may be a plain EPSG string or a {@code {"@class":"...","$":"EPSG:xxx"}} object.</li>
  * </ul>
- * </p>
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class LayerGroup {
@@ -93,26 +92,66 @@ public class LayerGroup {
 
     public LayerGroup() {}
 
-    public String getName()                           { return name; }
-    public String getMode()                           { return mode; }
-    public String getTitle()                          { return title; }
-    public String getAbstractText()                   { return abstractText; }
-    public StringMap getInternationalTitle()            { return internationalTitle; }
-    public StringMap getInternationalAbstract()           { return internationalAbstract; }
-    public Boolean getEnabled()                       { return enabled; }
-    public boolean isEnabled()                        { return Boolean.TRUE.equals(enabled); }
-    public Boolean getAdvertised()                    { return advertised; }
-    public boolean isAdvertised()                     { return Boolean.TRUE.equals(advertised); }
-    public WorkspaceRef getWorkspace()                { return workspace; }
-    public Publishables getPublishables()             { return publishables; }
-    public Styles getStyles()                         { return styles; }
-    public Bounds getBounds()                         { return bounds; }
-    public Keywords getKeywords()                     { return keywords; }
-    public Metadata getMetadata()                     { return metadata; }
-    public PublishedRef getRootLayer()                { return rootLayer; }
-    public StyleRef getRootLayerStyle()               { return rootLayerStyle; }
-    public String getDateCreated()                    { return dateCreated; }
-    public String getDateModified()                   { return dateModified; }
+    public String getName() {
+        return name;
+    }
+    public String getMode() {
+        return mode;
+    }
+    public String getTitle() {
+        return title;
+    }
+    public String getAbstractText() {
+        return abstractText;
+    }
+    public StringMap getInternationalTitle() {
+        return internationalTitle;
+    }
+    public StringMap getInternationalAbstract() {
+        return internationalAbstract;
+    }
+    public Boolean getEnabled() {
+        return enabled;
+    }
+    public boolean isEnabled() {
+        return Boolean.TRUE.equals(enabled);
+    }
+    public Boolean getAdvertised() {
+        return advertised;
+    }
+    public boolean isAdvertised() {
+        return Boolean.TRUE.equals(advertised);
+    }
+    public WorkspaceRef getWorkspace() {
+        return workspace;
+    }
+    public Publishables getPublishables() {
+        return publishables;
+    }
+    public Styles getStyles() {
+        return styles;
+    }
+    public Bounds getBounds() {
+        return bounds;
+    }
+    public Keywords getKeywords() {
+        return keywords;
+    }
+    public Metadata getMetadata() {
+        return metadata;
+    }
+    public PublishedRef getRootLayer() {
+        return rootLayer;
+    }
+    public StyleRef getRootLayerStyle() {
+        return rootLayerStyle;
+    }
+    public String getDateCreated() {
+        return dateCreated;
+    }
+    public String getDateModified() {
+        return dateModified;
+    }
 
     // Inner DTOs
 
@@ -121,7 +160,9 @@ public class LayerGroup {
     public static class WorkspaceRef {
         @JsonProperty("name") private String name;
         public WorkspaceRef() {}
-        public String getName() { return name; }
+        public String getName() {
+            return name;
+        }
 
         @Override
         public boolean equals(Object o) {
@@ -188,9 +229,15 @@ public class LayerGroup {
         @JsonProperty("href")  private String href;
 
         public PublishedRef() {}
-        public String getType() { return type; }
-        public String getName() { return name; }
-        public String getHref() { return href; }
+        public String getType() {
+            return type;
+        }
+        public String getName() {
+            return name;
+        }
+        public String getHref() {
+            return href;
+        }
 
         @Override
         public boolean equals(Object o) {
@@ -265,12 +312,22 @@ public class LayerGroup {
         @JsonProperty("workspace") private String workspace;
 
         public StyleRef() {}
-        public StyleRef(String name) { this.name = name; }
+        public StyleRef(String name) {
+            this.name = name;
+        }
 
-        public String getName()      { return name; }
-        public String getHref()      { return href; }
-        public String getWorkspace() { return workspace; }
-        public boolean isDefault()   { return name == null || name.isEmpty(); }
+        public String getName() {
+            return name;
+        }
+        public String getHref() {
+            return href;
+        }
+        public String getWorkspace() {
+            return workspace;
+        }
+        public boolean isDefault() {
+            return name == null || name.isEmpty();
+        }
 
         @Override
         public boolean equals(Object o) {
@@ -313,11 +370,21 @@ public class LayerGroup {
         private String crs;
 
         public Bounds() {}
-        public Double getMinx() { return minx; }
-        public Double getMaxx() { return maxx; }
-        public Double getMiny() { return miny; }
-        public Double getMaxy() { return maxy; }
-        public String getCrs()  { return crs; }
+        public Double getMinx() {
+            return minx;
+        }
+        public Double getMaxx() {
+            return maxx;
+        }
+        public Double getMiny() {
+            return miny;
+        }
+        public Double getMaxy() {
+            return maxy;
+        }
+        public String getCrs() {
+            return crs;
+        }
 
         @Override
         public boolean equals(Object o) {
@@ -394,7 +461,9 @@ public class LayerGroup {
     public static class Metadata {
         @JsonProperty("entry") private Object entry;
         public Metadata() {}
-        public Object getEntry() { return entry; }
+        public Object getEntry() {
+            return entry;
+        }
 
         @Override
         public boolean equals(Object o) {

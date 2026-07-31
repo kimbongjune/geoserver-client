@@ -8,12 +8,12 @@ import java.util.Objects;
  * Request DTO for updating a WMS layer.
  *
  * <p>Builds the request body for
- * {@code PUT /rest/workspaces/{ws}/wmsstores/{store}/wmslayers/{layer}}.</p>
+ * {@code PUT /rest/workspaces/{ws}/wmsstores/{store}/wmslayers/{layer}}.
  *
  * <p><b>GeoServer 2.28.2 BUG:</b> the PUT endpoint always returns 500.
- * This class is implemented for future compatibility.</p>
+ * This class is implemented for future compatibility.
  *
- * <p>At least one field must be set.</p>
+ * <p>At least one field must be set.
  */
 public class UpdateWmsLayerRequest {
 
@@ -47,18 +47,40 @@ public class UpdateWmsLayerRequest {
         return new Builder();
     }
 
-    public String getTitle()                          { return title; }
-    public String getDescription()                    { return description; }
-    public String getAbstractText()                   { return abstractText; }
-    public Boolean getEnabled()                       { return enabled; }
-    public String getForcedRemoteStyle()              { return forcedRemoteStyle; }
-    public String getPreferredFormat()                { return preferredFormat; }
-    public Double getMinScale()                       { return minScale; }
-    public Double getMaxScale()                       { return maxScale; }
-    public Boolean getMetadataBBoxRespected()         { return metadataBBoxRespected; }
-    public StringMap getVendorParameters()              { return vendorParameters; }
+    public String getTitle() {
+        return title;
+    }
+    public String getDescription() {
+        return description;
+    }
+    public String getAbstractText() {
+        return abstractText;
+    }
+    public Boolean getEnabled() {
+        return enabled;
+    }
+    public String getForcedRemoteStyle() {
+        return forcedRemoteStyle;
+    }
+    public String getPreferredFormat() {
+        return preferredFormat;
+    }
+    public Double getMinScale() {
+        return minScale;
+    }
+    public Double getMaxScale() {
+        return maxScale;
+    }
+    public Boolean getMetadataBBoxRespected() {
+        return metadataBBoxRespected;
+    }
+    public StringMap getVendorParameters() {
+        return vendorParameters;
+    }
     /** The {@code calculate} query parameter. Accepted values: "nativebbox", "latlonbbox", or a comma-separated combination. */
-    public String getCalculate()                      { return calculate; }
+    public String getCalculate() {
+        return calculate;
+    }
 
     public static class Builder {
         private String title;
@@ -73,17 +95,39 @@ public class UpdateWmsLayerRequest {
         private StringMap vendorParameters;
         private String calculate;
 
-        public Builder title(String title)                              { this.title = title; return this; }
-        public Builder description(String description)                  { this.description = description; return this; }
-        public Builder abstractText(String abstractText)               { this.abstractText = abstractText; return this; }
-        public Builder enabled(boolean enabled)                        { this.enabled = enabled; return this; }
-        public Builder forcedRemoteStyle(String style)                  { this.forcedRemoteStyle = style; return this; }
-        public Builder preferredFormat(String format)                   { this.preferredFormat = format; return this; }
-        public Builder minScale(double minScale)                        { this.minScale = minScale; return this; }
-        public Builder maxScale(double maxScale)                        { this.maxScale = maxScale; return this; }
-        public Builder metadataBBoxRespected(boolean v)                { this.metadataBBoxRespected = v; return this; }
-        public Builder vendorParameters(StringMap params)                { this.vendorParameters = params; return this; }
-        public Builder calculate(String calculate)                      { this.calculate = calculate; return this; }
+        public Builder title(String title) {
+            this.title = title; return this;
+        }
+        public Builder description(String description) {
+            this.description = description; return this;
+        }
+        public Builder abstractText(String abstractText) {
+            this.abstractText = abstractText; return this;
+        }
+        public Builder enabled(boolean enabled) {
+            this.enabled = enabled; return this;
+        }
+        public Builder forcedRemoteStyle(String style) {
+            this.forcedRemoteStyle = style; return this;
+        }
+        public Builder preferredFormat(String format) {
+            this.preferredFormat = format; return this;
+        }
+        public Builder minScale(double minScale) {
+            this.minScale = minScale; return this;
+        }
+        public Builder maxScale(double maxScale) {
+            this.maxScale = maxScale; return this;
+        }
+        public Builder metadataBBoxRespected(boolean v) {
+            this.metadataBBoxRespected = v; return this;
+        }
+        public Builder vendorParameters(StringMap params) {
+            this.vendorParameters = params; return this;
+        }
+        public Builder calculate(String calculate) {
+            this.calculate = calculate; return this;
+        }
 
         public UpdateWmsLayerRequest build() {
             boolean anySet = title != null || description != null || abstractText != null
@@ -99,8 +143,12 @@ public class UpdateWmsLayerRequest {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             Builder that = (Builder) o;
             return Objects.equals(title, that.title)
                     && Objects.equals(description, that.description)
@@ -140,8 +188,12 @@ public class UpdateWmsLayerRequest {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         UpdateWmsLayerRequest that = (UpdateWmsLayerRequest) o;
         return Objects.equals(title, that.title)
                 && Objects.equals(description, that.description)

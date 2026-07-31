@@ -28,11 +28,27 @@ import java.util.Map;
  *
  * <p>A WMTS store lets GeoServer proxy tile layers from an external WMTS server (Cascading WMTS).
  * Create a WMTS store by registering the external server's GetCapabilities URL;
- * then publish individual tile layers via the /layers API (WmtsLayerManager).</p>
+ * then publish individual tile layers via the layers API ({@link WmtsLayerManager}).
  *
- * <h2>Endpoints</h2>
- * <pre>
- * </pre>
+ * <h2>Endpoints covered</h2>
+ * <pre>{@code
+ * GET    /rest/workspaces/{ws}/wmtsstores
+ * POST   /rest/workspaces/{ws}/wmtsstores
+ * GET    /rest/workspaces/{ws}/wmtsstores/{storeName}
+ * PUT    /rest/workspaces/{ws}/wmtsstores/{storeName}
+ * DELETE /rest/workspaces/{ws}/wmtsstores/{storeName}
+ * }</pre>
+ *
+ * <h2>Usage example</h2>
+ * <pre>{@code
+ * WmtsStoreManager mgr = client.wmtsStore();
+ * CreateWmtsStoreRequest req = new CreateWmtsStoreRequest();
+ * req.setName("my-wmts");
+ * req.setCapabilitiesURL("https://example.com/wmts?SERVICE=WMTS&REQUEST=GetCapabilities");
+ * WmtsStore store = mgr.create("myWorkspace", req);
+ * }</pre>
+ *
+ * @since 1.0.0
  */
 public class WmtsStoreManager extends AbstractManager {
 
@@ -42,6 +58,13 @@ public class WmtsStoreManager extends AbstractManager {
         public WmtsStore wmtsStore;
     }
 
+    /**
+     * Constructs a new WmtsStoreManager.
+     *
+     * @param httpClient        HTTP client used to communicate with GeoServer
+     * @param serializerFactory factory for JSON/XML serializers
+     * @param defaultFormat     default serialization format (typically JSON)
+     */
     public WmtsStoreManager(GeoServerHttpClient httpClient,
                             SerializerFactory serializerFactory,
                             DataFormat defaultFormat) {
@@ -133,7 +156,7 @@ public class WmtsStoreManager extends AbstractManager {
      * Updates a WMTS store. Only the specified fields are changed (partial update).
      *
      * <p>Attempting to rename the store (setting a different name) returns 403 Forbidden.
-     * Use storeName to identify which store to update.</p>
+     * Use storeName to identify which store to update.
      *
      * @param workspaceName workspace name (required)
      * @param storeName     name of the WMTS store to update (required)
@@ -202,7 +225,9 @@ public class WmtsStoreManager extends AbstractManager {
     // Parsing helpers
 
     private List<WmtsStoreSummary> parseList(String body) {
-        if (body == null || body.isEmpty()) return Collections.emptyList();
+        if (body == null || body.isEmpty()) {
+            return Collections.emptyList();
+        }
         try {
             ObjectMapper om = getObjectMapper();
             JsonNode root = om.readTree(body);
@@ -246,38 +271,90 @@ public class WmtsStoreManager extends AbstractManager {
         store.put("name", req.getName());
         store.put("capabilitiesURL", req.getCapabilitiesURL());
         store.put("workspace", Collections.singletonMap("name", workspaceName));
-        if (req.getDescription() != null)             store.put("description",          req.getDescription());
-        if (req.getEnabled() != null)                 store.put("enabled",              req.getEnabled());
-        if (req.getDefaultStore() != null)            store.put("_default",             req.getDefaultStore());
-        if (req.getUser() != null)                    store.put("user",                 req.getUser());
-        if (req.getPassword() != null)                store.put("password",             req.getPassword());
-        if (req.getAuthKey() != null)                 store.put("authKey",              req.getAuthKey());
-        if (req.getHeaderName() != null)              store.put("headerName",           req.getHeaderName());
-        if (req.getHeaderValue() != null)             store.put("headerValue",          req.getHeaderValue());
-        if (req.getMaxConnections() != null)          store.put("maxConnections",       req.getMaxConnections());
-        if (req.getReadTimeout() != null)             store.put("readTimeout",          req.getReadTimeout());
-        if (req.getConnectTimeout() != null)          store.put("connectTimeout",       req.getConnectTimeout());
-        if (req.getDisableOnConnFailure() != null)    store.put("disableOnConnFailure", req.getDisableOnConnFailure());
-        if (req.getUseConnectionPooling() != null)    store.put("metadata",             buildMetadataEntry(req.getUseConnectionPooling()));
+        if (req.getDescription() != null) {
+            store.put("description",          req.getDescription());
+        }
+        if (req.getEnabled() != null) {
+            store.put("enabled",              req.getEnabled());
+        }
+        if (req.getDefaultStore() != null) {
+            store.put("_default",             req.getDefaultStore());
+        }
+        if (req.getUser() != null) {
+            store.put("user",                 req.getUser());
+        }
+        if (req.getPassword() != null) {
+            store.put("password",             req.getPassword());
+        }
+        if (req.getAuthKey() != null) {
+            store.put("authKey",              req.getAuthKey());
+        }
+        if (req.getHeaderName() != null) {
+            store.put("headerName",           req.getHeaderName());
+        }
+        if (req.getHeaderValue() != null) {
+            store.put("headerValue",          req.getHeaderValue());
+        }
+        if (req.getMaxConnections() != null) {
+            store.put("maxConnections",       req.getMaxConnections());
+        }
+        if (req.getReadTimeout() != null) {
+            store.put("readTimeout",          req.getReadTimeout());
+        }
+        if (req.getConnectTimeout() != null) {
+            store.put("connectTimeout",       req.getConnectTimeout());
+        }
+        if (req.getDisableOnConnFailure() != null) {
+            store.put("disableOnConnFailure", req.getDisableOnConnFailure());
+        }
+        if (req.getUseConnectionPooling() != null) {
+            store.put("metadata",             buildMetadataEntry(req.getUseConnectionPooling()));
+        }
         return serializeToJson(Collections.singletonMap("wmtsStore", store));
     }
 
     private String buildUpdatePayload(String storeName, UpdateWmtsStoreRequest req) {
         Map<String, Object> store = new LinkedHashMap<>();
         store.put("name", storeName);
-        if (req.getDescription() != null)             store.put("description",          req.getDescription());
-        if (req.getEnabled() != null)                 store.put("enabled",              req.getEnabled());
-        if (req.getCapabilitiesURL() != null)         store.put("capabilitiesURL",      req.getCapabilitiesURL());
-        if (req.getUser() != null)                    store.put("user",                 req.getUser());
-        if (req.getPassword() != null)                store.put("password",             req.getPassword());
-        if (req.getAuthKey() != null)                 store.put("authKey",              req.getAuthKey());
-        if (req.getHeaderName() != null)              store.put("headerName",           req.getHeaderName());
-        if (req.getHeaderValue() != null)             store.put("headerValue",          req.getHeaderValue());
-        if (req.getMaxConnections() != null)          store.put("maxConnections",       req.getMaxConnections());
-        if (req.getReadTimeout() != null)             store.put("readTimeout",          req.getReadTimeout());
-        if (req.getConnectTimeout() != null)          store.put("connectTimeout",       req.getConnectTimeout());
-        if (req.getDisableOnConnFailure() != null)    store.put("disableOnConnFailure", req.getDisableOnConnFailure());
-        if (req.getUseConnectionPooling() != null)    store.put("metadata",             buildMetadataEntry(req.getUseConnectionPooling()));
+        if (req.getDescription() != null) {
+            store.put("description",          req.getDescription());
+        }
+        if (req.getEnabled() != null) {
+            store.put("enabled",              req.getEnabled());
+        }
+        if (req.getCapabilitiesURL() != null) {
+            store.put("capabilitiesURL",      req.getCapabilitiesURL());
+        }
+        if (req.getUser() != null) {
+            store.put("user",                 req.getUser());
+        }
+        if (req.getPassword() != null) {
+            store.put("password",             req.getPassword());
+        }
+        if (req.getAuthKey() != null) {
+            store.put("authKey",              req.getAuthKey());
+        }
+        if (req.getHeaderName() != null) {
+            store.put("headerName",           req.getHeaderName());
+        }
+        if (req.getHeaderValue() != null) {
+            store.put("headerValue",          req.getHeaderValue());
+        }
+        if (req.getMaxConnections() != null) {
+            store.put("maxConnections",       req.getMaxConnections());
+        }
+        if (req.getReadTimeout() != null) {
+            store.put("readTimeout",          req.getReadTimeout());
+        }
+        if (req.getConnectTimeout() != null) {
+            store.put("connectTimeout",       req.getConnectTimeout());
+        }
+        if (req.getDisableOnConnFailure() != null) {
+            store.put("disableOnConnFailure", req.getDisableOnConnFailure());
+        }
+        if (req.getUseConnectionPooling() != null) {
+            store.put("metadata",             buildMetadataEntry(req.getUseConnectionPooling()));
+        }
         return serializeToJson(Collections.singletonMap("wmtsStore", store));
     }
 

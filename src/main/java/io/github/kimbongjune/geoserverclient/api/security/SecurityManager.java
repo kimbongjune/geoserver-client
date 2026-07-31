@@ -14,18 +14,60 @@ import java.io.IOException;
 /**
  * GeoServer Security REST API client (Master Password / Self Password / ACL).
  *
+ * <p>Covers master password management, self-service password change, catalog access mode,
+ * and layer/service/REST ACL rules.
+ *
  * <p>Source:
  * <ul>
  *   <li>Master Password: {@code src/restconfig/.../org/geoserver/rest/security/MasterPasswordController.java}</li>
+ *   <li>Self Password: {@code src/restconfig/.../org/geoserver/rest/security/UserPasswordController.java}</li>
+ *   <li>Catalog ACL: {@code src/restconfig/.../org/geoserver/rest/security/DataRuleController.java}</li>
+ *   <li>Service ACL: {@code src/restconfig/.../org/geoserver/rest/security/ServiceRuleController.java}</li>
+ *   <li>REST ACL: {@code src/restconfig/.../org/geoserver/rest/security/RestRuleController.java}</li>
  * </ul>
  *
- * <h2>Endpoints</h2>
- * <pre>
- * </pre>
+ * <h2>Endpoints covered</h2>
+ * <pre>{@code
+ * GET  /rest/security/masterpw
+ * PUT  /rest/security/masterpw
+ * PUT  /rest/security/self/password
+ * GET  /rest/security/acl/catalog
+ * PUT  /rest/security/acl/catalog
+ * GET  /rest/security/acl/layers
+ * POST /rest/security/acl/layers
+ * PUT  /rest/security/acl/layers
+ * DELETE /rest/security/acl/layers/{rule}
+ * GET  /rest/security/acl/services
+ * POST /rest/security/acl/services
+ * PUT  /rest/security/acl/services
+ * DELETE /rest/security/acl/services/{rule}
+ * GET  /rest/security/acl/rest
+ * POST /rest/security/acl/rest
+ * PUT  /rest/security/acl/rest
+ * DELETE /rest/security/acl/rest/{rule}
+ * PUT  /rest/security/acl/catalog/reload
+ * POST /rest/security/acl/catalog/reload
+ * }</pre>
+ *
+ * <h2>Usage example</h2>
+ * <pre>{@code
+ * SecurityManager mgr = client.security();
+ * String mode = mgr.getCatalogMode(); // "HIDE", "CHALLENGE", or "MIXED"
+ * mgr.setCatalogMode("CHALLENGE");
+ * }</pre>
+ *
+ * @since 1.0.0
  */
 public class SecurityManager extends AbstractManager {
 
 
+    /**
+     * Constructs a new SecurityManager.
+     *
+     * @param httpClient        HTTP client used to communicate with GeoServer
+     * @param serializerFactory factory for JSON/XML serializers
+     * @param defaultFormat     default serialization format (typically JSON)
+     */
     public SecurityManager(GeoServerHttpClient httpClient,
                            SerializerFactory serializerFactory,
                            DataFormat defaultFormat) {
@@ -34,7 +76,11 @@ public class SecurityManager extends AbstractManager {
 
     // [1] GET /rest/security/masterpw
 
-    /** Returns the current master password in plain text. */
+    /**
+     * Returns the current master password in plain text.
+     *
+     * @return the current master password
+     */
     public String getMasterPassword() {
         String body = doGetRaw("/rest/security/masterpw", "application/json");
         try {
@@ -46,7 +92,12 @@ public class SecurityManager extends AbstractManager {
 
     // [2] PUT /rest/security/masterpw
 
-    /** Changes the master password. Flat JSON — wrapping causes 400. */
+    /**
+     * Changes the master password. Request body must be flat JSON — wrapping causes 400.
+     *
+     * @param oldPassword the current master password (required)
+     * @param newPassword the new master password (required)
+     */
     public void setMasterPassword(String oldPassword, String newPassword) {
         requireNonEmpty(oldPassword, "oldPassword");
         requireNonEmpty(newPassword, "newPassword");
@@ -63,7 +114,11 @@ public class SecurityManager extends AbstractManager {
 
     // [3] PUT /rest/security/self/password
 
-    /** Changes the current authenticated user's password. Flat JSON — wrapping causes 400. */
+    /**
+     * Changes the current authenticated user's own password. Flat JSON — wrapping causes 400.
+     *
+     * @param newPassword the new password (required)
+     */
     public void setSelfPassword(String newPassword) {
         requireNonEmpty(newPassword, "newPassword");
         try {
@@ -78,7 +133,11 @@ public class SecurityManager extends AbstractManager {
 
     // [4] GET /rest/security/acl/catalog
 
-    /** Returns the catalog access control mode: HIDE | CHALLENGE | MIXED. */
+    /**
+     * Returns the catalog access control mode.
+     *
+     * @return the mode string: {@code HIDE}, {@code CHALLENGE}, or {@code MIXED}
+     */
     public String getCatalogMode() {
         String body = doGetRaw("/rest/security/acl/catalog", "application/json");
         try {
@@ -90,7 +149,11 @@ public class SecurityManager extends AbstractManager {
 
     // [5] PUT /rest/security/acl/catalog
 
-    /** Sets the catalog access control mode. Flat JSON — wrapping causes 404. */
+    /**
+     * Sets the catalog access control mode. Flat JSON — wrapping causes 404.
+     *
+     * @param mode the mode to set: {@code HIDE}, {@code CHALLENGE}, or {@code MIXED} (required)
+     */
     public void setCatalogMode(String mode) {
         requireNonEmpty(mode, "mode");
         try {
@@ -105,14 +168,22 @@ public class SecurityManager extends AbstractManager {
 
     // [6] GET /rest/security/acl/layers
 
-    /** Returns all layer ACL rules (key = rule pattern, value = comma-separated roles). */
+    /**
+     * Returns all layer ACL rules.
+     *
+     * @return ACL rules map (key = rule pattern, value = comma-separated roles)
+     */
     public AclRules getLayerAcl() {
         return parseAclRules(doGetRaw("/rest/security/acl/layers", "application/json"));
     }
 
     // [7] POST /rest/security/acl/layers
 
-    /** Adds new layer ACL rules. Existing keys are not overwritten. */
+    /**
+     * Adds new layer ACL rules. Existing keys are not overwritten.
+     *
+     * @param rules new rules to add (required)
+     */
     public void addLayerAcl(AclRules rules) {
         requireNonNull(rules, "rules");
         doPostRaw("/rest/security/acl/layers", serializeAcl(rules),
@@ -121,7 +192,11 @@ public class SecurityManager extends AbstractManager {
 
     // [8] PUT /rest/security/acl/layers
 
-    /** Updates role list of existing layer ACL rules. */
+    /**
+     * Updates the role list of existing layer ACL rules.
+     *
+     * @param rules rules to update (required; keys must already exist)
+     */
     public void updateLayerAcl(AclRules rules) {
         requireNonNull(rules, "rules");
         doPutRaw("/rest/security/acl/layers", serializeAcl(rules),
@@ -130,7 +205,11 @@ public class SecurityManager extends AbstractManager {
 
     // [9] DELETE /rest/security/acl/layers/{rule}
 
-    /** Deletes a layer ACL rule by its key. */
+    /**
+     * Deletes a layer ACL rule by its key.
+     *
+     * @param rule the rule key to delete (e.g., {@code "*.*.r"}) (required)
+     */
     public void deleteLayerAcl(String rule) {
         requireNonEmpty(rule, "rule");
         doDelete("/rest/security/acl/layers/" + rule);
@@ -138,14 +217,22 @@ public class SecurityManager extends AbstractManager {
 
     // [10] GET /rest/security/acl/services
 
-    /** Returns all service ACL rules. */
+    /**
+     * Returns all service ACL rules.
+     *
+     * @return ACL rules map (key = service.method pattern, value = comma-separated roles)
+     */
     public AclRules getServiceAcl() {
         return parseAclRules(doGetRaw("/rest/security/acl/services", "application/json"));
     }
 
     // [11] POST /rest/security/acl/services
 
-    /** Adds new service ACL rules. */
+    /**
+     * Adds new service ACL rules. Existing keys are not overwritten.
+     *
+     * @param rules new rules to add (required)
+     */
     public void addServiceAcl(AclRules rules) {
         requireNonNull(rules, "rules");
         doPostRaw("/rest/security/acl/services", serializeAcl(rules),
@@ -154,7 +241,11 @@ public class SecurityManager extends AbstractManager {
 
     // [12] PUT /rest/security/acl/services
 
-    /** Updates existing service ACL rules. */
+    /**
+     * Updates existing service ACL rules.
+     *
+     * @param rules rules to update (required)
+     */
     public void updateServiceAcl(AclRules rules) {
         requireNonNull(rules, "rules");
         doPutRaw("/rest/security/acl/services", serializeAcl(rules),
@@ -163,7 +254,11 @@ public class SecurityManager extends AbstractManager {
 
     // [13] DELETE /rest/security/acl/services/{rule}
 
-    /** Deletes a service ACL rule by its key. */
+    /**
+     * Deletes a service ACL rule by its key.
+     *
+     * @param rule the rule key to delete (required)
+     */
     public void deleteServiceAcl(String rule) {
         requireNonEmpty(rule, "rule");
         doDelete("/rest/security/acl/services/" + rule);
@@ -171,14 +266,22 @@ public class SecurityManager extends AbstractManager {
 
     // [14] GET /rest/security/acl/rest
 
-    /** Returns all REST API ACL rules. */
+    /**
+     * Returns all REST API ACL rules.
+     *
+     * @return ACL rules map (key = REST path pattern, value = comma-separated HTTP methods and roles)
+     */
     public AclRules getRestAcl() {
         return parseAclRules(doGetRaw("/rest/security/acl/rest", "application/json"));
     }
 
     // [15] POST /rest/security/acl/rest
 
-    /** Adds new REST API ACL rules. */
+    /**
+     * Adds new REST API ACL rules. Existing keys are not overwritten.
+     *
+     * @param rules new rules to add (required)
+     */
     public void addRestAcl(AclRules rules) {
         requireNonNull(rules, "rules");
         doPostRaw("/rest/security/acl/rest", serializeAcl(rules),
@@ -187,7 +290,11 @@ public class SecurityManager extends AbstractManager {
 
     // [16] PUT /rest/security/acl/rest
 
-    /** Updates existing REST API ACL rules. */
+    /**
+     * Updates existing REST API ACL rules.
+     *
+     * @param rules rules to update (required)
+     */
     public void updateRestAcl(AclRules rules) {
         requireNonNull(rules, "rules");
         doPutRaw("/rest/security/acl/rest", serializeAcl(rules),
@@ -196,7 +303,11 @@ public class SecurityManager extends AbstractManager {
 
     // [17] DELETE /rest/security/acl/rest/{rule}
 
-    /** Deletes a REST API ACL rule by its key. */
+    /**
+     * Deletes a REST API ACL rule by its key.
+     *
+     * @param rule the rule key to delete (required)
+     */
     public void deleteRestAcl(String rule) {
         requireNonEmpty(rule, "rule");
         doDelete("/rest/security/acl/rest/" + rule);
@@ -204,7 +315,9 @@ public class SecurityManager extends AbstractManager {
 
     // [18] PUT /rest/security/acl/catalog/reload
 
-    /** Triggers a reload of the external ACL service (e.g., GeoFence). */
+    /**
+     * Triggers a reload of the external ACL service (e.g., GeoFence) via PUT.
+     */
     public void reloadAcl() {
         String path = "/rest/security/acl/catalog/reload";
         GeoServerResponse response = httpClient.put(path, "", "application/json", "application/json");
@@ -213,7 +326,9 @@ public class SecurityManager extends AbstractManager {
 
     // [19] POST /rest/security/acl/catalog/reload
 
-    /** Triggers a reload of the external ACL service (POST variant). */
+    /**
+     * Triggers a reload of the external ACL service (e.g., GeoFence) via POST.
+     */
     public void postReloadAcl() {
         String path = "/rest/security/acl/catalog/reload";
         GeoServerResponse response = httpClient.post(path, "", "application/json", "application/json");

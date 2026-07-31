@@ -4,7 +4,7 @@ import java.util.Objects;
 /**
  * Query parameters for {@code GET /rest/monitor/requests}.
  *
- * <p>All fields are optional (nullable). Unset fields are omitted from the request.</p>
+ * <p>All fields are optional (nullable). Unset fields are omitted from the request.
  *
  * <p>Example:
  * <pre>
@@ -58,29 +58,109 @@ public class MonitoringQuery {
      */
     private Boolean live;
 
+    /** Constructs an empty {@code MonitoringQuery} with no filters set. */
     public MonitoringQuery() {}
 
     // Fluent setters
 
-    public MonitoringQuery from(String from)     { this.from = from;     return this; }
-    public MonitoringQuery to(String to)         { this.to = to;         return this; }
-    public MonitoringQuery filter(String filter) { this.filter = filter; return this; }
-    public MonitoringQuery order(String order)   { this.order = order;   return this; }
-    public MonitoringQuery offset(long offset)   { this.offset = offset; return this; }
-    public MonitoringQuery count(long count)     { this.count = count;   return this; }
-    public MonitoringQuery live(boolean live)    { this.live = live;     return this; }
+    /**
+     * Sets the start date/time filter.
+     * @param from the start date/time (e.g. {@code "2026-03-23T00:00:00"})
+     * @return this instance for chaining
+     */
+    public MonitoringQuery from(String from) {
+        this.from = from;     return this;
+    }
+
+    /**
+     * Sets the end date/time filter.
+     * @param to the end date/time
+     * @return this instance for chaining
+     */
+    public MonitoringQuery to(String to) {
+        this.to = to;         return this;
+    }
+
+    /**
+     * Sets the field filter expression.
+     * @param filter the filter expression (e.g. {@code "status:EQ:FINISHED"})
+     * @return this instance for chaining
+     */
+    public MonitoringQuery filter(String filter) {
+        this.filter = filter; return this;
+    }
+
+    /**
+     * Sets the sort order expression.
+     * @param order the sort order (e.g. {@code "startTime;DESC"})
+     * @return this instance for chaining
+     */
+    public MonitoringQuery order(String order) {
+        this.order = order;   return this;
+    }
+
+    /**
+     * Sets the number of records to skip.
+     * @param offset the offset
+     * @return this instance for chaining
+     */
+    public MonitoringQuery offset(long offset) {
+        this.offset = offset; return this;
+    }
+
+    /**
+     * Sets the maximum number of records to return.
+     * @param count the record count limit
+     * @return this instance for chaining
+     */
+    public MonitoringQuery count(long count) {
+        this.count = count;   return this;
+    }
+
+    /**
+     * Sets the live filter.
+     * @param live {@code true} for live only, {@code false} for finished only
+     * @return this instance for chaining
+     */
+    public MonitoringQuery live(boolean live) {
+        this.live = live;     return this;
+    }
 
     // Getters
 
-    public String  getFrom()   { return from; }
-    public String  getTo()     { return to; }
-    public String  getFilter() { return filter; }
-    public String  getOrder()  { return order; }
-    public Long    getOffset() { return offset; }
-    public Long    getCount()  { return count; }
-    public Boolean getLive()   { return live; }
+    /** @return the start date/time filter */
+    public String  getFrom() {
+        return from;
+    }
+    /** @return the end date/time filter */
+    public String  getTo() {
+        return to;
+    }
+    /** @return the field filter expression */
+    public String  getFilter() {
+        return filter;
+    }
+    /** @return the sort order expression */
+    public String  getOrder() {
+        return order;
+    }
+    /** @return the offset (number of records to skip) */
+    public Long    getOffset() {
+        return offset;
+    }
+    /** @return the maximum number of records to return */
+    public Long    getCount() {
+        return count;
+    }
+    /** @return the live filter flag */
+    public Boolean getLive() {
+        return live;
+    }
 
-    /** Returns true when no query parameters have been set. */
+    /**
+     * Returns {@code true} when no query parameters have been set.
+     * @return {@code true} if all parameters are null
+     */
     public boolean isEmpty() {
         return from == null && to == null && filter == null
                 && order == null && offset == null && count == null && live == null;
@@ -88,8 +168,12 @@ public class MonitoringQuery {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         MonitoringQuery that = (MonitoringQuery) o;
         return Objects.equals(from, that.from)
                 && Objects.equals(to, that.to)

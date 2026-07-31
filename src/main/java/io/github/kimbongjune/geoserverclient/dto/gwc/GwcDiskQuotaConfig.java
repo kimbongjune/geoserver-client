@@ -10,10 +10,10 @@ import java.util.Objects;
  * the JSON envelope key is {@code "org.geowebcache.diskquota.DiskQuotaConfig"}.
  *
  * <p>PUT requires XML — JSON PUT causes an XStream 500 error
- * (see GwcDiskQuotaManager). The {@link #quotaStore} field is read-only on PUT.</p>
+ * (see GwcDiskQuotaManager). The {@link #quotaStore} field is read-only on PUT.
  *
  * <p><b>Known issue (2026-07-29):</b> The {@link #globalQuota} field is ignored on PUT
- * (the server accepts the request but applies no change).</p>
+ * (the server accepts the request but applies no change).
  */
 @JacksonXmlRootElement(localName = "org.geowebcache.diskquota.DiskQuotaConfig")
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -30,35 +30,88 @@ public class GwcDiskQuotaConfig {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String quotaStore;
 
-    public Boolean getEnabled() { return enabled; }
-    public void setEnabled(Boolean enabled) { this.enabled = enabled; }
+    /** @return {@code true} if disk quota enforcement is enabled */
+    public Boolean getEnabled() {
+        return enabled;
+    }
+    /** @param enabled {@code true} to enable */
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
 
-    public Integer getDiskBlockSize() { return diskBlockSize; }
-    public void setDiskBlockSize(Integer diskBlockSize) { this.diskBlockSize = diskBlockSize; }
+    /** @return the file system block size in bytes */
+    public Integer getDiskBlockSize() {
+        return diskBlockSize;
+    }
+    /** @param diskBlockSize the block size in bytes */
+    public void setDiskBlockSize(Integer diskBlockSize) {
+        this.diskBlockSize = diskBlockSize;
+    }
 
-    public Integer getCacheCleanUpFrequency() { return cacheCleanUpFrequency; }
-    public void setCacheCleanUpFrequency(Integer cacheCleanUpFrequency) { this.cacheCleanUpFrequency = cacheCleanUpFrequency; }
+    /** @return the cache clean-up frequency */
+    public Integer getCacheCleanUpFrequency() {
+        return cacheCleanUpFrequency;
+    }
+    /** @param cacheCleanUpFrequency the frequency */
+    public void setCacheCleanUpFrequency(Integer cacheCleanUpFrequency) {
+        this.cacheCleanUpFrequency = cacheCleanUpFrequency;
+    }
 
-    /** Cleanup interval unit. Valid values: SECONDS, MINUTES, HOURS, DAYS. */
-    public String getCacheCleanUpUnits() { return cacheCleanUpUnits; }
-    public void setCacheCleanUpUnits(String cacheCleanUpUnits) { this.cacheCleanUpUnits = cacheCleanUpUnits; }
+    /**
+     * Cleanup interval unit. Valid values: {@code SECONDS}, {@code MINUTES}, {@code HOURS}, {@code DAYS}.
+     * @return the time unit for the clean-up interval
+     */
+    public String getCacheCleanUpUnits() {
+        return cacheCleanUpUnits;
+    }
+    /** @param cacheCleanUpUnits the time unit (SECONDS, MINUTES, HOURS, DAYS) */
+    public void setCacheCleanUpUnits(String cacheCleanUpUnits) {
+        this.cacheCleanUpUnits = cacheCleanUpUnits;
+    }
 
-    public Integer getMaxConcurrentCleanUps() { return maxConcurrentCleanUps; }
-    public void setMaxConcurrentCleanUps(Integer maxConcurrentCleanUps) { this.maxConcurrentCleanUps = maxConcurrentCleanUps; }
+    /** @return the maximum number of concurrent clean-up threads */
+    public Integer getMaxConcurrentCleanUps() {
+        return maxConcurrentCleanUps;
+    }
+    /** @param maxConcurrentCleanUps the maximum concurrent clean-ups */
+    public void setMaxConcurrentCleanUps(Integer maxConcurrentCleanUps) {
+        this.maxConcurrentCleanUps = maxConcurrentCleanUps;
+    }
 
-    /** LFU (Least Frequently Used) | LRU (Least Recently Used) */
-    public String getGlobalExpirationPolicyName() { return globalExpirationPolicyName; }
-    public void setGlobalExpirationPolicyName(String globalExpirationPolicyName) { this.globalExpirationPolicyName = globalExpirationPolicyName; }
+    /**
+     * Returns the global expiration policy name ({@code LFU} or {@code LRU}).
+     * @return the policy name
+     */
+    public String getGlobalExpirationPolicyName() {
+        return globalExpirationPolicyName;
+    }
+    /** @param globalExpirationPolicyName the policy name (LFU or LRU) */
+    public void setGlobalExpirationPolicyName(String globalExpirationPolicyName) {
+        this.globalExpirationPolicyName = globalExpirationPolicyName;
+    }
 
-    public GwcQuota getGlobalQuota() { return globalQuota; }
-    public void setGlobalQuota(GwcQuota globalQuota) { this.globalQuota = globalQuota; }
+    /** @return the global disk quota */
+    public GwcQuota getGlobalQuota() {
+        return globalQuota;
+    }
+    /** @param globalQuota the global disk quota */
+    public void setGlobalQuota(GwcQuota globalQuota) {
+        this.globalQuota = globalQuota;
+    }
 
-    public String getQuotaStore() { return quotaStore; }
+    /** @return the quota store type (read-only) */
+    public String getQuotaStore() {
+        return quotaStore;
+    }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         GwcDiskQuotaConfig that = (GwcDiskQuotaConfig) o;
         return Objects.equals(enabled, that.enabled)
                 && Objects.equals(diskBlockSize, that.diskBlockSize)

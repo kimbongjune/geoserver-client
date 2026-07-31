@@ -80,27 +80,69 @@ public class Coverage {
 
     public Coverage() {}
 
-    public String getName()                              { return name; }
-    public String getNativeName()                        { return nativeName; }
-    public String getNativeCoverageName()                { return nativeCoverageName; }
-    public NamespaceLink getNamespace()                  { return namespace; }
-    public String getTitle()                             { return title; }
-    public String getDescription()                       { return description; }
-    public StringListWrapper getKeywords()               { return keywords; }
-    public String getSrs()                               { return srs; }
-    public String getProjectionPolicy()                  { return projectionPolicy; }
-    public Boolean getEnabled()                          { return enabled; }
-    public boolean isEnabled()                           { return Boolean.TRUE.equals(enabled); }
-    public Boolean getAdvertised()                       { return advertised; }
-    public StoreLink getStore()                          { return store; }
-    public Boolean getServiceConfiguration()             { return serviceConfiguration; }
-    public Boolean getSimpleConversionEnabled()          { return simpleConversionEnabled; }
-    public String getNativeFormat()                      { return nativeFormat; }
-    public String getDefaultInterpolationMethod()        { return defaultInterpolationMethod; }
-    public StringListWrapper getSupportedFormats()       { return supportedFormats; }
-    public StringListWrapper getInterpolationMethods()   { return interpolationMethods; }
-    public StringListWrapper getRequestSRS()             { return requestSRS; }
-    public StringListWrapper getResponseSRS()            { return responseSRS; }
+    public String getName() {
+        return name;
+    }
+    public String getNativeName() {
+        return nativeName;
+    }
+    public String getNativeCoverageName() {
+        return nativeCoverageName;
+    }
+    public NamespaceLink getNamespace() {
+        return namespace;
+    }
+    public String getTitle() {
+        return title;
+    }
+    public String getDescription() {
+        return description;
+    }
+    public StringListWrapper getKeywords() {
+        return keywords;
+    }
+    public String getSrs() {
+        return srs;
+    }
+    public String getProjectionPolicy() {
+        return projectionPolicy;
+    }
+    public Boolean getEnabled() {
+        return enabled;
+    }
+    public boolean isEnabled() {
+        return Boolean.TRUE.equals(enabled);
+    }
+    public Boolean getAdvertised() {
+        return advertised;
+    }
+    public StoreLink getStore() {
+        return store;
+    }
+    public Boolean getServiceConfiguration() {
+        return serviceConfiguration;
+    }
+    public Boolean getSimpleConversionEnabled() {
+        return simpleConversionEnabled;
+    }
+    public String getNativeFormat() {
+        return nativeFormat;
+    }
+    public String getDefaultInterpolationMethod() {
+        return defaultInterpolationMethod;
+    }
+    public StringListWrapper getSupportedFormats() {
+        return supportedFormats;
+    }
+    public StringListWrapper getInterpolationMethods() {
+        return interpolationMethods;
+    }
+    public StringListWrapper getRequestSRS() {
+        return requestSRS;
+    }
+    public StringListWrapper getResponseSRS() {
+        return responseSRS;
+    }
 
     // Inner DTOs
 
@@ -109,8 +151,12 @@ public class Coverage {
         @JsonProperty("name") private String name;
         @JsonProperty("href") private String href;
         public NamespaceLink() {}
-        public String getName() { return name; }
-        public String getHref() { return href; }
+        public String getName() {
+            return name;
+        }
+        public String getHref() {
+            return href;
+        }
 
         @Override
         public boolean equals(Object o) {
@@ -141,9 +187,15 @@ public class Coverage {
         @JsonProperty("name")   private String name;
         @JsonProperty("href")   private String href;
         public StoreLink() {}
-        public String getCls()  { return cls; }
-        public String getName() { return name; }
-        public String getHref() { return href; }
+        public String getCls() {
+            return cls;
+        }
+        public String getName() {
+            return name;
+        }
+        public String getHref() {
+            return href;
+        }
 
         @Override
         public boolean equals(Object o) {

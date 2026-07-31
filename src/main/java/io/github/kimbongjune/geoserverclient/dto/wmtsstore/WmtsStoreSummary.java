@@ -7,7 +7,7 @@ import java.util.Objects;
 /**
  * Summary entry returned when listing WMTS stores (name + href only).
  *
- * <p>Maps each item in the array returned by {@code GET /rest/workspaces/{ws}/wmtsstores}.</p>
+ * <p>Maps each item in the array returned by {@code GET /rest/workspaces/{ws}/wmtsstores}.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WmtsStoreSummary {
@@ -20,13 +20,21 @@ public class WmtsStoreSummary {
 
     public WmtsStoreSummary() {}
 
-    public String getName() { return name; }
-    public String getHref() { return href; }
+    public String getName() {
+        return name;
+    }
+    public String getHref() {
+        return href;
+    }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         WmtsStoreSummary that = (WmtsStoreSummary) o;
         return Objects.equals(name, that.name)
                 && Objects.equals(href, that.href);

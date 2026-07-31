@@ -18,15 +18,26 @@ public class LayerGroupSummary {
     @JsonProperty("href")
     private String href;
 
+    /** Constructs an empty {@code LayerGroupSummary} for deserialization. */
     public LayerGroupSummary() {}
 
-    public String getName() { return name; }
-    public String getHref() { return href; }
+    /** @return the layer group name */
+    public String getName() {
+        return name;
+    }
+    /** @return the href to the layer group detail resource */
+    public String getHref() {
+        return href;
+    }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         LayerGroupSummary that = (LayerGroupSummary) o;
         return Objects.equals(name, that.name)
                 && Objects.equals(href, that.href);

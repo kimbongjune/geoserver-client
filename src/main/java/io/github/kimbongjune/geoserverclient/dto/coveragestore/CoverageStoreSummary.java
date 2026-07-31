@@ -7,7 +7,7 @@ import java.util.Objects;
 /**
  * Summary entry returned when listing coverage stores (name + href only).
  *
- * <p>Maps each item in the array returned by {@code GET /rest/workspaces/{ws}/coveragestores}.</p>
+ * <p>Maps each item in the array returned by {@code GET /rest/workspaces/{ws}/coveragestores}.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CoverageStoreSummary {
@@ -18,15 +18,26 @@ public class CoverageStoreSummary {
     @JsonProperty("href")
     private String href;
 
+    /** Constructs an empty {@code CoverageStoreSummary} for deserialization. */
     public CoverageStoreSummary() {}
 
-    public String getName() { return name; }
-    public String getHref() { return href; }
+    /** @return the coverage store name */
+    public String getName() {
+        return name;
+    }
+    /** @return the href to the full coverage store resource */
+    public String getHref() {
+        return href;
+    }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         CoverageStoreSummary that = (CoverageStoreSummary) o;
         return Objects.equals(name, that.name)
                 && Objects.equals(href, that.href);

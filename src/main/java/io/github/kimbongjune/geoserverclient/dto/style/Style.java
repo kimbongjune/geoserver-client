@@ -51,14 +51,30 @@ public class Style {
 
     public Style() {}
 
-    public String getName() { return name; }
-    public WorkspaceRef getWorkspace() { return workspace; }
-    public String getFormat() { return format; }
-    public LanguageVersion getLanguageVersion() { return languageVersion; }
-    public String getFilename() { return filename; }
-    public Legend getLegend() { return legend; }
-    public String getDateCreated() { return dateCreated; }
-    public String getDateModified() { return dateModified; }
+    public String getName() {
+        return name;
+    }
+    public WorkspaceRef getWorkspace() {
+        return workspace;
+    }
+    public String getFormat() {
+        return format;
+    }
+    public LanguageVersion getLanguageVersion() {
+        return languageVersion;
+    }
+    public String getFilename() {
+        return filename;
+    }
+    public Legend getLegend() {
+        return legend;
+    }
+    public String getDateCreated() {
+        return dateCreated;
+    }
+    public String getDateModified() {
+        return dateModified;
+    }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class WorkspaceRef {
@@ -66,12 +82,18 @@ public class Style {
         private String name;
 
         public WorkspaceRef() {}
-        public String getName() { return name; }
+        public String getName() {
+            return name;
+        }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             WorkspaceRef that = (WorkspaceRef) o;
             return Objects.equals(name, that.name);
         }
@@ -95,12 +117,18 @@ public class Style {
         private String version;
 
         public LanguageVersion() {}
-        public String getVersion() { return version; }
+        public String getVersion() {
+            return version;
+        }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             LanguageVersion that = (LanguageVersion) o;
             return Objects.equals(version, that.version);
         }
@@ -133,15 +161,27 @@ public class Style {
         private String onlineResource;
 
         public Legend() {}
-        public int getWidth() { return width; }
-        public int getHeight() { return height; }
-        public String getFormat() { return format; }
-        public String getOnlineResource() { return onlineResource; }
+        public int getWidth() {
+            return width;
+        }
+        public int getHeight() {
+            return height;
+        }
+        public String getFormat() {
+            return format;
+        }
+        public String getOnlineResource() {
+            return onlineResource;
+        }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             Legend that = (Legend) o;
             return Objects.equals(width, that.width)
                     && Objects.equals(height, that.height)
@@ -167,8 +207,12 @@ public class Style {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Style that = (Style) o;
         return Objects.equals(name, that.name)
                 && Objects.equals(workspace, that.workspace)

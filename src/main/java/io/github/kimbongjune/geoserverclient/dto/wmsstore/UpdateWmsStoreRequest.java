@@ -56,20 +56,46 @@ public class UpdateWmsStoreRequest {
         this.disableOnConnFailure = b.disableOnConnFailure;
     }
 
-    public static Builder builder() { return new Builder(); }
+    public static Builder builder() {
+        return new Builder();
+    }
 
-    public String  getDescription()           { return description; }
-    public Boolean getEnabled()               { return enabled; }
-    public String  getCapabilitiesURL()       { return capabilitiesURL; }
-    public String  getUser()                  { return user; }
-    public String  getPassword()              { return password; }
-    public String  getAuthKey()               { return authKey; }
-    public String  getHeaderName()            { return headerName; }
-    public String  getHeaderValue()           { return headerValue; }
-    public Integer getMaxConnections()        { return maxConnections; }
-    public Integer getReadTimeout()           { return readTimeout; }
-    public Integer getConnectTimeout()        { return connectTimeout; }
-    public Boolean getDisableOnConnFailure()  { return disableOnConnFailure; }
+    public String  getDescription() {
+        return description;
+    }
+    public Boolean getEnabled() {
+        return enabled;
+    }
+    public String  getCapabilitiesURL() {
+        return capabilitiesURL;
+    }
+    public String  getUser() {
+        return user;
+    }
+    public String  getPassword() {
+        return password;
+    }
+    public String  getAuthKey() {
+        return authKey;
+    }
+    public String  getHeaderName() {
+        return headerName;
+    }
+    public String  getHeaderValue() {
+        return headerValue;
+    }
+    public Integer getMaxConnections() {
+        return maxConnections;
+    }
+    public Integer getReadTimeout() {
+        return readTimeout;
+    }
+    public Integer getConnectTimeout() {
+        return connectTimeout;
+    }
+    public Boolean getDisableOnConnFailure() {
+        return disableOnConnFailure;
+    }
 
     public static class Builder {
         private String  description;
@@ -85,24 +111,54 @@ public class UpdateWmsStoreRequest {
         private Integer connectTimeout;
         private Boolean disableOnConnFailure;
 
-        public Builder description(String v)           { this.description = v;           return this; }
-        public Builder enabled(Boolean v)              { this.enabled = v;               return this; }
-        public Builder capabilitiesURL(String v)       { this.capabilitiesURL = v;       return this; }
-        public Builder user(String v)                  { this.user = v;                  return this; }
-        public Builder password(String v)              { this.password = v;              return this; }
-        public Builder authKey(String v)               { this.authKey = v;               return this; }
-        public Builder headerName(String v)            { this.headerName = v;            return this; }
-        public Builder headerValue(String v)           { this.headerValue = v;           return this; }
-        public Builder maxConnections(Integer v)       { this.maxConnections = v;        return this; }
-        public Builder readTimeout(Integer v)          { this.readTimeout = v;           return this; }
-        public Builder connectTimeout(Integer v)       { this.connectTimeout = v;        return this; }
-        public Builder disableOnConnFailure(Boolean v) { this.disableOnConnFailure = v;  return this; }
-        public UpdateWmsStoreRequest build()           { return new UpdateWmsStoreRequest(this); }
+        public Builder description(String v) {
+            this.description = v;           return this;
+        }
+        public Builder enabled(Boolean v) {
+            this.enabled = v;               return this;
+        }
+        public Builder capabilitiesURL(String v) {
+            this.capabilitiesURL = v;       return this;
+        }
+        public Builder user(String v) {
+            this.user = v;                  return this;
+        }
+        public Builder password(String v) {
+            this.password = v;              return this;
+        }
+        public Builder authKey(String v) {
+            this.authKey = v;               return this;
+        }
+        public Builder headerName(String v) {
+            this.headerName = v;            return this;
+        }
+        public Builder headerValue(String v) {
+            this.headerValue = v;           return this;
+        }
+        public Builder maxConnections(Integer v) {
+            this.maxConnections = v;        return this;
+        }
+        public Builder readTimeout(Integer v) {
+            this.readTimeout = v;           return this;
+        }
+        public Builder connectTimeout(Integer v) {
+            this.connectTimeout = v;        return this;
+        }
+        public Builder disableOnConnFailure(Boolean v) {
+            this.disableOnConnFailure = v;  return this;
+        }
+        public UpdateWmsStoreRequest build() {
+            return new UpdateWmsStoreRequest(this);
+        }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             Builder that = (Builder) o;
             return Objects.equals(description, that.description)
                     && Objects.equals(enabled, that.enabled)
@@ -144,8 +200,12 @@ public class UpdateWmsStoreRequest {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         UpdateWmsStoreRequest that = (UpdateWmsStoreRequest) o;
         return Objects.equals(description, that.description)
                 && Objects.equals(enabled, that.enabled)

@@ -6,9 +6,9 @@ import java.util.Objects;
 /**
  * Request DTO for creating a coverage.
  *
- * <p>Builds the request body for {@code POST /rest/workspaces/{ws}/coveragestores/{cs}/coverages}.</p>
+ * <p>Builds the request body for {@code POST /rest/workspaces/{ws}/coveragestores/{cs}/coverages}.
  *
- * <p><b>Two modes:</b></p>
+ * <p><b>Two modes:</b>
  * <ul>
  *   <li><b>isNew mode (recommended):</b> specify only the name; GeoServer reads metadata
  *       automatically from the raster reader. Use {@code CreateCoverageRequest.isNew("mycov")}.</li>
@@ -51,6 +51,9 @@ public class CreateCoverageRequest {
     /**
      * isNew mode: only the name is required. GeoServer reads all metadata from the store reader automatically.
      * Use this when the store was uploaded with {@code configure=none}.
+     *
+     * @param name the coverage name (must not be null or empty)
+     * @return a new request in isNew mode
      */
     public static CreateCoverageRequest isNew(String name) {
         return new CreateCoverageRequest(name);
@@ -58,6 +61,9 @@ public class CreateCoverageRequest {
 
     /**
      * Partial-definition mode: specify the name and any additional fields to set explicitly.
+     *
+     * @param name the coverage name (must not be null or empty)
+     * @return a new request in partial-definition mode
      */
     public static CreateCoverageRequest of(String name) {
         return new CreateCoverageRequest(name);
@@ -67,68 +73,147 @@ public class CreateCoverageRequest {
      * Alias for {@link #of(String)} (partial-definition mode), for callers who prefer the
      * {@code builder(...)...build()} spelling used by every {@code UpdateXxxRequest} in this
      * library. {@link #build()} is a no-op terminal call.
+     *
+     * @param name the coverage name
+     * @return a new request instance
      */
     public static CreateCoverageRequest builder(String name) {
         return of(name);
     }
 
+    /**
+     * Sets the native coverage name.
+     * @param nativeCoverageName the native coverage name
+     * @return this request
+     */
     public CreateCoverageRequest nativeCoverageName(String nativeCoverageName) {
         this.nativeCoverageName = nativeCoverageName;
         return this;
     }
 
+    /**
+     * Sets the native name.
+     * @param nativeName the native name
+     * @return this request
+     */
     public CreateCoverageRequest nativeName(String nativeName) {
         this.nativeName = nativeName;
         return this;
     }
 
+    /**
+     * Sets the coverage title.
+     * @param title the title
+     * @return this request
+     */
     public CreateCoverageRequest title(String title) {
         this.title = title;
         return this;
     }
 
+    /**
+     * Sets the coverage description.
+     * @param description the description
+     * @return this request
+     */
     public CreateCoverageRequest description(String description) {
         this.description = description;
         return this;
     }
 
+    /**
+     * Sets the declared CRS code.
+     * @param srs the SRS code (e.g. {@code "EPSG:4326"})
+     * @return this request
+     */
     public CreateCoverageRequest srs(String srs) {
         this.srs = srs;
         return this;
     }
 
+    /**
+     * Sets the projection policy.
+     * @param projectionPolicy the projection policy (e.g. {@code "REPROJECT_TO_DECLARED"})
+     * @return this request
+     */
     public CreateCoverageRequest projectionPolicy(String projectionPolicy) {
         this.projectionPolicy = projectionPolicy;
         return this;
     }
 
+    /**
+     * Sets whether this coverage is enabled.
+     * @param enabled {@code true} to enable
+     * @return this request
+     */
     public CreateCoverageRequest enabled(Boolean enabled) {
         this.enabled = enabled;
         return this;
     }
 
+    /**
+     * Sets the native format.
+     * @param nativeFormat the native format name
+     * @return this request
+     */
     public CreateCoverageRequest nativeFormat(String nativeFormat) {
         this.nativeFormat = nativeFormat;
         return this;
     }
 
-    /** Terminal no-op for {@code builder(...)...build()} chains — returns {@code this}. */
-    public CreateCoverageRequest build() { return this; }
+    /**
+     * Terminal no-op for {@code builder(...)...build()} chains.
+     * @return this request
+     */
+    public CreateCoverageRequest build() {
+        return this;
+    }
 
-    public String  getName()               { return name; }
-    public String  getNativeCoverageName() { return nativeCoverageName; }
-    public String  getNativeName()         { return nativeName; }
-    public String  getTitle()             { return title; }
-    public String  getDescription()       { return description; }
-    public String  getSrs()               { return srs; }
-    public String  getProjectionPolicy()  { return projectionPolicy; }
-    public Boolean getEnabled()           { return enabled; }
-    public String  getNativeFormat()      { return nativeFormat; }
+    /** @return the coverage name */
+    public String  getName() {
+        return name;
+    }
+    /** @return the native coverage name */
+    public String  getNativeCoverageName() {
+        return nativeCoverageName;
+    }
+    /** @return the native name */
+    public String  getNativeName() {
+        return nativeName;
+    }
+    /** @return the title */
+    public String  getTitle() {
+        return title;
+    }
+    /** @return the description */
+    public String  getDescription() {
+        return description;
+    }
+    /** @return the SRS code */
+    public String  getSrs() {
+        return srs;
+    }
+    /** @return the projection policy */
+    public String  getProjectionPolicy() {
+        return projectionPolicy;
+    }
+    /** @return {@code true} if enabled */
+    public Boolean getEnabled() {
+        return enabled;
+    }
+    /** @return the native format name */
+    public String  getNativeFormat() {
+        return nativeFormat;
+    }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         CreateCoverageRequest that = (CreateCoverageRequest) o;
         return Objects.equals(name, that.name)
                 && Objects.equals(nativeCoverageName, that.nativeCoverageName)

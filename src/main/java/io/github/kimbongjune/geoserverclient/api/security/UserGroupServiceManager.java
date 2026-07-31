@@ -32,9 +32,25 @@ import java.util.Map;
  * <p><b>Protected service:</b> {@code default} cannot be deleted (400).
  * <p><b>GeoServer note:</b> PUT for a non-existent service returns 400 rather than 404
  * (documented in source as intentional to match existing tests/behavior).
+ *
+ * <h2>Usage example</h2>
+ * <pre>{@code
+ * UserGroupServiceManager mgr = client.userGroupService();
+ * List<String> services = mgr.list();
+ * UserGroupServiceConfig cfg = mgr.get("default");
+ * }</pre>
+ *
+ * @since 1.0.0
  */
 public class UserGroupServiceManager extends AbstractManager {
 
+    /**
+     * Constructs a new UserGroupServiceManager.
+     *
+     * @param httpClient        HTTP client used to communicate with GeoServer
+     * @param serializerFactory factory for JSON/XML serializers
+     * @param defaultFormat     default serialization format (typically JSON)
+     */
     public UserGroupServiceManager(GeoServerHttpClient httpClient,
                                    SerializerFactory serializerFactory,
                                    DataFormat defaultFormat) {
@@ -43,7 +59,11 @@ public class UserGroupServiceManager extends AbstractManager {
 
     // [1] GET /rest/security/usergroupservices
 
-    /** Returns the names of all registered user/group services. */
+    /**
+     * Returns the names of all registered user/group services.
+     *
+     * @return list of service names (never null; empty when none exist)
+     */
     @SuppressWarnings("unchecked")
     public List<String> list() {
         String body = doGetRaw("/rest/security/usergroupservices", "application/json");
@@ -69,6 +89,8 @@ public class UserGroupServiceManager extends AbstractManager {
     /**
      * Returns a specific user/group service's config.
      *
+     * @param serviceName service name (required)
+     * @return the user/group service configuration
      * @throws UserGroupServiceNotFoundException if no service with the given name exists
      */
     public UserGroupServiceConfig get(String serviceName) {
@@ -89,6 +111,8 @@ public class UserGroupServiceManager extends AbstractManager {
      *
      * <p>Duplicate name returns 400 {@code "...because the name is already in use"}.
      *
+     * @param config service configuration to create (required; {@code configClass} must be set)
+     * @return the created user/group service configuration
      * @throws ResourceAlreadyExistsException if the name is already in use
      */
     public UserGroupServiceConfig create(UserGroupServiceConfig config) {
@@ -111,7 +135,13 @@ public class UserGroupServiceManager extends AbstractManager {
 
     // [4] PUT /rest/security/usergroupservices/{serviceName}
 
-    /** Updates an existing user/group service. URL {@code serviceName} must match {@code config.getName()}. */
+    /**
+     * Updates an existing user/group service.
+     * The URL {@code serviceName} must match {@code config.getName()}.
+     *
+     * @param serviceName current service name used in the path (required)
+     * @param config      updated service configuration (required)
+     */
     public void update(String serviceName, UserGroupServiceConfig config) {
         requireNonEmpty(serviceName, "serviceName");
         requireNonNull(config, "config");
@@ -121,7 +151,12 @@ public class UserGroupServiceManager extends AbstractManager {
 
     // [5] DELETE /rest/security/usergroupservices/{serviceName}
 
-    /** Deletes a user/group service. {@code default} cannot be deleted (400). */
+    /**
+     * Deletes a user/group service.
+     * The {@code default} service cannot be deleted and will return 400.
+     *
+     * @param serviceName service name to delete (required)
+     */
     public void delete(String serviceName) {
         requireNonEmpty(serviceName, "serviceName");
         doDelete("/rest/security/usergroupservices/" + serviceName);

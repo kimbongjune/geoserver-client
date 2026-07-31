@@ -16,15 +16,57 @@ import java.util.List;
 /**
  * GeoServer Security Roles REST API client.
  *
+ * <p>Manages roles within the active or a named role service, and handles
+ * role-to-user and role-to-group assignments.
+ *
  * <p>Source: {@code src/restconfig/src/main/java/org/geoserver/rest/security/RolesRestController.java}
  * <br>{@code @RequestMapping("/security/roles")}
  *
  * <p>All endpoints take <b>no request body</b>.
- * Role names (role), user names (user), and group names (group) are all Path Parameters.
+ * Role names (role), user names (user), and group names (group) are all path parameters.
+ *
+ * <h2>Endpoints covered</h2>
+ * <pre>{@code
+ * GET    /rest/security/roles
+ * GET    /rest/security/roles/user/{user}
+ * GET    /rest/security/roles/group/{group}
+ * POST   /rest/security/roles/role/{role}
+ * DELETE /rest/security/roles/role/{role}
+ * POST   /rest/security/roles/role/{role}/user/{user}
+ * DELETE /rest/security/roles/role/{role}/user/{user}
+ * POST   /rest/security/roles/role/{role}/group/{group}
+ * DELETE /rest/security/roles/role/{role}/group/{group}
+ * GET    /rest/security/roles/service/{service}
+ * GET    /rest/security/roles/service/{service}/user/{user}
+ * GET    /rest/security/roles/service/{service}/group/{group}
+ * POST   /rest/security/roles/service/{service}/role/{role}
+ * DELETE /rest/security/roles/service/{service}/role/{role}
+ * POST   /rest/security/roles/service/{service}/role/{role}/user/{user}
+ * DELETE /rest/security/roles/service/{service}/role/{role}/user/{user}
+ * POST   /rest/security/roles/service/{service}/role/{role}/group/{group}
+ * DELETE /rest/security/roles/service/{service}/role/{role}/group/{group}
+ * }</pre>
+ *
+ * <h2>Usage example</h2>
+ * <pre>{@code
+ * RoleManager mgr = client.role();
+ * mgr.createRole("DATA_EDITOR");
+ * mgr.assignRoleToUser("DATA_EDITOR", "alice");
+ * List<String> roles = mgr.getUserRoles("alice");
+ * }</pre>
+ *
+ * @since 1.0.0
  */
 public class RoleManager extends AbstractManager {
 
 
+    /**
+     * Constructs a new RoleManager.
+     *
+     * @param httpClient        HTTP client used to communicate with GeoServer
+     * @param serializerFactory factory for JSON/XML serializers
+     * @param defaultFormat     default serialization format (typically JSON)
+     */
     public RoleManager(GeoServerHttpClient httpClient,
                        SerializerFactory serializerFactory,
                        DataFormat defaultFormat) {
@@ -33,24 +75,45 @@ public class RoleManager extends AbstractManager {
 
     // Active Role Service
 
-    /** [1] Returns all roles in the active role service. */
+    /**
+     * Returns all roles in the active role service.
+     *
+     * @return list of role names; empty list when none exist
+     */
     public List<String> getRoles() {
         return parseRoles(doGetRaw("/rest/security/roles", "application/json"));
     }
 
-    /** [2] Returns roles assigned to a user. Returns empty list for non-existent user. */
+    /**
+     * Returns roles assigned to a user in the active role service.
+     * Returns an empty list for a non-existent user.
+     *
+     * @param user user name (required)
+     * @return list of role names; empty list when none assigned
+     */
     public List<String> getUserRoles(String user) {
         requireNonEmpty(user, "user");
         return parseRoles(doGetRaw("/rest/security/roles/user/" + user, "application/json"));
     }
 
-    /** [3] Returns roles assigned to a group. Returns empty list for non-existent group. */
+    /**
+     * Returns roles assigned to a group in the active role service.
+     * Returns an empty list for a non-existent group.
+     *
+     * @param group group name (required)
+     * @return list of role names; empty list when none assigned
+     */
     public List<String> getGroupRoles(String group) {
         requireNonEmpty(group, "group");
         return parseRoles(doGetRaw("/rest/security/roles/group/" + group, "application/json"));
     }
 
-    /** [4] Creates a new role. Returns 201 on success, throws on duplicate (404 from GeoServer). */
+    /**
+     * Creates a new role in the active role service.
+     * Returns 201 on success; throws on duplicate (GeoServer returns 404 for conflicts).
+     *
+     * @param role role name to create (required)
+     */
     public void createRole(String role) {
         requireNonEmpty(role, "role");
         String path = "/rest/security/roles/role/" + role;
@@ -58,13 +121,23 @@ public class RoleManager extends AbstractManager {
         handleErrorResponse(response, "POST", path);
     }
 
-    /** [5] Deletes a role. Throws ResourceNotFoundException if not found. */
+    /**
+     * Deletes a role from the active role service.
+     *
+     * @param role role name to delete (required)
+     * @throws io.github.kimbongjune.geoserverclient.exception.ResourceNotFoundException if no such role exists (404)
+     */
     public void deleteRole(String role) {
         requireNonEmpty(role, "role");
         doDelete("/rest/security/roles/role/" + role);
     }
 
-    /** [6] Assigns a role to a user. */
+    /**
+     * Assigns a role to a user in the active role service.
+     *
+     * @param role role name to assign (required)
+     * @param user user name to receive the role (required)
+     */
     public void assignRoleToUser(String role, String user) {
         requireNonEmpty(role, "role");
         requireNonEmpty(user, "user");
@@ -73,14 +146,24 @@ public class RoleManager extends AbstractManager {
         handleErrorResponse(response, "POST", path);
     }
 
-    /** [7] Unassigns a role from a user. */
+    /**
+     * Removes a role assignment from a user in the active role service.
+     *
+     * @param role role name to unassign (required)
+     * @param user user name to remove the role from (required)
+     */
     public void unassignRoleFromUser(String role, String user) {
         requireNonEmpty(role, "role");
         requireNonEmpty(user, "user");
         doDelete("/rest/security/roles/role/" + role + "/user/" + user);
     }
 
-    /** [8] Assigns a role to a group. */
+    /**
+     * Assigns a role to a group in the active role service.
+     *
+     * @param role  role name to assign (required)
+     * @param group group name to receive the role (required)
+     */
     public void assignRoleToGroup(String role, String group) {
         requireNonEmpty(role, "role");
         requireNonEmpty(group, "group");
@@ -89,7 +172,12 @@ public class RoleManager extends AbstractManager {
         handleErrorResponse(response, "POST", path);
     }
 
-    /** [9] Unassigns a role from a group. */
+    /**
+     * Removes a role assignment from a group in the active role service.
+     *
+     * @param role  role name to unassign (required)
+     * @param group group name to remove the role from (required)
+     */
     public void unassignRoleFromGroup(String role, String group) {
         requireNonEmpty(role, "role");
         requireNonEmpty(group, "group");
@@ -98,13 +186,25 @@ public class RoleManager extends AbstractManager {
 
     // Service-specific Role API
 
-    /** [10] Returns all roles in a specific role service. Throws 404 for unknown service. */
+    /**
+     * Returns all roles in a specific (named) role service.
+     *
+     * @param serviceName role service name (required)
+     * @return list of role names; empty list when none exist
+     * @throws io.github.kimbongjune.geoserverclient.exception.ResourceNotFoundException if service does not exist (404)
+     */
     public List<String> getRolesByService(String serviceName) {
         requireNonEmpty(serviceName, "serviceName");
         return parseRoles(doGetRaw("/rest/security/roles/service/" + serviceName, "application/json"));
     }
 
-    /** [11] Returns user roles in a specific role service. */
+    /**
+     * Returns roles assigned to a user in a specific (named) role service.
+     *
+     * @param serviceName role service name (required)
+     * @param user        user name (required)
+     * @return list of role names; empty list when none assigned
+     */
     public List<String> getUserRolesByService(String serviceName, String user) {
         requireNonEmpty(serviceName, "serviceName");
         requireNonEmpty(user, "user");
@@ -112,7 +212,13 @@ public class RoleManager extends AbstractManager {
                 "/rest/security/roles/service/" + serviceName + "/user/" + user, "application/json"));
     }
 
-    /** [12] Returns group roles in a specific role service. */
+    /**
+     * Returns roles assigned to a group in a specific (named) role service.
+     *
+     * @param serviceName role service name (required)
+     * @param group       group name (required)
+     * @return list of role names; empty list when none assigned
+     */
     public List<String> getGroupRolesByService(String serviceName, String group) {
         requireNonEmpty(serviceName, "serviceName");
         requireNonEmpty(group, "group");
@@ -120,7 +226,12 @@ public class RoleManager extends AbstractManager {
                 "/rest/security/roles/service/" + serviceName + "/group/" + group, "application/json"));
     }
 
-    /** [13] Creates a role in a specific role service. */
+    /**
+     * Creates a new role in a specific (named) role service.
+     *
+     * @param serviceName role service name (required)
+     * @param role        role name to create (required)
+     */
     public void createRoleByService(String serviceName, String role) {
         requireNonEmpty(serviceName, "serviceName");
         requireNonEmpty(role, "role");
@@ -129,14 +240,25 @@ public class RoleManager extends AbstractManager {
         handleErrorResponse(response, "POST", path);
     }
 
-    /** [14] Deletes a role from a specific role service. */
+    /**
+     * Deletes a role from a specific (named) role service.
+     *
+     * @param serviceName role service name (required)
+     * @param role        role name to delete (required)
+     */
     public void deleteRoleByService(String serviceName, String role) {
         requireNonEmpty(serviceName, "serviceName");
         requireNonEmpty(role, "role");
         doDelete("/rest/security/roles/service/" + serviceName + "/role/" + role);
     }
 
-    /** [15] Assigns a role to a user in a specific role service. */
+    /**
+     * Assigns a role to a user in a specific (named) role service.
+     *
+     * @param serviceName role service name (required)
+     * @param role        role name to assign (required)
+     * @param user        user name to receive the role (required)
+     */
     public void assignRoleToUserByService(String serviceName, String role, String user) {
         requireNonEmpty(serviceName, "serviceName");
         requireNonEmpty(role, "role");
@@ -147,7 +269,13 @@ public class RoleManager extends AbstractManager {
         handleErrorResponse(response, "POST", path);
     }
 
-    /** [16] Unassigns a role from a user in a specific role service. */
+    /**
+     * Removes a role assignment from a user in a specific (named) role service.
+     *
+     * @param serviceName role service name (required)
+     * @param role        role name to unassign (required)
+     * @param user        user name to remove the role from (required)
+     */
     public void unassignRoleFromUserByService(String serviceName, String role, String user) {
         requireNonEmpty(serviceName, "serviceName");
         requireNonEmpty(role, "role");
@@ -156,7 +284,13 @@ public class RoleManager extends AbstractManager {
                 + "/role/" + role + "/user/" + user);
     }
 
-    /** [17] Assigns a role to a group in a specific role service. */
+    /**
+     * Assigns a role to a group in a specific (named) role service.
+     *
+     * @param serviceName role service name (required)
+     * @param role        role name to assign (required)
+     * @param group       group name to receive the role (required)
+     */
     public void assignRoleToGroupByService(String serviceName, String role, String group) {
         requireNonEmpty(serviceName, "serviceName");
         requireNonEmpty(role, "role");
@@ -167,7 +301,13 @@ public class RoleManager extends AbstractManager {
         handleErrorResponse(response, "POST", path);
     }
 
-    /** [18] Unassigns a role from a group in a specific role service. */
+    /**
+     * Removes a role assignment from a group in a specific (named) role service.
+     *
+     * @param serviceName role service name (required)
+     * @param role        role name to unassign (required)
+     * @param group       group name to remove the role from (required)
+     */
     public void unassignRoleFromGroupByService(String serviceName, String role, String group) {
         requireNonEmpty(serviceName, "serviceName");
         requireNonEmpty(role, "role");
@@ -179,7 +319,9 @@ public class RoleManager extends AbstractManager {
     // Helpers
 
     private List<String> parseRoles(String body) {
-        if (body == null || body.isEmpty()) return Collections.emptyList();
+        if (body == null || body.isEmpty()) {
+            return Collections.emptyList();
+        }
         try {
             JsonNode arr = getObjectMapper().readTree(body).path("roles");
             List<String> result = new ArrayList<>();

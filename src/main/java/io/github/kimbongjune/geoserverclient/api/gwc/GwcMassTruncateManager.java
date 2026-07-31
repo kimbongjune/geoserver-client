@@ -31,9 +31,25 @@ import java.io.IOException;
  * {@link io.github.kimbongjune.geoserverclient.dto.gwc.GwcTruncateParametersRequest},
  * {@link io.github.kimbongjune.geoserverclient.dto.gwc.GwcTruncateOrphansRequest} (causes 500 with file-based BlobStore),
  * {@link io.github.kimbongjune.geoserverclient.dto.gwc.GwcTruncateExtentRequest} (creates async seed tasks internally).
+ *
+ * <h2>Usage example</h2>
+ * <pre>{@code
+ * GwcMassTruncateManager mgr = client.gwcMassTruncate();
+ * GwcTruncateLayerRequest req = new GwcTruncateLayerRequest("ne:vworld_2d_map");
+ * mgr.truncate(req);
+ * }</pre>
+ *
+ * @since 1.0.0
  */
 public class GwcMassTruncateManager extends AbstractManager {
 
+    /**
+     * Constructs a new GwcMassTruncateManager.
+     *
+     * @param httpClient        HTTP client used to communicate with GeoServer
+     * @param serializerFactory factory for JSON/XML serializers
+     * @param defaultFormat     default serialization format (typically JSON)
+     */
     public GwcMassTruncateManager(GeoServerHttpClient httpClient,
                                   SerializerFactory serializerFactory,
                                   DataFormat defaultFormat) {
@@ -42,7 +58,12 @@ public class GwcMassTruncateManager extends AbstractManager {
 
     // [1] GET /gwc/rest/masstruncate
 
-    /** Returns the list of supported mass-truncate request types. Always XML on the wire. */
+    /**
+     * Returns the list of supported mass-truncate request types.
+     * Response is always XML regardless of the Accept header.
+     *
+     * @return supported truncate request type names
+     */
     public GwcTruncateRequestTypes listRequestTypes() {
         String body = doGetRaw("/gwc/rest/masstruncate", "application/xml");
         try {
@@ -56,8 +77,10 @@ public class GwcMassTruncateManager extends AbstractManager {
     // [2] POST /gwc/rest/masstruncate
 
     /**
-     * Executes a mass-truncate request synchronously. Content-Type is always {@code text/xml}
-     * (per server requirement) regardless of the client's default format.
+     * Executes a mass-truncate request synchronously.
+     * Content-Type is always {@code text/xml} (per server requirement) regardless of the client's default format.
+     *
+     * @param request the truncate request (one of the supported subtypes: layer, parameters, orphans, or extent)
      */
     public void truncate(GwcTruncateRequest request) {
         requireNonNull(request, "request");

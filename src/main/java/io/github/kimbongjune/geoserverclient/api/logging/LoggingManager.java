@@ -17,6 +17,9 @@ import java.util.Map;
 /**
  * GeoServer Logging REST API client.
  *
+ * <p>Provides read and write access to GeoServer's logging configuration:
+ * log level profile, log file location, and standard-output logging toggle.
+ *
  * <p>Source controllers:
  * <ul>
  *   <li>{@code src/restconfig/.../org/geoserver/rest/LoggingController.java}
@@ -25,12 +28,31 @@ import java.util.Map;
  *       (fields: {@code String level}, {@code String location}, {@code boolean stdOutLogging})</li>
  * </ul>
  *
- * <h2>Endpoints</h2>
- * <pre>
- * </pre>
+ * <h2>Endpoints covered</h2>
+ * <pre>{@code
+ * GET /rest/logging
+ * PUT /rest/logging
+ * }</pre>
+ *
+ * <h2>Usage example</h2>
+ * <pre>{@code
+ * LoggingManager mgr = client.logging();
+ * LoggingInfo info = mgr.getLogging();
+ * info.setLevel("VERBOSE_LOGGING.properties");
+ * mgr.updateLogging(info);
+ * }</pre>
+ *
+ * @since 1.0.0
  */
 public class LoggingManager extends AbstractManager {
 
+    /**
+     * Constructs a new LoggingManager.
+     *
+     * @param httpClient        HTTP client used to communicate with GeoServer
+     * @param serializerFactory factory for JSON/XML serializers
+     * @param defaultFormat     default serialization format (typically JSON)
+     */
     public LoggingManager(GeoServerHttpClient httpClient,
                           SerializerFactory serializerFactory,
                           DataFormat defaultFormat) {

@@ -36,9 +36,25 @@ import java.util.ArrayList;
  *
  * <p>{@code order} is a reserved name and cannot be used as a chain name.
  * See {@link FilterChainEntry} for the full field reference.
+ *
+ * <h2>Usage example</h2>
+ * <pre>{@code
+ * FilterChainManager mgr = client.filterChain();
+ * List<FilterChainEntry> chains = mgr.list();
+ * FilterChainEntry entry = mgr.get("web");
+ * }</pre>
+ *
+ * @since 1.0.0
  */
 public class FilterChainManager extends AbstractManager {
 
+    /**
+     * Constructs a new FilterChainManager.
+     *
+     * @param httpClient        HTTP client used to communicate with GeoServer
+     * @param serializerFactory factory for JSON/XML serializers
+     * @param defaultFormat     default serialization format (typically JSON)
+     */
     public FilterChainManager(GeoServerHttpClient httpClient,
                               SerializerFactory serializerFactory,
                               DataFormat defaultFormat) {
@@ -47,7 +63,11 @@ public class FilterChainManager extends AbstractManager {
 
     // [1] GET /rest/security/filterchain
 
-    /** Returns all filter chains in matching order. */
+    /**
+     * Returns all filter chains in their current matching order.
+     *
+     * @return list of filter chain entries (never null; empty when none exist)
+     */
     @SuppressWarnings("unchecked")
     public List<FilterChainEntry> list() {
         String body = doGetRaw("/rest/security/filterchain", "application/json");
@@ -72,6 +92,8 @@ public class FilterChainManager extends AbstractManager {
     /**
      * Returns a specific filter chain.
      *
+     * @param chainName chain name (required)
+     * @return the filter chain entry
      * @throws FilterChainNotFoundException if no chain with the given name exists
      */
     public FilterChainEntry get(String chainName) {
@@ -87,7 +109,12 @@ public class FilterChainManager extends AbstractManager {
 
     // [3] POST /rest/security/filterchain
 
-    /** Creates a new filter chain, appended to the end. */
+    /**
+     * Creates a new filter chain, appended to the end.
+     *
+     * @param entry filter chain configuration to create (required)
+     * @return the created filter chain entry
+     */
     public FilterChainEntry create(FilterChainEntry entry) {
         return create(entry, null);
     }
@@ -97,6 +124,9 @@ public class FilterChainManager extends AbstractManager {
      *
      * <p>Duplicate name returns 400 {@code "...because one with that name already exists."}.
      *
+     * @param entry    filter chain configuration to create (required)
+     * @param position 0-based insertion position, or {@code null} to append
+     * @return the created filter chain entry
      * @throws ResourceAlreadyExistsException if the name already exists
      */
     public FilterChainEntry create(FilterChainEntry entry, Integer position) {
@@ -119,12 +149,26 @@ public class FilterChainManager extends AbstractManager {
 
     // [4] PUT /rest/security/filterchain/{chainName}
 
-    /** Updates an existing filter chain. URL {@code chainName} must match {@code entry.getName()}. */
+    /**
+     * Updates an existing filter chain.
+     * The URL {@code chainName} must match {@code entry.getName()}.
+     *
+     * @param chainName chain name used in the path (required)
+     * @param entry     updated filter chain configuration (required)
+     * @return the updated filter chain entry
+     */
     public FilterChainEntry update(String chainName, FilterChainEntry entry) {
         return update(chainName, entry, null);
     }
 
-    /** Updates an existing filter chain and moves it to the given 0-based position. */
+    /**
+     * Updates an existing filter chain and moves it to the given 0-based position.
+     *
+     * @param chainName chain name used in the path (required)
+     * @param entry     updated filter chain configuration (required)
+     * @param position  0-based target position, or {@code null} to leave position unchanged
+     * @return the updated filter chain entry
+     */
     public FilterChainEntry update(String chainName, FilterChainEntry entry, Integer position) {
         requireNonEmpty(chainName, "chainName");
         requireNonNull(entry, "entry");
@@ -137,7 +181,12 @@ public class FilterChainManager extends AbstractManager {
 
     // [5] DELETE /rest/security/filterchain/{chainName}
 
-    /** Deletes a filter chain. Non-existent chain returns 410 Gone. */
+    /**
+     * Deletes a filter chain.
+     * Attempting to delete a non-existent chain returns 410 Gone.
+     *
+     * @param chainName chain name to delete (required)
+     */
     public void delete(String chainName) {
         requireNonEmpty(chainName, "chainName");
         doDelete("/rest/security/filterchain/" + chainName);
@@ -145,7 +194,12 @@ public class FilterChainManager extends AbstractManager {
 
     // [7] PUT /rest/security/filterchain/order
 
-    /** Replaces the entire chain order. The array must match the current set of chains exactly. */
+    /**
+     * Replaces the entire chain order.
+     * The array must contain all current chain names — any omission causes undefined behavior.
+     *
+     * @param order ordered list of all chain names (required)
+     */
     public void updateOrder(List<String> order) {
         requireNonNull(order, "order");
         try {

@@ -25,11 +25,27 @@ import java.util.regex.Pattern;
  *
  * <p><b>Success response (2026-07-29):</b> HTML body containing
  * {@code "...Read 1 layers from configuration resources..."}
+ *
+ * <h2>Usage example</h2>
+ * <pre>{@code
+ * GwcReloadManager mgr = client.gwcReload();
+ * GwcReloadResult result = mgr.reload();
+ * System.out.println("Reloaded: " + result.isReloaded() + ", layers: " + result.getLayerCount());
+ * }</pre>
+ *
+ * @since 1.0.0
  */
 public class GwcReloadManager extends AbstractManager {
 
     private static final Pattern LAYER_COUNT = Pattern.compile("Read (\\d+) layers");
 
+    /**
+     * Constructs a new GwcReloadManager.
+     *
+     * @param httpClient        HTTP client used to communicate with GeoServer
+     * @param serializerFactory factory for JSON/XML serializers
+     * @param defaultFormat     default serialization format (typically JSON)
+     */
     public GwcReloadManager(GeoServerHttpClient httpClient,
                             SerializerFactory serializerFactory,
                             DataFormat defaultFormat) {
@@ -38,7 +54,12 @@ public class GwcReloadManager extends AbstractManager {
 
     // [1] POST /gwc/rest/reload
 
-    /** Triggers a GWC configuration reload. Returns 400 if the server rejects the request. */
+    /**
+     * Triggers a GWC configuration reload synchronously.
+     * Returns 400 if the server rejects the request.
+     *
+     * @return reload result containing success flag, layer count, and raw HTML response
+     */
     public GwcReloadResult reload() {
         String path = "/gwc/rest/reload";
         GeoServerResponse response = httpClient.post(path, "reload_configuration=1",

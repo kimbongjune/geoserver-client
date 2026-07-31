@@ -57,6 +57,7 @@ happens rather than failing.
 | `Ex09_AboutAndResource` | Version/module status, browsing the data directory (read-only) | no |
 | `Ex10_Importer` | Import context lifecycle (create/list/delete) | no |
 | `Ex11_TemplateAndUrlCheck` | Freemarker template CRUD, URL Check rule CRUD | no |
+| `Ex12_SldBuilder` | `SldBuilder` — all 5 symbolizer types (Point, Line, Polygon, Text, Raster), OGC filters, `SldExpression`, multi-scale rules | no |
 
 Not covered yet by a dedicated example (see the [API Reference wiki page](https://github.com/kimbongjune/geoserver-client/wiki/API-Reference)
 for their full method lists): `ServiceManager` (WMS/WFS/WCS/WMTS service settings — the workspace-scoped

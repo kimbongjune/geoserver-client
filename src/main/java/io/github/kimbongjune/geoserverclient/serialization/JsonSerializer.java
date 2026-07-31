@@ -20,6 +20,7 @@ public class JsonSerializer implements Serializer {
 
     private final ObjectMapper mapper;
 
+    /** Constructs a {@code JsonSerializer} with a pre-configured {@code ObjectMapper}. */
     public JsonSerializer() {
         this.mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
@@ -55,6 +56,7 @@ public class JsonSerializer implements Serializer {
 
     /**
      * Returns the underlying ObjectMapper for advanced customization.
+     * @return the underlying {@code ObjectMapper}
      */
     public ObjectMapper getObjectMapper() {
         return mapper;

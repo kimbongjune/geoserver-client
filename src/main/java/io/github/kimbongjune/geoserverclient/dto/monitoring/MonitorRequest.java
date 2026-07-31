@@ -8,7 +8,7 @@ import java.util.Objects;
  * DTO for a monitoring request (detail).
  *
  * <p>Maps the {@code "org.geoserver.monitor.RequestData"} object returned by
- * {@code GET /rest/monitor/requests/{id}}.</p>
+ * {@code GET /rest/monitor/requests/{id}}.
  */
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -36,34 +36,102 @@ public class MonitorRequest {
     private String responseContentType;
     private int responseStatus;
 
+    /** Constructs an empty {@code MonitorRequest} for deserialization. */
     public MonitorRequest() {}
 
-    public long getId()                   { return id; }
-    public long getInternalid()            { return internalid; }
-    public String getStatus()             { return status; }
-    public String getCategory()           { return category; }
-    public String getPath()               { return path; }
-    public String getBody()               { return body; }
-    public long getBodyContentLength()    { return bodyContentLength; }
-    public String getHttpMethod()         { return httpMethod; }
-    public String getStartTime()          { return startTime; }
-    public String getEndTime()            { return endTime; }
-    public long getTotalTime()            { return totalTime; }
-    public String getRemoteAddr()         { return remoteAddr; }
-    public String getRemoteHost()         { return remoteHost; }
-    public String getRemoteUser()         { return remoteUser; }
-    public double getRemoteLat()          { return remoteLat; }
-    public double getRemoteLon()          { return remoteLon; }
-    public String getHost()               { return host; }
-    public String getInternalHost()       { return internalHost; }
-    public long getResponseLength()       { return responseLength; }
-    public String getResponseContentType(){ return responseContentType; }
-    public int getResponseStatus()        { return responseStatus; }
+    /** @return the request ID */
+    public long getId() {
+        return id;
+    }
+    /** @return the internal request ID */
+    public long getInternalid() {
+        return internalid;
+    }
+    /** @return the request status (e.g. {@code "FINISHED"}, {@code "FAILED"}) */
+    public String getStatus() {
+        return status;
+    }
+    /** @return the request category (e.g. {@code "OWS"}) */
+    public String getCategory() {
+        return category;
+    }
+    /** @return the request path */
+    public String getPath() {
+        return path;
+    }
+    /** @return the request body */
+    public String getBody() {
+        return body;
+    }
+    /** @return the body content length in bytes */
+    public long getBodyContentLength() {
+        return bodyContentLength;
+    }
+    /** @return the HTTP method (e.g. {@code "GET"}, {@code "POST"}) */
+    public String getHttpMethod() {
+        return httpMethod;
+    }
+    /** @return the request start time as an ISO-8601 string */
+    public String getStartTime() {
+        return startTime;
+    }
+    /** @return the request end time as an ISO-8601 string */
+    public String getEndTime() {
+        return endTime;
+    }
+    /** @return the total processing time in milliseconds */
+    public long getTotalTime() {
+        return totalTime;
+    }
+    /** @return the remote client IP address */
+    public String getRemoteAddr() {
+        return remoteAddr;
+    }
+    /** @return the remote client hostname */
+    public String getRemoteHost() {
+        return remoteHost;
+    }
+    /** @return the remote authenticated user */
+    public String getRemoteUser() {
+        return remoteUser;
+    }
+    /** @return the remote client latitude */
+    public double getRemoteLat() {
+        return remoteLat;
+    }
+    /** @return the remote client longitude */
+    public double getRemoteLon() {
+        return remoteLon;
+    }
+    /** @return the GeoServer host name */
+    public String getHost() {
+        return host;
+    }
+    /** @return the GeoServer internal host name */
+    public String getInternalHost() {
+        return internalHost;
+    }
+    /** @return the response content length in bytes */
+    public long getResponseLength() {
+        return responseLength;
+    }
+    /** @return the response content type */
+    public String getResponseContentType() {
+        return responseContentType;
+    }
+    /** @return the HTTP response status code */
+    public int getResponseStatus() {
+        return responseStatus;
+    }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         MonitorRequest that = (MonitorRequest) o;
         return Objects.equals(id, that.id)
                 && Objects.equals(internalid, that.internalid)

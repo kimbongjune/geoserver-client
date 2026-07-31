@@ -10,22 +10,50 @@ public class SecurityUserInfo {
     private String userName;
     private Boolean enabled;
 
+    /** Constructs an empty {@code SecurityUserInfo} for deserialization. */
     public SecurityUserInfo() {}
 
+    /**
+     * Constructs a {@code SecurityUserInfo} with the given values.
+     * @param userName the GeoServer username
+     * @param enabled  {@code true} if the user account is enabled
+     */
     public SecurityUserInfo(String userName, Boolean enabled) {
         this.userName = userName;
         this.enabled  = enabled;
     }
 
-    public String getUserName()             { return userName; }
-    public void   setUserName(String u)     { this.userName = u; }
-    public Boolean getEnabled()             { return enabled; }
-    public void   setEnabled(Boolean e)     { this.enabled = e; }
+    /** @return the GeoServer username */
+    public String getUserName() {
+        return userName;
+    }
+    /**
+     * Sets the GeoServer username.
+     * @param u the username
+     */
+    public void   setUserName(String u) {
+        this.userName = u;
+    }
+    /** @return {@code true} if the user account is enabled */
+    public Boolean getEnabled() {
+        return enabled;
+    }
+    /**
+     * Sets whether the user account is enabled.
+     * @param e {@code true} to enable the account
+     */
+    public void   setEnabled(Boolean e) {
+        this.enabled = e;
+    }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         SecurityUserInfo that = (SecurityUserInfo) o;
         return Objects.equals(userName, that.userName)
                 && Objects.equals(enabled, that.enabled);

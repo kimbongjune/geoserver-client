@@ -15,15 +15,15 @@ import java.util.Collections;
  * DTO for a GWC tile layer ({@code GeoServerLayer}). Used for both GET and PUT.
  *
  * <p>Some fields ({@link #id}, {@link #inMemoryCached}, {@link #cacheWarningSkips})
- * are returned by GET but ignored on PUT ({@code WRITE_ONLY} annotation prevents serialization).</p>
+ * are returned by GET but ignored on PUT ({@code WRITE_ONLY} annotation prevents serialization).
  *
  * <p>{@link #parameterFilters} is populated on GET. GWC returns these as
  * polymorphic XML elements ({@code styleParameterFilter}, {@code regexParameterFilter}, etc.)
  * that are difficult to round-trip on PUT — see
- * {@link io.github.kimbongjune.geoserverclient.api.gwc.GwcLayerManager} upsert for the recommended approach.</p>
+ * {@link io.github.kimbongjune.geoserverclient.api.gwc.GwcLayerManager} upsert for the recommended approach.
  *
  * <p>PUT must use {@code application/xml} — JSON PUT on GeoServer 2.28.2 causes an
- * XStream "Duplicate field" 500 error (see GwcLayerManager).</p>
+ * XStream "Duplicate field" 500 error (see GwcLayerManager).
  */
 @JacksonXmlRootElement(localName = "GeoServerLayer")
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -65,25 +65,58 @@ public class GwcLayer {
     @JacksonXmlProperty(localName = "parameterFilter")
     private List<ParameterFilter> parameterFilters;
 
+    /** Constructs an empty {@code GwcLayer} for deserialization. */
     public GwcLayer() {}
 
+    /**
+     * Constructs a {@code GwcLayer} with the given name.
+     * @param name the layer name
+     */
     public GwcLayer(String name) {
         this.name = name;
     }
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    /** @return the layer name */
+    public String getName() {
+        return name;
+    }
+    /** @param name the layer name */
+    public void setName(String name) {
+        this.name = name;
+    }
 
-    public Boolean getEnabled() { return enabled; }
-    public void setEnabled(Boolean enabled) { this.enabled = enabled; }
+    /** @return {@code true} if the layer is enabled for caching */
+    public Boolean getEnabled() {
+        return enabled;
+    }
+    /** @param enabled {@code true} to enable */
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
 
-    public List<String> getMimeFormats() { return mimeFormats == null ? null : Collections.unmodifiableList(mimeFormats); }
-    public void setMimeFormats(List<String> mimeFormats) { this.mimeFormats = mimeFormats; }
+    /** @return the supported MIME formats */
+    public List<String> getMimeFormats() {
+        return mimeFormats == null ? null : Collections.unmodifiableList(mimeFormats);
+    }
+    /** @param mimeFormats the supported MIME formats */
+    public void setMimeFormats(List<String> mimeFormats) {
+        this.mimeFormats = mimeFormats;
+    }
 
-    public List<GridSubset> getGridSubsets() { return gridSubsets == null ? null : Collections.unmodifiableList(gridSubsets); }
-    public void setGridSubsets(List<GridSubset> gridSubsets) { this.gridSubsets = gridSubsets; }
+    /** @return the grid subsets */
+    public List<GridSubset> getGridSubsets() {
+        return gridSubsets == null ? null : Collections.unmodifiableList(gridSubsets);
+    }
+    /** @param gridSubsets the grid subsets */
+    public void setGridSubsets(List<GridSubset> gridSubsets) {
+        this.gridSubsets = gridSubsets;
+    }
 
-    /** Fluent helper: sets gridSubsets from bare gridSetName strings. */
+    /**
+     * Fluent helper: sets gridSubsets from bare gridSetName strings.
+     * @param gridSetNames the grid set names
+     * @return this layer for chaining
+     */
     public GwcLayer gridSetNames(String... gridSetNames) {
         List<GridSubset> subsets = new ArrayList<GridSubset>();
         for (String name : gridSetNames) {
@@ -93,38 +126,92 @@ public class GwcLayer {
         return this;
     }
 
-    public Long getExpireCache() { return expireCache; }
-    public void setExpireCache(Long expireCache) { this.expireCache = expireCache; }
+    /** @return the cache expiry time in seconds */
+    public Long getExpireCache() {
+        return expireCache;
+    }
+    /** @param expireCache the cache expiry time in seconds */
+    public void setExpireCache(Long expireCache) {
+        this.expireCache = expireCache;
+    }
 
-    public Long getExpireClients() { return expireClients; }
-    public void setExpireClients(Long expireClients) { this.expireClients = expireClients; }
+    /** @return the client-facing expiry time in seconds */
+    public Long getExpireClients() {
+        return expireClients;
+    }
+    /** @param expireClients the client expiry time in seconds */
+    public void setExpireClients(Long expireClients) {
+        this.expireClients = expireClients;
+    }
 
-    public List<Integer> getMetaWidthHeight() { return metaWidthHeight == null ? null : Collections.unmodifiableList(metaWidthHeight); }
-    public void setMetaWidthHeight(List<Integer> metaWidthHeight) { this.metaWidthHeight = metaWidthHeight; }
+    /** @return the metatile width and height {@code [width, height]} */
+    public List<Integer> getMetaWidthHeight() {
+        return metaWidthHeight == null ? null : Collections.unmodifiableList(metaWidthHeight);
+    }
+    /** @param metaWidthHeight the metatile dimensions {@code [width, height]} */
+    public void setMetaWidthHeight(List<Integer> metaWidthHeight) {
+        this.metaWidthHeight = metaWidthHeight;
+    }
 
-    public Integer getGutter() { return gutter; }
-    public void setGutter(Integer gutter) { this.gutter = gutter; }
+    /** @return the gutter size in pixels */
+    public Integer getGutter() {
+        return gutter;
+    }
+    /** @param gutter the gutter size in pixels */
+    public void setGutter(Integer gutter) {
+        this.gutter = gutter;
+    }
 
-    public String getId() { return id; }
-    public Boolean getInMemoryCached() { return inMemoryCached; }
-    public List<String> getCacheWarningSkips() { return cacheWarningSkips == null ? null : Collections.unmodifiableList(cacheWarningSkips); }
-    public List<ParameterFilter> getParameterFilters() { return parameterFilters == null ? null : Collections.unmodifiableList(parameterFilters); }
+    /** @return the internal layer ID (read-only) */
+    public String getId() {
+        return id;
+    }
+    /** @return {@code true} if the layer is in-memory cached (read-only) */
+    public Boolean getInMemoryCached() {
+        return inMemoryCached;
+    }
+    /** @return the cache warning skip list (read-only) */
+    public List<String> getCacheWarningSkips() {
+        return cacheWarningSkips == null ? null : Collections.unmodifiableList(cacheWarningSkips);
+    }
+    /** @return the parameter filters (read-only) */
+    public List<ParameterFilter> getParameterFilters() {
+        return parameterFilters == null ? null : Collections.unmodifiableList(parameterFilters);
+    }
 
+    /** A grid subset entry specifying which grid set this layer uses. */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class GridSubset {
         @JacksonXmlProperty(localName = "gridSetName")
         private String gridSetName;
 
+        /** Constructs an empty {@code GridSubset} for deserialization. */
         public GridSubset() {}
-        public GridSubset(String gridSetName) { this.gridSetName = gridSetName; }
+        /**
+         * Constructs a {@code GridSubset} with the given grid set name.
+         * @param gridSetName the grid set name
+         */
+        public GridSubset(String gridSetName) {
+            this.gridSetName = gridSetName;
+        }
 
-        public String getGridSetName() { return gridSetName; }
-        public void setGridSetName(String gridSetName) { this.gridSetName = gridSetName; }
+        /** @return the grid set name */
+        public String getGridSetName() {
+            return gridSetName;
+        }
+        /** @param gridSetName the grid set name */
+        public void setGridSetName(String gridSetName) {
+            this.gridSetName = gridSetName;
+        }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             GridSubset that = (GridSubset) o;
             return Objects.equals(gridSetName, that.gridSetName);
         }
@@ -142,21 +229,40 @@ public class GwcLayer {
         }
     }
 
-    /**  .  (2026-04-02): {@code {"key": "STYLES", "defaultValue": ""}}  . */
+    /**
+     * A parameter filter definition (e.g. {@code {"key": "STYLES", "defaultValue": ""}}).
+     * These are read-only on GET; do not set them on PUT.
+     */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class ParameterFilter {
         private String key;
         private String defaultValue;
 
-        public String getKey() { return key; }
-        public void setKey(String key) { this.key = key; }
-        public String getDefaultValue() { return defaultValue; }
-        public void setDefaultValue(String defaultValue) { this.defaultValue = defaultValue; }
+        /** @return the filter key (e.g. {@code "STYLES"}) */
+        public String getKey() {
+            return key;
+        }
+        /** @param key the filter key */
+        public void setKey(String key) {
+            this.key = key;
+        }
+        /** @return the default value for this filter */
+        public String getDefaultValue() {
+            return defaultValue;
+        }
+        /** @param defaultValue the default value */
+        public void setDefaultValue(String defaultValue) {
+            this.defaultValue = defaultValue;
+        }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             ParameterFilter that = (ParameterFilter) o;
             return Objects.equals(key, that.key)
                     && Objects.equals(defaultValue, that.defaultValue);
@@ -178,8 +284,12 @@ public class GwcLayer {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         GwcLayer that = (GwcLayer) o;
         return Objects.equals(name, that.name)
                 && Objects.equals(enabled, that.enabled)
