@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>GeoWebCache — geoserver-client explorer</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header th:replace="~{fragments/nav :: nav}"></header>
+<main>
+    <h1>GeoWebCache</h1>
+    <div class="flash ok" th:if="${ok}" th:text="${ok}"></div>
+    <div class="flash err" th:if="${err}" th:text="${err}"></div>
+
+    <div class="form-panel">
+        <h3>Global config</h3>
+        <form action="/gwc/global" method="post">
+            <div class="field">
+                <label>Backend timeout (s)</label>
+                <input type="number" name="backendTimeout" th:value="${global.backendTimeout}"/>
+            </div>
+            <button class="btn" type="submit">Save</button>
+        </form>
+        <p class="sub">WMTS CITE compliant: <span th:text="${global.wmtsCiteCompliant}"></span></p>
+    </div>
+
+    <div class="form-panel">
+        <h3>Create GridSet</h3>
+        <form action="/gwc/gridsets/create" method="post">
+            <input type="text" name="name" required placeholder="my_grid"/>
+            <input type="number" name="epsg" required placeholder="4326" value="4326"/>
+            <input type="number" step="any" name="minx" required placeholder="minx" value="-180"/>
+            <input type="number" step="any" name="miny" required placeholder="miny" value="-90"/>
+            <input type="number" step="any" name="maxx" required placeholder="maxx" value="180"/>
+            <input type="number" step="any" name="maxy" required placeholder="maxy" value="90"/>
+            <button class="btn" type="submit">Create</button>
+        </form>
+    </div>
+    <table class="datatable">
+        <thead><tr><th>GridSet</th><th></th></tr></thead>
+        <tbody>
+        <tr th:each="g : ${gridsets}">
+            <td th:text="${g}"></td>
+            <td class="actions">
+                <form th:action="@{'/gwc/gridsets/' + ${g} + '/delete'}" method="post">
+                    <button class="btn small danger" type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h2>Layer cache operations</h2>
+    <div class="form-panel">
+        <form action="/gwc/layers/seed" method="post">
+            <select name="layer">
+                <option th:each="l : ${layers}" th:value="${l.name}" th:text="${l.name}"></option>
+            </select>
+            <button class="btn" type="submit">Seed (zoom 0-1)</button>
+        </form>
+        <form action="/gwc/layers/truncate" method="post" style="margin-top:8px">
+            <select name="layer">
+                <option th:each="l : ${layers}" th:value="${l.name}" th:text="${l.name}"></option>
+            </select>
+            <button class="btn secondary" type="submit">Truncate cache</button>
+        </form>
+        <form action="/gwc/layers/inspect" method="post" style="margin-top:8px">
+            <select name="layer">
+                <option th:each="l : ${layers}" th:value="${l.name}" th:text="${l.name}"></option>
+            </select>
+            <button class="btn secondary" type="submit">Inspect (gwcLayers + gwcBounds)</button>
+        </form>
+    </div>
+
+    <h2>GWC layer config</h2>
+    <div class="form-panel">
+        <form action="/gwc" method="get">
+            <label style="color:#9aa0a6;font-size:13px">Layer:</label>
+            <select name="gwcLayer" onchange="this.form.submit()">
+                <option value="">-- choose --</option>
+                <option th:each="l : ${layers}" th:value="${l.name}" th:text="${l.name}"
+                        th:selected="${l.name == selectedGwcLayer}"></option>
+            </select>
+        </form>
+        <div th:if="${selectedGwcLayer != null and !selectedGwcLayer.isEmpty()}" style="margin-top:10px">
+            <p class="sub" th:if="${gwcLayerDetail != null}">Enabled: <code th:text="${gwcLayerDetail.enabled}"></code> —
+                MIME formats: <code th:text="${gwcLayerDetail.mimeFormats}"></code> —
+                Expire cache (s): <code th:text="${gwcLayerDetail.expireCache}"></code></p>
+            <p class="sub" th:if="${gwcLayerDetail == null}">No explicit GWC override configured for this layer yet (using server defaults).</p>
+            <form th:action="@{/gwc/gwclayers/upsert}" method="post" style="display:inline-flex;gap:8px;align-items:center">
+                <input type="hidden" name="layerName" th:value="${selectedGwcLayer}"/>
+                <div class="checkline">
+                    <input type="checkbox" name="enabled" value="true" id="gwcl_en" th:checked="${gwcLayerDetail == null or gwcLayerDetail.enabled}"/>
+                    <label for="gwcl_en">Enabled</label>
+                </div>
+                <input type="number" name="expireCache" th:value="${gwcLayerDetail != null ? gwcLayerDetail.expireCache : ''}" placeholder="expireCache (s)" style="width:140px"/>
+                <button class="btn small secondary" type="submit">Save</button>
+            </form>
+            <form th:if="${gwcLayerDetail != null}" th:action="@{'/gwc/gwclayers/' + ${selectedGwcLayer} + '/delete'}" method="post" style="display:inline;margin-left:8px">
+                <button class="btn small danger" type="submit">Remove GWC override</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="form-panel">
+        <h3>Filter update (needs a pre-registered WMSRasterFilter — expect a typed error otherwise)</h3>
+        <form action="/gwc/filter-update" method="post">
+            <input type="text" name="filterName" placeholder="my_raster_filter" required/>
+            <button class="btn secondary" type="submit">updateFilterXml</button>
+        </form>
+    </div>
+
+    <div class="form-panel">
+        <form action="/gwc/kill-all" method="post" style="display:inline">
+            <button class="btn secondary" type="submit">Kill all seed tasks</button>
+        </form>
+        <form action="/gwc/reload" method="post" style="display:inline;margin-left:10px">
+            <button class="btn secondary" type="submit">Reload GWC config</button>
+        </form>
+    </div>
+
+    <h2>Blob stores</h2>
+    <div class="form-panel">
+        <h3>Create file blob store</h3>
+        <form action="/gwc/blobstores/create" method="post">
+            <input type="text" name="name" required placeholder="my_blobstore"/>
+            <input type="text" name="baseDirectory" required placeholder="/tmp/gwc-my_blobstore" style="min-width:220px"/>
+            <div class="checkline">
+                <input type="checkbox" name="enabled" value="true" id="bs_en" checked/>
+                <label for="bs_en">Enabled</label>
+            </div>
+            <button class="btn" type="submit">Create</button>
+        </form>
+    </div>
+    <table class="datatable">
+        <thead><tr><th>Name</th><th></th></tr></thead>
+        <tbody>
+        <tr th:each="b : ${blobstores}">
+            <td th:text="${b}"></td>
+            <td class="actions">
+                <form th:action="@{'/gwc/blobstores/' + ${b} + '/delete'}" method="post">
+                    <button class="btn small danger" type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h2>Disk quota</h2>
+    <p class="sub" th:if="${diskQuota == null}">DiskQuota module not installed on this server.</p>
+    <div th:if="${diskQuota != null}">
+        <p class="sub">
+            enabled=<span th:text="${diskQuota.enabled}"></span>,
+            cacheCleanUpFrequency=<span th:text="${diskQuota.cacheCleanUpFrequency}"></span>
+        </p>
+        <form action="/gwc/diskquota/update" method="post" style="display:inline-flex;gap:8px;align-items:center">
+            <div class="checkline">
+                <input type="checkbox" name="enabled" value="true" id="dq_en" th:checked="${diskQuota.enabled}"/>
+                <label for="dq_en">Enabled</label>
+            </div>
+            <input type="number" name="cacheCleanUpFrequency" th:value="${diskQuota.cacheCleanUpFrequency}" style="width:100px"/>
+            <button class="btn small secondary" type="submit">Update</button>
+        </form>
+    </div>
+</main>
+</body>
+</html>

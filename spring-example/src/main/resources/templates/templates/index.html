@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Templates — geoserver-client explorer</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header th:replace="~{fragments/nav :: nav}"></header>
+<main>
+    <h1>Templates &amp; URL Checks</h1>
+    <div class="flash ok" th:if="${ok}" th:text="${ok}"></div>
+    <div class="flash err" th:if="${err}" th:text="${err}"></div>
+
+    <form action="/templates" method="get" style="margin-bottom:16px">
+        <label style="color:#9aa0a6;font-size:13px">Workspace scope (optional):</label>
+        <select name="ws" onchange="this.form.submit()">
+            <option value="">-- global --</option>
+            <option th:each="w : ${workspaces}" th:value="${w.name}" th:text="${w.name}"
+                    th:selected="${w.name == selectedWs}"></option>
+        </select>
+    </form>
+
+    <div class="form-panel">
+        <h3>Create Freemarker template</h3>
+        <form action="/templates/create" method="post">
+            <input type="hidden" name="ws" th:value="${selectedWs}"/>
+            <div class="field">
+                <label>Name</label>
+                <input type="text" name="name" required placeholder="content.ftl"/>
+            </div>
+            <div class="field wide">
+                <label>Body</label>
+                <textarea name="body" rows="3" required>Hello, ${name}!</textarea>
+            </div>
+            <button class="btn" type="submit">Save</button>
+        </form>
+    </div>
+
+    <h2>Global templates</h2>
+    <table class="datatable">
+        <thead><tr><th>Name</th><th></th></tr></thead>
+        <tbody>
+        <tr th:each="t : ${globalTemplates}">
+            <td th:text="${t.name}"></td>
+            <td class="actions">
+                <a class="btn small secondary" target="_blank" th:href="@{'/templates/' + ${t.name} + '/view'}">View</a>
+                <form th:action="@{'/templates/' + ${t.name} + '/delete'}" method="post">
+                    <button class="btn small danger" type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div th:if="${selectedWs != null and !selectedWs.isEmpty()}">
+        <h2>Workspace templates (<span th:text="${selectedWs}"></span>)</h2>
+        <table class="datatable">
+            <thead><tr><th>Name</th><th></th></tr></thead>
+            <tbody>
+            <tr th:each="t : ${wsTemplates}">
+                <td th:text="${t.name}"></td>
+                <td class="actions">
+                    <a class="btn small secondary" target="_blank" th:href="@{'/templates/' + ${t.name} + '/view'(ws=${selectedWs})}">View</a>
+                    <form th:action="@{'/templates/' + ${t.name} + '/delete'(ws=${selectedWs})}" method="post">
+                        <button class="btn small danger" type="submit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2>URL Checks</h2>
+    <div class="form-panel">
+        <h3>Create URL check (allow-list rule)</h3>
+        <form action="/templates/urlchecks/create" method="post">
+            <input type="text" name="name" required placeholder="allow_example"/>
+            <input type="text" name="description" required placeholder="Only allow example.com"/>
+            <input type="text" name="regex" required style="min-width:260px" placeholder="^https?://.*\.example\.com/.*$"/>
+            <div class="checkline">
+                <input type="checkbox" name="enabled" value="true" id="uc_en" checked/>
+                <label for="uc_en">Enabled</label>
+            </div>
+            <button class="btn" type="submit">Create</button>
+        </form>
+    </div>
+    <table class="datatable">
+        <thead><tr><th>Name</th><th></th></tr></thead>
+        <tbody>
+        <tr th:each="u : ${urlChecks}">
+            <td th:text="${u.name}"></td>
+            <td class="actions">
+                <form th:action="@{'/templates/urlchecks/' + ${u.name} + '/delete'}" method="post">
+                    <button class="btn small danger" type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</main>
+</body>
+</html>

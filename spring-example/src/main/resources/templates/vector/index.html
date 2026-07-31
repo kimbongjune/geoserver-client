@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Vector Data — geoserver-client explorer</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header th:replace="~{fragments/nav :: nav}"></header>
+<main>
+    <h1>Vector Data</h1>
+    <p class="sub">DataStores &amp; FeatureTypes — PostGIS, Shapefile, GeoPackage.</p>
+    <div class="flash ok" th:if="${ok}" th:text="${ok}"></div>
+    <div class="flash err" th:if="${err}" th:text="${err}"></div>
+
+    <form action="/vector" method="get" style="margin-bottom:16px">
+        <label style="color:#9aa0a6;font-size:13px">Workspace:</label>
+        <select name="ws" onchange="this.form.submit()">
+            <option value="">-- choose --</option>
+            <option th:each="w : ${workspaces}" th:value="${w.name}" th:text="${w.name}"
+                    th:selected="${w.name == selectedWs}"></option>
+        </select>
+    </form>
+
+    <div class="form-panel" th:if="${selectedWs != null and !selectedWs.isEmpty()}">
+        <h3>Connect a real PostGIS datastore</h3>
+        <form action="/vector/postgis/connect" method="post">
+            <input type="hidden" name="ws" th:value="${selectedWs}"/>
+            <div class="field">
+                <label>Store name</label>
+                <input type="text" name="storeName" required placeholder="my_postgis"/>
+            </div>
+            <div class="checkline">
+                <input type="checkbox" name="createSampleTable" value="true" id="mktbl" checked/>
+                <label for="mktbl">Create a sample "cities" table with 3 real points</label>
+            </div>
+            <button class="btn" type="submit">Connect</button>
+        </form>
+    </div>
+
+    <div class="form-panel" th:if="${selectedWs != null and !selectedWs.isEmpty()}">
+        <h3>Upload a file (Shapefile ZIP / GeoPackage / Properties)</h3>
+        <form action="/vector/upload" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="ws" th:value="${selectedWs}"/>
+            <div class="field">
+                <label>Store name</label>
+                <input type="text" name="storeName" required placeholder="my_vector_store"/>
+            </div>
+            <div class="field">
+                <label>Format</label>
+                <select name="format">
+                    <option value="shp">Shapefile (.zip)</option>
+                    <option value="gpkg">GeoPackage (.gpkg)</option>
+                    <option value="properties">Properties</option>
+                </select>
+            </div>
+            <div class="field">
+                <label>File</label>
+                <input type="file" name="file" required/>
+            </div>
+            <button class="btn" type="submit">Upload &amp; publish</button>
+        </form>
+    </div>
+
+    <table class="datatable" th:if="${stores != null}">
+        <thead><tr><th>Store</th><th></th></tr></thead>
+        <tbody>
+        <tr th:each="s : ${stores}">
+            <td th:text="${s.name}"></td>
+            <td class="actions">
+                <a class="btn small secondary" th:href="@{'/vector'(ws=${selectedWs},store=${s.name})}">Feature types</a>
+                <form th:action="@{'/vector/' + ${selectedWs} + '/' + ${s.name} + '/reset'}" method="post">
+                    <button class="btn small secondary" type="submit">Reset</button>
+                </form>
+                <form th:action="@{'/vector/' + ${selectedWs} + '/' + ${s.name} + '/delete'}" method="post">
+                    <button class="btn small danger" type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div th:if="${selectedStore != null and !selectedStore.isEmpty()}">
+        <h2>Feature types in <code th:text="${selectedWs} + ':' + ${selectedStore}"></code></h2>
+
+        <div class="form-panel" th:if="${storeDetail != null}">
+            <h3>Store details</h3>
+            <p class="sub">Type: <code th:text="${storeDetail.type}"></code> —
+                Enabled: <code th:text="${storeDetail.enabled}"></code> —
+                Created: <code th:text="${storeDetail.dateCreated}"></code> —
+                Modified: <code th:text="${storeDetail.dateModified}"></code></p>
+            <form th:if="${storeDetail.connectionParameters != null}"
+                  th:action="@{'/vector/' + ${selectedWs} + '/' + ${selectedStore} + '/connection/update'}" method="post">
+                <table class="datatable">
+                    <thead><tr><th>Connection param</th><th>Value</th></tr></thead>
+                    <tbody>
+                    <tr th:each="e : ${storeDetail.connectionParameters.entry}">
+                        <td th:text="${e.key}"></td>
+                        <td>
+                            <input th:type="${e.key == 'passwd'} ? 'password' : 'text'"
+                                   th:name="'cp_' + ${e.key}" th:value="${e.value}" style="width:260px"/>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <button class="btn small secondary" type="submit" style="margin-top:6px">Save connection params</button>
+            </form>
+            <form th:action="@{'/vector/' + ${selectedWs} + '/' + ${selectedStore} + '/update'}" method="post" style="margin-top:10px">
+                <div class="field">
+                    <label>Rename store to</label>
+                    <input type="text" name="newName" placeholder="leave blank to keep name"/>
+                </div>
+                <div class="field">
+                    <label>Description</label>
+                    <input type="text" name="description" th:value="${storeDetail.description}" placeholder="optional description"/>
+                </div>
+                <div class="checkline">
+                    <input type="checkbox" name="enabled" value="true" id="store_en" th:checked="${storeDetail.enabled}"/>
+                    <label for="store_en">Enabled</label>
+                </div>
+                <div class="checkline">
+                    <input type="checkbox" name="defaultStore" value="true" id="store_def" th:checked="${storeDetail.defaultStore}"/>
+                    <label for="store_def">Default store for this workspace</label>
+                </div>
+                <div class="checkline">
+                    <input type="checkbox" name="disableOnConnFailure" value="true" id="store_dcf" th:checked="${storeDetail.disableOnConnFailure}"/>
+                    <label for="store_dcf">Disable on connection failure</label>
+                </div>
+                <button class="btn small secondary" type="submit">Update store</button>
+            </form>
+        </div>
+
+        <div class="form-panel" th:if="${available != null and !available.isEmpty()}">
+            <h3>Available (unconfigured) tables — publish one</h3>
+            <form th:action="@{'/vector/' + ${selectedWs} + '/' + ${selectedStore} + '/publish'}" method="post">
+                <div class="field">
+                    <label>Table</label>
+                    <select name="tableName">
+                        <option th:each="a : ${available}" th:value="${a}" th:text="${a}"></option>
+                    </select>
+                </div>
+                <button class="btn" type="submit">Publish</button>
+            </form>
+        </div>
+
+        <table class="datatable">
+            <thead><tr><th>Name</th><th>SRS</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+            <tr th:each="ft : ${featureTypes}">
+                <td th:text="${ft.name}"></td>
+                <td th:text="${ft.srs}"></td>
+                <td>
+                    <span th:if="${ft.enabled}" class="badge on">enabled</span>
+                    <span th:unless="${ft.enabled}" class="badge off">disabled</span>
+                </td>
+                <td class="actions">
+                    <form th:action="@{'/vector/' + ${selectedWs} + '/' + ${selectedStore} + '/featuretypes/' + ${ft.name} + '/enable'}" method="post">
+                        <input type="hidden" name="enabled" th:value="${!ft.enabled}"/>
+                        <button class="btn small secondary" type="submit" th:text="${ft.enabled} ? 'Disable' : 'Enable'"></button>
+                    </form>
+                    <a class="btn small secondary" th:href="@{'/map'(layer=${selectedWs} + ':' + ${ft.name})}">View on map</a>
+                    <form th:action="@{'/vector/' + ${selectedWs} + '/' + ${selectedStore} + '/featuretypes/' + ${ft.name} + '/delete'}" method="post">
+                        <button class="btn small danger" type="submit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            <tr th:each="ft : ${featureTypes}">
+                <td colspan="4">
+                    <form th:action="@{'/vector/' + ${selectedWs} + '/' + ${selectedStore} + '/featuretypes/' + ${ft.name} + '/update'}"
+                          method="post" style="display:inline-flex;gap:4px;align-items:center;flex-wrap:wrap">
+                        <span class="sub" style="font-size:11px" th:text="${ft.name} + ':'"></span>
+                        <input type="text" name="newName" placeholder="rename to..." style="width:120px"/>
+                        <input type="text" name="title" placeholder="title" style="width:120px"/>
+                        <input type="text" name="srs" placeholder="SRS (e.g. EPSG:4326)" style="width:130px"/>
+                        <input type="text" name="projectionPolicy" placeholder="projectionPolicy" style="width:110px"/>
+                        <input type="number" name="maxFeatures" placeholder="maxFeatures" style="width:90px"/>
+                        <button class="btn small secondary" type="submit">Save</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+</body>
+</html>

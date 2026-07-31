@@ -1,0 +1,25 @@
+server:
+  port: 8090
+
+spring:
+  thymeleaf:
+    cache: false
+  servlet:
+    multipart:
+      max-file-size: 300MB
+      max-request-size: 300MB
+
+geoserver:
+  url: http://localhost:8100/geoserver
+  username: admin
+  password: geoserver
+
+postgis:
+  host: localhost
+  port: 5432
+  database: geoserver
+  schema: public
+  user: geoserver
+  password: geoserver
+  # host GeoServer itself uses to reach the same PostGIS container over the compose network
+  container-host: postgres

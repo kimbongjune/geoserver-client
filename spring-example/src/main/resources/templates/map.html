@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Map — geoserver-client explorer</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@9.2.4/ol.css">
+    <style>
+        #map { background: #0b0d10; }
+        .map-toolbar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
+        .map-toolbar select, .map-toolbar button { font-size: 13px; }
+    </style>
+</head>
+<body>
+<header th:replace="~{fragments/nav :: nav}"></header>
+<main>
+    <h1>Map Viewer</h1>
+    <div class="map-toolbar">
+        <label>Layer:</label>
+        <select id="layerSelect">
+            <option value="">-- choose a layer --</option>
+            <option th:each="l : ${layerNames}" th:value="${l}" th:text="${l}"
+                    th:selected="${l == selectedLayer}"></option>
+        </select>
+        <label>Load as:</label>
+        <select id="modeSelect">
+            <option value="wms">WMS (raster tiles)</option>
+            <option value="wfs">WFS (vector, editable)</option>
+        </select>
+        <span id="status" style="color:#9aa0a6;font-size:13px"></span>
+    </div>
+    <div class="map-toolbar" id="wfsToolbar" style="display:none">
+        <label>Draw:</label>
+        <select id="drawType">
+            <option value="">(none)</option>
+            <option value="Point">Point</option>
+            <option value="LineString">Line</option>
+            <option value="Polygon">Polygon</option>
+        </select>
+        <button class="btn small secondary" id="deleteSelectedBtn" type="button">Delete selected</button>
+        <button class="btn small" id="saveEditsBtn" type="button">Save edits (WFS-T)</button>
+        <span id="pendingCount" style="color:#9aa0a6;font-size:13px"></span>
+    </div>
+    <div id="map"></div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/ol@9.2.4/dist/ol.js"></script>
+<script th:inline="javascript">
+    const GEOSERVER_URL = /*[[${geoServerUrl}]]*/ 'http://localhost:8100/geoserver';
+    const INITIAL_LAYER = /*[[${selectedLayer}]]*/ null;
+    const NAMESPACE_URIS = /*[[${namespaceUris}]]*/ {};
+
+    const osmLayer = new ol.layer.Tile({ source: new ol.source.OSM() });
+    let wmsLayer = null;
+    let vectorLayer = null;
+    let vectorSource = null;
+    let modifyInteraction = null;
+    let drawInteraction = null;
+    let selectInteraction = null;
+    let snapInteraction = null;
+    let pendingInserts = [];
+    let pendingUpdates = new Set();
+    let pendingDeletes = [];
+    let currentWs = null;
+    let currentShortName = null;
+    let currentGeometryName = 'geometry';
+
+    const map = new ol.Map({
+        target: 'map',
+        layers: [osmLayer],
+        view: new ol.View({ center: [0, 0], zoom: 2 })
+    });
+
+    function statusMsg(msg) { document.getElementById('status').textContent = msg; }
+    function updatePendingCount() {
+        document.getElementById('pendingCount').textContent =
+            'Pending: +' + pendingInserts.length + ' / ~' + pendingUpdates.size + ' / -' + pendingDeletes.length;
+    }
+
+    function splitName(fullName) {
+        const colonIdx = fullName.indexOf(':');
+        return {
+            ws: colonIdx >= 0 ? fullName.substring(0, colonIdx) : null,
+            shortName: colonIdx >= 0 ? fullName.substring(colonIdx + 1) : fullName
+        };
+    }
+
+    function clearLayers() {
+        if (wmsLayer) { map.removeLayer(wmsLayer); wmsLayer = null; }
+        if (vectorLayer) { map.removeLayer(vectorLayer); vectorLayer = null; vectorSource = null; }
+        [modifyInteraction, drawInteraction, selectInteraction, snapInteraction].forEach(i => {
+            if (i) map.removeInteraction(i);
+        });
+        modifyInteraction = drawInteraction = selectInteraction = snapInteraction = null;
+        pendingInserts = []; pendingUpdates = new Set(); pendingDeletes = [];
+        updatePendingCount();
+    }
+
+    function fitToLayerBBox(fullName, shortName, ws) {
+        const capsUrl = GEOSERVER_URL + (ws ? '/' + ws : '') + '/wms?service=wms&version=1.3.0&request=GetCapabilities';
+        fetch(capsUrl).then(r => r.text()).then(text => {
+            const xml = new DOMParser().parseFromString(text, 'text/xml');
+            const layerNodes = xml.getElementsByTagName('Layer');
+            for (let i = 0; i < layerNodes.length; i++) {
+                const nameEl = layerNodes[i].getElementsByTagName('Name')[0];
+                if (!nameEl) continue;
+                if (nameEl.textContent === fullName || nameEl.textContent === shortName) {
+                    const bbox = layerNodes[i].getElementsByTagName('EX_GeographicBoundingBox')[0];
+                    if (bbox) {
+                        const west = parseFloat(bbox.getElementsByTagName('westBoundLongitude')[0].textContent);
+                        const east = parseFloat(bbox.getElementsByTagName('eastBoundLongitude')[0].textContent);
+                        const south = parseFloat(bbox.getElementsByTagName('southBoundLatitude')[0].textContent);
+                        const north = parseFloat(bbox.getElementsByTagName('northBoundLatitude')[0].textContent);
+                        const extent = ol.proj.transformExtent([west, south, east, north], 'EPSG:4326', 'EPSG:3857');
+                        map.getView().fit(extent, { padding: [40, 40, 40, 40], maxZoom: 18 });
+                        return;
+                    }
+                }
+            }
+        }).catch(() => {});
+    }
+
+    function loadWms(fullName) {
+        const { ws, shortName } = splitName(fullName);
+        wmsLayer = new ol.layer.Tile({
+            source: new ol.source.TileWMS({
+                url: GEOSERVER_URL + (ws ? '/' + ws : '') + '/wms',
+                params: { 'LAYERS': fullName, 'TILED': true },
+                serverType: 'geoserver'
+            })
+        });
+        map.addLayer(wmsLayer);
+        statusMsg('Loading capabilities for bbox...');
+        fitToLayerBBox(fullName, shortName, ws);
+        statusMsg('Showing ' + fullName + ' (WMS)');
+    }
+
+    function loadWfs(fullName) {
+        const { ws, shortName } = splitName(fullName);
+        currentWs = ws;
+        currentShortName = shortName;
+        vectorSource = new ol.source.Vector();
+        vectorLayer = new ol.layer.Vector({
+            source: vectorSource,
+            style: new ol.style.Style({
+                fill: new ol.style.Fill({ color: 'rgba(255,255,0,0.3)' }),
+                stroke: new ol.style.Stroke({ color: '#ffff00', width: 2 }),
+                image: new ol.style.Circle({ radius: 6, fill: new ol.style.Fill({ color: '#ffff00' }) })
+            })
+        });
+        map.addLayer(vectorLayer);
+
+        statusMsg('Fetching features via WFS GetFeature...');
+        const getFeatureUrl = '/map/wfs/features?layer=' + encodeURIComponent(fullName);
+        fetch(getFeatureUrl).then(r => r.text()).then(text => {
+            let geojson;
+            try {
+                geojson = JSON.parse(text);
+            } catch (e) {
+                statusMsg('Not a WFS-servable (vector) layer, or GetFeature failed — see console.');
+                console.error('WFS GetFeature response was not JSON:', text);
+                return;
+            }
+            // GeoServer's WFS GeoJSON output always calls the JSON key "geometry", but the
+            // actual attribute name WFS-T needs to reference (e.g. "geom", "the_geom") is given
+            // per-feature as "geometry_name" — read it here so Modify/Draw/writeTransaction all
+            // tag features with the name GeoServer's DescribeFeatureType actually expects.
+            currentGeometryName = (geojson.features && geojson.features.length > 0 && geojson.features[0].geometry_name)
+                ? geojson.features[0].geometry_name : 'geometry';
+            const features = new ol.format.GeoJSON({ geometryName: currentGeometryName }).readFeatures(geojson, {
+                dataProjection: 'EPSG:4326',
+                featureProjection: 'EPSG:3857'
+            });
+            vectorSource.addFeatures(features);
+            if (features.length > 0) {
+                map.getView().fit(vectorSource.getExtent(), { padding: [40, 40, 40, 40], maxZoom: 18 });
+            }
+            statusMsg('Showing ' + fullName + ' (WFS, ' + features.length + ' features) — draw/modify/delete, then Save.');
+
+            modifyInteraction = new ol.interaction.Modify({ source: vectorSource });
+            modifyInteraction.on('modifyend', e => {
+                e.features.forEach(f => { if (f.getId() !== undefined) pendingUpdates.add(f); });
+                updatePendingCount();
+            });
+            map.addInteraction(modifyInteraction);
+
+            selectInteraction = new ol.interaction.Select();
+            map.addInteraction(selectInteraction);
+
+            snapInteraction = new ol.interaction.Snap({ source: vectorSource });
+            map.addInteraction(snapInteraction);
+        }).catch(err => statusMsg('WFS GetFeature failed: ' + err));
+    }
+
+    function setDrawTool(geometryType) {
+        if (drawInteraction) { map.removeInteraction(drawInteraction); drawInteraction = null; }
+        if (!geometryType || !vectorSource) return;
+        drawInteraction = new ol.interaction.Draw({ source: vectorSource, type: geometryType, geometryName: currentGeometryName });
+        drawInteraction.on('drawend', e => {
+            pendingInserts.push(e.feature);
+            updatePendingCount();
+        });
+        map.addInteraction(drawInteraction);
+    }
+
+    function deleteSelected() {
+        if (!selectInteraction) return;
+        const selected = selectInteraction.getFeatures();
+        selected.forEach(f => {
+            vectorSource.removeFeature(f);
+            if (f.getId() !== undefined) {
+                pendingDeletes.push(f);
+            } else {
+                pendingInserts = pendingInserts.filter(x => x !== f);
+            }
+            pendingUpdates.delete(f);
+        });
+        selected.clear();
+        updatePendingCount();
+    }
+
+    function saveEdits() {
+        if (!currentWs || !currentShortName) return;
+        if (pendingInserts.length === 0 && pendingUpdates.size === 0 && pendingDeletes.length === 0) {
+            statusMsg('Nothing to save.');
+            return;
+        }
+        const featureNS = NAMESPACE_URIS[currentWs] || ('http://' + currentWs);
+        const wfsFormat = new ol.format.WFS();
+        const xml = wfsFormat.writeTransaction(
+            pendingInserts, Array.from(pendingUpdates), pendingDeletes,
+            { featureNS: featureNS, featurePrefix: currentWs, featureType: currentShortName, srsName: 'EPSG:3857' }
+        );
+        const payload = new XMLSerializer().serializeToString(xml);
+        statusMsg('Saving WFS-T transaction...');
+        fetch('/map/wfs/transaction', {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/xml' },
+            body: payload
+        }).then(r => r.text()).then(text => {
+            const xmlDoc = new DOMParser().parseFromString(text, 'text/xml');
+            const exceptionEl = xmlDoc.getElementsByTagNameNS('*', 'ExceptionText')[0];
+            if (exceptionEl) {
+                statusMsg('WFS-T failed: ' + exceptionEl.textContent);
+                return;
+            }
+            const totalInserted = xmlDoc.getElementsByTagNameNS('*', 'totalInserted')[0];
+            const totalUpdated = xmlDoc.getElementsByTagNameNS('*', 'totalUpdated')[0];
+            const totalDeleted = xmlDoc.getElementsByTagNameNS('*', 'totalDeleted')[0];
+            statusMsg('Saved — inserted=' + (totalInserted ? totalInserted.textContent : 0)
+                + ', updated=' + (totalUpdated ? totalUpdated.textContent : 0)
+                + ', deleted=' + (totalDeleted ? totalDeleted.textContent : 0));
+            const fullName = currentWs + ':' + currentShortName;
+            clearLayers();
+            loadWfs(fullName);
+        }).catch(err => statusMsg('WFS-T request failed: ' + err));
+    }
+
+    function loadLayer(fullName) {
+        clearLayers();
+        if (!fullName) return;
+        const mode = document.getElementById('modeSelect').value;
+        document.getElementById('wfsToolbar').style.display = mode === 'wfs' ? 'flex' : 'none';
+        if (mode === 'wfs') {
+            loadWfs(fullName);
+        } else {
+            loadWms(fullName);
+        }
+    }
+
+    document.getElementById('layerSelect').addEventListener('change', e => loadLayer(e.target.value));
+    document.getElementById('modeSelect').addEventListener('change', () => loadLayer(document.getElementById('layerSelect').value));
+    document.getElementById('drawType').addEventListener('change', e => setDrawTool(e.target.value || null));
+    document.getElementById('deleteSelectedBtn').addEventListener('click', deleteSelected);
+    document.getElementById('saveEditsBtn').addEventListener('click', saveEdits);
+
+    if (INITIAL_LAYER) {
+        document.getElementById('layerSelect').value = INITIAL_LAYER;
+        loadLayer(INITIAL_LAYER);
+    }
+</script>
+</body>
+</html>

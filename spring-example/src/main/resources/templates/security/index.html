@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Security — geoserver-client explorer</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header th:replace="~{fragments/nav :: nav}"></header>
+<main>
+    <h1>Security</h1>
+    <p class="sub">Catalog mode: <code th:text="${catalogMode}"></code></p>
+    <div class="flash ok" th:if="${ok}" th:text="${ok}"></div>
+    <div class="flash err" th:if="${err}" th:text="${err}"></div>
+
+    <div class="form-panel">
+        <h3>Catalog access mode</h3>
+        <form action="/security/catalog-mode" method="post">
+            <select name="mode">
+                <option value="HIDE">HIDE</option>
+                <option value="CHALLENGE">CHALLENGE</option>
+                <option value="MIXED">MIXED</option>
+            </select>
+            <button class="btn" type="submit">Apply</button>
+        </form>
+    </div>
+
+    <h2>Roles</h2>
+    <div class="form-panel">
+        <h3>Create role</h3>
+        <form action="/security/roles/create" method="post">
+            <input type="text" name="role" required placeholder="ROLE_EDITOR"/>
+            <button class="btn" type="submit">Create</button>
+        </form>
+    </div>
+    <div class="form-panel">
+        <h3>Assign / unassign role to user</h3>
+        <form action="/security/roles/assign" method="post">
+            <input type="text" name="role" required placeholder="ROLE_EDITOR"/>
+            <input type="text" name="user" required placeholder="username"/>
+            <button class="btn" type="submit">Assign</button>
+        </form>
+        <form action="/security/roles/unassign" method="post" style="margin-top:8px">
+            <input type="text" name="role" required placeholder="ROLE_EDITOR"/>
+            <input type="text" name="user" required placeholder="username"/>
+            <button class="btn secondary" type="submit">Unassign</button>
+        </form>
+    </div>
+    <table class="datatable">
+        <thead><tr><th>Role</th><th></th></tr></thead>
+        <tbody>
+        <tr th:each="r : ${roles}">
+            <td th:text="${r}"></td>
+            <td class="actions">
+                <form th:action="@{'/security/roles/' + ${r} + '/delete'}" method="post">
+                    <button class="btn small danger" type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h2>Users</h2>
+    <div class="form-panel">
+        <h3>Create user</h3>
+        <form action="/security/users/create" method="post">
+            <input type="text" name="username" required placeholder="alice"/>
+            <input type="password" name="password" required placeholder="Passw0rd#"/>
+            <div class="checkline">
+                <input type="checkbox" name="enabled" value="true" id="user_en" checked/>
+                <label for="user_en">Enabled</label>
+            </div>
+            <button class="btn" type="submit">Create</button>
+        </form>
+    </div>
+    <table class="datatable">
+        <thead><tr><th>Username</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+        <tr th:each="u : ${users}">
+            <td th:text="${u.userName}"></td>
+            <td>
+                <span th:if="${u.enabled}" class="badge on">enabled</span>
+                <span th:unless="${u.enabled}" class="badge off">disabled</span>
+            </td>
+            <td class="actions">
+                <form th:action="@{'/security/users/' + ${u.userName} + '/toggle'}" method="post">
+                    <input type="hidden" name="enabled" th:value="${!u.enabled}"/>
+                    <button class="btn small secondary" type="submit" th:text="${u.enabled} ? 'Disable' : 'Enable'"></button>
+                </form>
+                <form th:action="@{'/security/users/' + ${u.userName} + '/delete'}" method="post">
+                    <button class="btn small danger" type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h2>Groups</h2>
+    <div class="form-panel">
+        <h3>Create group / assign user</h3>
+        <form action="/security/groups/create" method="post">
+            <input type="text" name="group" required placeholder="editors"/>
+            <button class="btn" type="submit">Create</button>
+        </form>
+        <form action="/security/groups/assign" method="post" style="margin-top:8px">
+            <input type="text" name="user" required placeholder="username"/>
+            <input type="text" name="group" required placeholder="editors"/>
+            <button class="btn secondary" type="submit">Assign user to group</button>
+        </form>
+    </div>
+    <table class="datatable">
+        <thead><tr><th>Group</th><th></th></tr></thead>
+        <tbody>
+        <tr th:each="g : ${groups}">
+            <td th:text="${g}"></td>
+            <td class="actions">
+                <form th:action="@{'/security/groups/' + ${g} + '/delete'}" method="post">
+                    <button class="btn small danger" type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h2>Filter Chains</h2>
+    <div class="form-panel">
+        <h3>Create filter chain</h3>
+        <form action="/security/filterchains/create" method="post">
+            <input type="text" name="name" required placeholder="my_chain"/>
+            <input type="text" name="path" required placeholder="/my_chain/**"/>
+            <input type="text" name="filters" value="anonymous" placeholder="comma-separated filter names"/>
+            <button class="btn" type="submit">Create</button>
+        </form>
+    </div>
+    <table class="datatable">
+        <thead><tr><th>Name</th><th>Class</th><th>Path</th><th></th></tr></thead>
+        <tbody>
+        <tr th:each="c : ${filterChains}">
+            <td th:text="${c.name}"></td>
+            <td th:text="${c.clazz}"></td>
+            <td th:text="${c.path}"></td>
+            <td class="actions">
+                <form th:action="@{'/security/filterchains/' + ${c.name} + '/delete'}" method="post">
+                    <button class="btn small danger" type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h2>Auth Filters</h2>
+    <div class="form-panel">
+        <h3>Create auth filter (basic)</h3>
+        <form action="/security/authfilters/create" method="post">
+            <input type="text" name="name" required placeholder="my_basic_filter"/>
+            <div class="checkline">
+                <input type="checkbox" name="useRememberMe" value="true" id="af_rm"/>
+                <label for="af_rm">Use remember-me</label>
+            </div>
+            <button class="btn" type="submit">Create</button>
+        </form>
+    </div>
+    <table class="datatable">
+        <thead><tr><th>Name</th><th></th></tr></thead>
+        <tbody>
+        <tr th:each="f : ${authFilters}">
+            <td th:text="${f}"></td>
+            <td class="actions">
+                <form th:action="@{'/security/authfilters/' + ${f} + '/update'}" method="post" style="display:inline-flex;gap:4px;align-items:center">
+                    <input type="checkbox" name="useRememberMe" value="true" th:id="'af_upd_' + ${f}"/>
+                    <label th:for="'af_upd_' + ${f}" style="margin:0;font-size:11px">rememberMe</label>
+                    <button class="btn small secondary" type="submit">Update</button>
+                </form>
+                <form th:action="@{'/security/authfilters/' + ${f} + '/delete'}" method="post">
+                    <button class="btn small danger" type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h2>Auth Providers</h2>
+    <div class="form-panel">
+        <h3>Create auth provider (username/password)</h3>
+        <form action="/security/authproviders/create" method="post">
+            <input type="text" name="name" required placeholder="my_provider"/>
+            <input type="text" name="userGroupService" value="default" placeholder="user/group service name"/>
+            <button class="btn" type="submit">Create</button>
+        </form>
+    </div>
+    <table class="datatable">
+        <thead><tr><th>Name</th><th></th></tr></thead>
+        <tbody>
+        <tr th:each="p : ${authProviders}">
+            <td th:text="${p.name}"></td>
+            <td class="actions">
+                <form th:action="@{'/security/authproviders/' + ${p.name} + '/delete'}" method="post">
+                    <button class="btn small danger" type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h2>User/Group Services</h2>
+    <div class="form-panel">
+        <h3>Create named user/group service (XML-backed)</h3>
+        <form action="/security/usergroupservices/create" method="post">
+            <input type="text" name="name" required placeholder="my_ug_service"/>
+            <button class="btn" type="submit">Create</button>
+        </form>
+    </div>
+    <table class="datatable">
+        <thead><tr><th>Name</th><th></th></tr></thead>
+        <tbody>
+        <tr th:each="s : ${userGroupServices}">
+            <td th:text="${s}"></td>
+            <td class="actions">
+                <form th:action="@{'/security/usergroupservices/' + ${s} + '/delete'}" method="post">
+                    <button class="btn small danger" type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</main>
+</body>
+</html>
