@@ -11,7 +11,7 @@ import java.util.Collections;
 /**
  * DTO for a structured coverage granule list (GeoJSON FeatureCollection).
  *
- * <p>Maps the response of {@code GET /rest/.../index/granules}.</p>
+ * <p>Maps the response of {@code GET /rest/.../index/granules}.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class GranuleCollection {
@@ -22,13 +22,18 @@ public class GranuleCollection {
     @JsonProperty("features")
     private List<Granule> features;
 
-    public String       getType()     { return type; }
+    /** @return the GeoJSON type (e.g. {@code "FeatureCollection"}) */
+    public String       getType() {
+        return type;
+    }
+    /** @return the list of granules (never {@code null}) */
     public List<Granule> getFeatures() {
         return features != null
                 ? Collections.unmodifiableList(features)
                 : Collections.<Granule>emptyList();
     }
 
+    /** A single granule (GeoJSON Feature) within the collection. */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Granule {
         @JsonProperty("type")
@@ -43,15 +48,31 @@ public class GranuleCollection {
         @JsonProperty("properties")
         private Map<String, Object> properties;
 
-        public String              getId()         { return id; }
-        public String              getType()       { return type; }
-        public Object              getGeometry()   { return geometry; }
-        public Map<String, Object> getProperties() { return properties == null ? null : Collections.unmodifiableMap(properties); }
+        /** @return the granule feature ID */
+        public String              getId() {
+            return id;
+        }
+        /** @return the GeoJSON feature type (e.g. {@code "Feature"}) */
+        public String              getType() {
+            return type;
+        }
+        /** @return the geometry object (GeoJSON geometry, or {@code null}) */
+        public Object              getGeometry() {
+            return geometry;
+        }
+        /** @return the granule properties map */
+        public Map<String, Object> getProperties() {
+            return properties == null ? null : Collections.unmodifiableMap(properties);
+        }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             Granule that = (Granule) o;
             return Objects.equals(type, that.type)
                     && Objects.equals(id, that.id)
@@ -77,8 +98,12 @@ public class GranuleCollection {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         GranuleCollection that = (GranuleCollection) o;
         return Objects.equals(type, that.type)
                 && Objects.equals(features, that.features);

@@ -88,8 +88,12 @@ public class StringMap {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         StringMap that = (StringMap) o;
         return Objects.equals(entries, that.entries);
     }

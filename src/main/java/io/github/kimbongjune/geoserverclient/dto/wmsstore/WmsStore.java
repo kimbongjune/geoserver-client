@@ -7,9 +7,9 @@ import java.util.Objects;
 /**
  * DTO for WMS store details.
  *
- * <p>Maps the response body of {@code GET /rest/workspaces/{ws}/wmsstores/{name}}.</p>
+ * <p>Maps the response body of {@code GET /rest/workspaces/{ws}/wmsstores/{name}}.
  *
- * <p>Verified against GeoServer 2.28.2. Includes fields not documented in Swagger.</p>
+ * <p>Verified against GeoServer 2.28.2. Includes fields not documented in Swagger.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WmsStore {
@@ -76,27 +76,69 @@ public class WmsStore {
 
     public WmsStore() {}
 
-    public String getName()                   { return name; }
-    public String getDescription()            { return description; }
-    public String getType()                   { return type; }
-    public Boolean getEnabled()               { return enabled; }
-    public boolean isEnabled()                { return Boolean.TRUE.equals(enabled); }
-    public Boolean getDefaultStore()          { return defaultStore; }
-    public WorkspaceLink getWorkspace()       { return workspace; }
-    public String getCapabilitiesURL()        { return capabilitiesURL; }
-    public String getUser()                   { return user; }
-    public String getPassword()               { return password; }
-    public String getAuthKey()                { return authKey; }
-    public String getHeaderName()             { return headerName; }
-    public String getHeaderValue()            { return headerValue; }
-    public Integer getMaxConnections()        { return maxConnections; }
-    public Integer getReadTimeout()           { return readTimeout; }
-    public Integer getConnectTimeout()        { return connectTimeout; }
-    public Boolean getDisableOnConnFailure()  { return disableOnConnFailure; }
-    public String getDateCreated()            { return dateCreated; }
-    public String getDateModified()           { return dateModified; }
-    public String getWmslayers()              { return wmslayers; }
-    public Metadata getMetadata()             { return metadata; }
+    public String getName() {
+        return name;
+    }
+    public String getDescription() {
+        return description;
+    }
+    public String getType() {
+        return type;
+    }
+    public Boolean getEnabled() {
+        return enabled;
+    }
+    public boolean isEnabled() {
+        return Boolean.TRUE.equals(enabled);
+    }
+    public Boolean getDefaultStore() {
+        return defaultStore;
+    }
+    public WorkspaceLink getWorkspace() {
+        return workspace;
+    }
+    public String getCapabilitiesURL() {
+        return capabilitiesURL;
+    }
+    public String getUser() {
+        return user;
+    }
+    public String getPassword() {
+        return password;
+    }
+    public String getAuthKey() {
+        return authKey;
+    }
+    public String getHeaderName() {
+        return headerName;
+    }
+    public String getHeaderValue() {
+        return headerValue;
+    }
+    public Integer getMaxConnections() {
+        return maxConnections;
+    }
+    public Integer getReadTimeout() {
+        return readTimeout;
+    }
+    public Integer getConnectTimeout() {
+        return connectTimeout;
+    }
+    public Boolean getDisableOnConnFailure() {
+        return disableOnConnFailure;
+    }
+    public String getDateCreated() {
+        return dateCreated;
+    }
+    public String getDateModified() {
+        return dateModified;
+    }
+    public String getWmslayers() {
+        return wmslayers;
+    }
+    public Metadata getMetadata() {
+        return metadata;
+    }
 
     //  Inner DTOs 
 
@@ -105,13 +147,21 @@ public class WmsStore {
         @JsonProperty("name") private String name;
         @JsonProperty("href") private String href;
         public WorkspaceLink() {}
-        public String getName() { return name; }
-        public String getHref() { return href; }
+        public String getName() {
+            return name;
+        }
+        public String getHref() {
+            return href;
+        }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             WorkspaceLink that = (WorkspaceLink) o;
             return Objects.equals(name, that.name)
                     && Objects.equals(href, that.href);
@@ -135,12 +185,18 @@ public class WmsStore {
     public static class Metadata {
         @JsonProperty("entry") private MetadataEntry entry;
         public Metadata() {}
-        public MetadataEntry getEntry() { return entry; }
+        public MetadataEntry getEntry() {
+            return entry;
+        }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             Metadata that = (Metadata) o;
             return Objects.equals(entry, that.entry);
         }
@@ -163,13 +219,21 @@ public class WmsStore {
         @JsonProperty("@key") private String key;
         @JsonProperty("$")    private String value;
         public MetadataEntry() {}
-        public String getKey()   { return key; }
-        public String getValue() { return value; }
+        public String getKey() {
+            return key;
+        }
+        public String getValue() {
+            return value;
+        }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             MetadataEntry that = (MetadataEntry) o;
             return Objects.equals(key, that.key)
                     && Objects.equals(value, that.value);
@@ -191,8 +255,12 @@ public class WmsStore {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         WmsStore that = (WmsStore) o;
         return Objects.equals(name, that.name)
                 && Objects.equals(description, that.description)

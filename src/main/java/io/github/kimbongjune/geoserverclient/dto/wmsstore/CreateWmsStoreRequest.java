@@ -53,6 +53,12 @@ public class CreateWmsStoreRequest {
         this.capabilitiesURL = capabilitiesURL.trim();
     }
 
+    /**
+     * Creates a WMS store request with the given name and capabilities URL.
+     * @param name            the WMS store name (must not be null or empty)
+     * @param capabilitiesURL the WMS GetCapabilities URL (must not be null or empty)
+     * @return a new request instance
+     */
     public static CreateWmsStoreRequest of(String name, String capabilitiesURL) {
         return new CreateWmsStoreRequest(name, capabilitiesURL);
     }
@@ -61,46 +67,184 @@ public class CreateWmsStoreRequest {
      * Alias for {@link #of(String, String)}, for callers who prefer the
      * {@code builder(...)...build()} spelling used by every {@code UpdateXxxRequest} in this
      * library. {@link #build()} is a no-op terminal call.
+     * @param name            the WMS store name
+     * @param capabilitiesURL the WMS GetCapabilities URL
+     * @return a new request instance
      */
     public static CreateWmsStoreRequest builder(String name, String capabilitiesURL) {
         return of(name, capabilitiesURL);
     }
 
-    public CreateWmsStoreRequest description(String description)               { this.description = description;           return this; }
-    public CreateWmsStoreRequest enabled(Boolean enabled)                      { this.enabled = enabled;                   return this; }
-    public CreateWmsStoreRequest defaultStore(Boolean defaultStore)            { this.defaultStore = defaultStore;         return this; }
-    public CreateWmsStoreRequest user(String user)                             { this.user = user;                         return this; }
-    public CreateWmsStoreRequest password(String password)                     { this.password = password;                 return this; }
-    public CreateWmsStoreRequest authKey(String authKey)                       { this.authKey = authKey;                   return this; }
-    public CreateWmsStoreRequest headerName(String headerName)                 { this.headerName = headerName;             return this; }
-    public CreateWmsStoreRequest headerValue(String headerValue)               { this.headerValue = headerValue;           return this; }
-    public CreateWmsStoreRequest maxConnections(Integer maxConnections)        { this.maxConnections = maxConnections;     return this; }
-    public CreateWmsStoreRequest readTimeout(Integer readTimeout)              { this.readTimeout = readTimeout;           return this; }
-    public CreateWmsStoreRequest connectTimeout(Integer connectTimeout)        { this.connectTimeout = connectTimeout;     return this; }
-    public CreateWmsStoreRequest disableOnConnFailure(Boolean disable)         { this.disableOnConnFailure = disable;      return this; }
+    /**
+     * Sets the store description.
+     * @param description the store description
+     * @return this request
+     */
+    public CreateWmsStoreRequest description(String description) {
+        this.description = description;           return this;
+    }
+    /**
+     * Sets whether this store is enabled.
+     * @param enabled {@code true} to enable
+     * @return this request
+     */
+    public CreateWmsStoreRequest enabled(Boolean enabled) {
+        this.enabled = enabled;                   return this;
+    }
+    /**
+     * Sets whether this is the default store.
+     * @param defaultStore {@code true} to set as default
+     * @return this request
+     */
+    public CreateWmsStoreRequest defaultStore(Boolean defaultStore) {
+        this.defaultStore = defaultStore;         return this;
+    }
+    /**
+     * Sets the remote service username.
+     * @param user the username
+     * @return this request
+     */
+    public CreateWmsStoreRequest user(String user) {
+        this.user = user;                         return this;
+    }
+    /**
+     * Sets the remote service password.
+     * @param password the password
+     * @return this request
+     */
+    public CreateWmsStoreRequest password(String password) {
+        this.password = password;                 return this;
+    }
+    /**
+     * Sets the authentication key.
+     * @param authKey the authentication key
+     * @return this request
+     */
+    public CreateWmsStoreRequest authKey(String authKey) {
+        this.authKey = authKey;                   return this;
+    }
+    /**
+     * Sets the extra HTTP header name.
+     * @param headerName the header name
+     * @return this request
+     */
+    public CreateWmsStoreRequest headerName(String headerName) {
+        this.headerName = headerName;             return this;
+    }
+    /**
+     * Sets the extra HTTP header value.
+     * @param headerValue the header value
+     * @return this request
+     */
+    public CreateWmsStoreRequest headerValue(String headerValue) {
+        this.headerValue = headerValue;           return this;
+    }
+    /**
+     * Sets the maximum concurrent connections.
+     * @param maxConnections maximum connections
+     * @return this request
+     */
+    public CreateWmsStoreRequest maxConnections(Integer maxConnections) {
+        this.maxConnections = maxConnections;     return this;
+    }
+    /**
+     * Sets the read timeout in seconds.
+     * @param readTimeout the read timeout
+     * @return this request
+     */
+    public CreateWmsStoreRequest readTimeout(Integer readTimeout) {
+        this.readTimeout = readTimeout;           return this;
+    }
+    /**
+     * Sets the connect timeout in seconds.
+     * @param connectTimeout the connect timeout
+     * @return this request
+     */
+    public CreateWmsStoreRequest connectTimeout(Integer connectTimeout) {
+        this.connectTimeout = connectTimeout;     return this;
+    }
+    /**
+     * Sets whether to disable on connection failure.
+     * @param disable {@code true} to disable on connection failure
+     * @return this request
+     */
+    public CreateWmsStoreRequest disableOnConnFailure(Boolean disable) {
+        this.disableOnConnFailure = disable;      return this;
+    }
 
-    /** Terminal no-op for {@code builder(...)...build()} chains — returns {@code this}. */
-    public CreateWmsStoreRequest build() { return this; }
+    /**
+     * Terminal no-op for {@code builder(...)...build()} chains.
+     * @return this request
+     */
+    public CreateWmsStoreRequest build() {
+        return this;
+    }
 
-    public String  getName()                  { return name; }
-    public String  getCapabilitiesURL()       { return capabilitiesURL; }
-    public String  getDescription()           { return description; }
-    public Boolean getEnabled()               { return enabled; }
-    public Boolean getDefaultStore()          { return defaultStore; }
-    public String  getUser()                  { return user; }
-    public String  getPassword()              { return password; }
-    public String  getAuthKey()               { return authKey; }
-    public String  getHeaderName()            { return headerName; }
-    public String  getHeaderValue()           { return headerValue; }
-    public Integer getMaxConnections()        { return maxConnections; }
-    public Integer getReadTimeout()           { return readTimeout; }
-    public Integer getConnectTimeout()        { return connectTimeout; }
-    public Boolean getDisableOnConnFailure()  { return disableOnConnFailure; }
+    /** @return the store name */
+    public String  getName() {
+        return name;
+    }
+    /** @return the WMS GetCapabilities URL */
+    public String  getCapabilitiesURL() {
+        return capabilitiesURL;
+    }
+    /** @return the store description */
+    public String  getDescription() {
+        return description;
+    }
+    /** @return {@code true} if enabled */
+    public Boolean getEnabled() {
+        return enabled;
+    }
+    /** @return {@code true} if this is the default store */
+    public Boolean getDefaultStore() {
+        return defaultStore;
+    }
+    /** @return the remote service username */
+    public String  getUser() {
+        return user;
+    }
+    /** @return the remote service password */
+    public String  getPassword() {
+        return password;
+    }
+    /** @return the authentication key */
+    public String  getAuthKey() {
+        return authKey;
+    }
+    /** @return the extra HTTP header name */
+    public String  getHeaderName() {
+        return headerName;
+    }
+    /** @return the extra HTTP header value */
+    public String  getHeaderValue() {
+        return headerValue;
+    }
+    /** @return the maximum concurrent connections */
+    public Integer getMaxConnections() {
+        return maxConnections;
+    }
+    /** @return the read timeout in seconds */
+    public Integer getReadTimeout() {
+        return readTimeout;
+    }
+    /** @return the connect timeout in seconds */
+    public Integer getConnectTimeout() {
+        return connectTimeout;
+    }
+    /** @return {@code true} if disabled on connection failure */
+    public Boolean getDisableOnConnFailure() {
+        return disableOnConnFailure;
+    }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         CreateWmsStoreRequest that = (CreateWmsStoreRequest) o;
         return Objects.equals(name, that.name)
                 && Objects.equals(capabilitiesURL, that.capabilitiesURL)

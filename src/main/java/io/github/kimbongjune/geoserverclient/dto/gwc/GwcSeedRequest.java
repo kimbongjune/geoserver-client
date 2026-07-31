@@ -20,8 +20,18 @@ public class GwcSeedRequest {
     private GwcSeedType type;
     private Integer threadCount;
 
+    /** Constructs an empty {@code GwcSeedRequest} for deserialization. */
     public GwcSeedRequest() {}
 
+    /**
+     * Constructs a {@code GwcSeedRequest} with all required fields.
+     * @param name      the layer name
+     * @param srs       the EPSG code (e.g. {@code 4326})
+     * @param zoomStart the starting zoom level
+     * @param zoomStop  the stopping zoom level
+     * @param format    the MIME format (e.g. {@code "image/png"})
+     * @param type      the seed operation type
+     */
     public GwcSeedRequest(String name, int srs, int zoomStart, int zoomStop, String format, GwcSeedType type) {
         this.name = name;
         this.srs = srs;
@@ -31,32 +41,84 @@ public class GwcSeedRequest {
         this.type = type;
     }
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    /** @return the layer name */
+    public String getName() {
+        return name;
+    }
+    /** @param name the layer name */
+    public void setName(String name) {
+        this.name = name;
+    }
 
-    public Integer getSrs() { return srs; }
-    public void setSrs(Integer srs) { this.srs = srs; }
+    /** @return the EPSG SRS code */
+    public Integer getSrs() {
+        return srs;
+    }
+    /** @param srs the EPSG SRS code */
+    public void setSrs(Integer srs) {
+        this.srs = srs;
+    }
 
-    public Integer getZoomStart() { return zoomStart; }
-    public void setZoomStart(Integer zoomStart) { this.zoomStart = zoomStart; }
+    /** @return the starting zoom level */
+    public Integer getZoomStart() {
+        return zoomStart;
+    }
+    /** @param zoomStart the starting zoom level */
+    public void setZoomStart(Integer zoomStart) {
+        this.zoomStart = zoomStart;
+    }
 
-    public Integer getZoomStop() { return zoomStop; }
-    public void setZoomStop(Integer zoomStop) { this.zoomStop = zoomStop; }
+    /** @return the stopping zoom level */
+    public Integer getZoomStop() {
+        return zoomStop;
+    }
+    /** @param zoomStop the stopping zoom level */
+    public void setZoomStop(Integer zoomStop) {
+        this.zoomStop = zoomStop;
+    }
 
-    public String getFormat() { return format; }
-    public void setFormat(String format) { this.format = format; }
+    /** @return the tile MIME format */
+    public String getFormat() {
+        return format;
+    }
+    /** @param format the tile MIME format */
+    public void setFormat(String format) {
+        this.format = format;
+    }
 
-    public GwcSeedType getType() { return type; }
-    public void setType(GwcSeedType type) { this.type = type; }
+    /** @return the seed operation type */
+    public GwcSeedType getType() {
+        return type;
+    }
+    /** @param type the seed operation type */
+    public void setType(GwcSeedType type) {
+        this.type = type;
+    }
 
-    /** truncate   ( 1  ) [ ]. */
-    public Integer getThreadCount() { return threadCount; }
-    public GwcSeedRequest threadCount(int threadCount) { this.threadCount = threadCount; return this; }
+    /**
+     * Returns the thread count. Ignored for truncate tasks (always runs on 1 thread).
+     * @return the thread count, or {@code null} for the default
+     */
+    public Integer getThreadCount() {
+        return threadCount;
+    }
+    /**
+     * Sets the thread count for this seed operation.
+     * @param threadCount the number of threads
+     * @return this request for chaining
+     */
+    public GwcSeedRequest threadCount(int threadCount) {
+        this.threadCount = threadCount; return this;
+    }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         GwcSeedRequest that = (GwcSeedRequest) o;
         return Objects.equals(name, that.name)
                 && Objects.equals(srs, that.srs)

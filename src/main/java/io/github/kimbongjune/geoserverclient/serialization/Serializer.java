@@ -29,6 +29,7 @@ public interface Serializer {
 
     /**
      * Returns the data format this serializer handles.
+     * @return the data format
      */
     DataFormat getFormat();
 }

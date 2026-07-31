@@ -17,13 +17,21 @@ public class UrlCheckSummary {
 
     public UrlCheckSummary() {}
 
-    public String getName() { return name; }
-    public String getHref() { return href; }
+    public String getName() {
+        return name;
+    }
+    public String getHref() {
+        return href;
+    }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         UrlCheckSummary that = (UrlCheckSummary) o;
         return Objects.equals(name, that.name)
                 && Objects.equals(href, that.href);

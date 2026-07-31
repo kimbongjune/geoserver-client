@@ -266,7 +266,9 @@ public class ApacheHttpClient implements GeoServerHttpClient {
         StringBuilder sb = new StringBuilder();
         for (String segment : pathPart.split("/", -1)) {
             // Skip empty segments to prevent double slashes.
-            if (segment.isEmpty()) continue;
+            if (segment.isEmpty()) {
+                continue;
+            }
             sb.append('/');
             sb.append(encodeSegment(segment));
         }
@@ -279,9 +281,13 @@ public class ApacheHttpClient implements GeoServerHttpClient {
         // Fast path: return as-is when segment contains only ASCII characters.
         boolean hasNonAscii = false;
         for (char c : segment.toCharArray()) {
-            if (c > 127) { hasNonAscii = true; break; }
+            if (c > 127) {
+              hasNonAscii = true; break;
+          }
         }
-        if (!hasNonAscii) return segment;
+        if (!hasNonAscii) {
+            return segment;
+        }
         try {
             return URLEncoder.encode(segment, StandardCharsets.UTF_8.name()).replace("+", "%20");
         } catch (UnsupportedEncodingException e) {

@@ -7,7 +7,7 @@ import java.util.Objects;
 /**
  * Summary entry returned when listing data stores (name + href only).
  *
- * <p>Maps each item in the array returned by {@code GET /rest/workspaces/{ws}/datastores}.</p>
+ * <p>Maps each item in the array returned by {@code GET /rest/workspaces/{ws}/datastores}.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DataStoreSummary {
@@ -18,15 +18,26 @@ public class DataStoreSummary {
     @JsonProperty("href")
     private String href;
 
+    /** Constructs an empty {@code DataStoreSummary} for deserialization. */
     public DataStoreSummary() {}
 
-    public String getName() { return name; }
-    public String getHref() { return href; }
+    /** @return the data store name */
+    public String getName() {
+        return name;
+    }
+    /** @return the href to the full data store resource */
+    public String getHref() {
+        return href;
+    }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         DataStoreSummary that = (DataStoreSummary) o;
         return Objects.equals(name, that.name)
                 && Objects.equals(href, that.href);

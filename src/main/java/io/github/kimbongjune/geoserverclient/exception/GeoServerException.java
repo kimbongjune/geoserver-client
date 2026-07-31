@@ -21,10 +21,19 @@ public class GeoServerException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Constructs a {@code GeoServerException} with the given message.
+     * @param message the detail message
+     */
     public GeoServerException(String message) {
         super(message);
     }
 
+    /**
+     * Constructs a {@code GeoServerException} with the given message and cause.
+     * @param message the detail message
+     * @param cause   the underlying cause
+     */
     public GeoServerException(String message, Throwable cause) {
         super(message, cause);
     }

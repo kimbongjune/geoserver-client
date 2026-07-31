@@ -1,0 +1,429 @@
+/*
+ * GeoServer Client 1.0.0 — Custom Javadoc Stylesheet
+ * Modern flat design, Bootstrap-inspired color scheme.
+ */
+
+/* ============================================================
+   Root & Reset
+   ============================================================ */
+:root {
+    --primary:     #0d6efd;
+    --primary-dark:#0a58ca;
+    --sidebar-bg:  #1a1a2e;
+    --sidebar-fg:  #c8cfd8;
+    --sidebar-link:#90caf9;
+    --code-bg:     #f8f9fa;
+    --border:      #dee2e6;
+    --text:        #212529;
+    --text-muted:  #6c757d;
+    --header-h:    64px;
+    --font-sans:   -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                   "Helvetica Neue", Arial, sans-serif;
+    --font-mono:   SFMono-Regular, Menlo, Monaco, Consolas,
+                   "Liberation Mono", "Courier New", monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text);
+    background: #ffffff;
+}
+
+/* ============================================================
+   Links
+   ============================================================ */
+a:link, a:visited {
+    color: var(--primary);
+    text-decoration: none;
+}
+a:hover, a:focus {
+    color: var(--primary-dark);
+    text-decoration: underline;
+}
+
+/* ============================================================
+   Header / Top Nav Bar
+   ============================================================ */
+div.topNav, div.subNav,
+header.topNav, nav.topNav {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
+    color: #ffffff;
+    padding: 0 24px;
+    min-height: var(--header-h);
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.35);
+}
+
+div.topNav a:link, div.topNav a:visited,
+header.topNav a:link, header.topNav a:visited,
+nav.topNav a:link, nav.topNav a:visited {
+    color: #ffffff;
+    font-weight: 500;
+    padding: 6px 12px;
+    border-radius: 4px;
+    transition: background .15s;
+}
+div.topNav a:hover, header.topNav a:hover, nav.topNav a:hover {
+    background: rgba(255,255,255,.12);
+    text-decoration: none;
+}
+
+div.subNav {
+    background: #16213e;
+    min-height: 40px;
+    font-size: 13px;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+.topNavContainer, .subNavContainer {
+    max-width: 1400px;
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+/* ============================================================
+   Main Content Area
+   ============================================================ */
+div.contentContainer, div.header,
+main, .contentContainer {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 24px 32px;
+}
+
+/* ============================================================
+   Package / Overview Title
+   ============================================================ */
+div.header h1.title,
+div.header h2,
+.header h1.title {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--sidebar-bg);
+    border-bottom: 3px solid var(--primary);
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+/* ============================================================
+   Section Headings
+   ============================================================ */
+h1, h2, h3, h4 {
+    font-family: var(--font-sans);
+    color: var(--sidebar-bg);
+    font-weight: 600;
+}
+h2.title {
+    font-size: 22px;
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 8px;
+    margin-top: 32px;
+}
+h3 {
+    font-size: 18px;
+    color: #343a40;
+    margin-top: 24px;
+}
+
+/* ============================================================
+   Class / Method Summary Tables
+   ============================================================ */
+table.memberSummary, table.typeSummary,
+table.packagesSummary, table.overviewSummary,
+table.constantsSummary, table.deprecatedSummary,
+.summary-table, div.summary-table table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0 24px;
+    font-size: 13px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+table.memberSummary th, table.typeSummary th,
+table.packagesSummary th, table.overviewSummary th,
+.summary-table th {
+    background: #f1f3f5;
+    color: #343a40;
+    font-weight: 600;
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 2px solid var(--border);
+}
+
+table.memberSummary td, table.typeSummary td,
+table.packagesSummary td, table.overviewSummary td,
+.summary-table td {
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+}
+
+table.memberSummary tr:last-child td,
+table.typeSummary tr:last-child td,
+.summary-table tr:last-child td {
+    border-bottom: none;
+}
+
+table.memberSummary tr:hover td,
+table.typeSummary tr:hover td,
+.summary-table tr:hover td {
+    background: #f0f4ff;
+}
+
+/* Alternating row colors */
+table.memberSummary tr.altColor,
+table.typeSummary tr.altColor,
+.summary-table tr.altColor {
+    background: #fafbfc;
+}
+table.memberSummary tr.rowColor,
+table.typeSummary tr.rowColor {
+    background: #ffffff;
+}
+
+/* ============================================================
+   Method / Field Detail Blocks
+   ============================================================ */
+ul.blockList, ul.blockListLast {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+li.blockList {
+    margin: 0 0 24px;
+    padding: 0;
+}
+
+/* Method/field detail anchor sections */
+section.detail, div.details > ul > li {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+/* ============================================================
+   Method Signatures
+   ============================================================ */
+pre, code {
+    font-family: var(--font-mono);
+    font-size: 13px;
+}
+
+pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 14px 18px;
+    overflow-x: auto;
+    margin: 12px 0;
+    line-height: 1.5;
+}
+
+code {
+    background: var(--code-bg);
+    border: 1px solid #e0e3e7;
+    border-radius: 3px;
+    padding: 1px 5px;
+    color: #c7254e;
+    font-size: 12.5px;
+}
+
+/* Method signature blocks */
+div.memberSignature, span.memberNameLabel,
+.member-signature {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--primary);
+    border-radius: 0 5px 5px 0;
+    padding: 12px 16px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    margin: 8px 0 12px;
+    overflow-x: auto;
+}
+
+/* Return types, parameter types */
+span.returnType, span.paramLabel {
+    color: #0069c0;
+}
+
+/* ============================================================
+   Package Frame / Left Sidebar (framesets, legacy layout)
+   ============================================================ */
+body.packagesSummary, frame, frameset { /* legacy, ignored in modern HTML */ }
+
+/* Sidebar-style package list in non-frameset layout */
+div.leftContainer, div.leftColumn, .left-column {
+    background: var(--sidebar-bg);
+    color: var(--sidebar-fg);
+    min-height: 100vh;
+    padding: 16px 0;
+    width: 260px;
+    flex-shrink: 0;
+}
+
+div.leftContainer a:link,
+div.leftContainer a:visited,
+div.leftColumn a {
+    color: var(--sidebar-link);
+}
+div.leftContainer a:hover,
+div.leftColumn a:hover {
+    color: #ffffff;
+    text-decoration: underline;
+}
+
+/* ============================================================
+   Deprecated / Annotation Blocks
+   ============================================================ */
+div.deprecatedContent, span.deprecatedLabel {
+    background: #fff3cd;
+    border: 1px solid #ffc107;
+    border-left: 4px solid #ffc107;
+    border-radius: 4px;
+    padding: 8px 14px;
+    margin: 8px 0;
+    font-size: 13px;
+    color: #664d03;
+}
+
+div.block {
+    margin: 8px 0 12px;
+    line-height: 1.65;
+}
+
+/* ============================================================
+   Navigation Bar Links (ALL, FIELD, CONSTR, METHOD)
+   ============================================================ */
+div.subNav ul {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 4px;
+    flex-wrap: wrap;
+}
+div.subNav li {
+    margin: 0;
+}
+div.subNav a, div.subNav span {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 3px;
+    font-size: 12px;
+    color: var(--sidebar-link);
+}
+div.subNav a:hover {
+    background: rgba(255,255,255,.1);
+    text-decoration: none;
+    color: #fff;
+}
+
+/* ============================================================
+   Index / All Classes Page
+   ============================================================ */
+div.indexContainer {
+    column-count: 2;
+    column-gap: 32px;
+}
+@media (max-width: 700px) {
+    div.indexContainer { column-count: 1; }
+}
+
+div.indexContainer dl dt {
+    font-weight: 600;
+    color: var(--sidebar-bg);
+    margin-top: 16px;
+    font-size: 15px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 4px;
+}
+div.indexContainer dl dd {
+    margin: 4px 0 4px 16px;
+    font-size: 13px;
+}
+
+/* ============================================================
+   Footer / Bottom Bar
+   ============================================================ */
+div.bottomNav, footer {
+    background: #1a1a2e;
+    color: #8899aa;
+    text-align: center;
+    padding: 14px 24px;
+    font-size: 12px;
+    margin-top: 48px;
+    border-top: 1px solid rgba(255,255,255,.08);
+}
+div.bottomNav a:link, div.bottomNav a:visited, footer a {
+    color: var(--sidebar-link);
+}
+
+div.legalCopy {
+    background: #0f3460;
+    color: #8899aa;
+    text-align: center;
+    padding: 10px 24px;
+    font-size: 12px;
+}
+
+/* ============================================================
+   Search Box (JDK 9+ Javadoc)
+   ============================================================ */
+#search, input[type="text"]#search-input {
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 16px;
+    font-size: 13px;
+    outline: none;
+    width: 220px;
+    transition: border-color .2s, box-shadow .2s;
+}
+#search:focus, input[type="text"]#search-input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(13,110,253,.2);
+}
+
+/* ============================================================
+   Misc Utilities
+   ============================================================ */
+.typeNameLabel {
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--sidebar-bg);
+}
+
+span.modifiers { color: #0d6efd; }
+span.exceptions { color: #c0392b; }
+
+hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 24px 0;
+}
+
+/* Responsive: collapse padding on small screens */
+@media (max-width: 768px) {
+    div.contentContainer, div.header, main {
+        padding: 16px;
+    }
+    div.topNav {
+        padding: 0 12px;
+    }
+}

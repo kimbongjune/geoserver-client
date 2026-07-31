@@ -11,6 +11,7 @@ public class SerializerFactory {
 
     private final Map<DataFormat, Serializer> serializers;
 
+    /** Constructs a {@code SerializerFactory} with pre-initialized JSON and XML serializers. */
     public SerializerFactory() {
         this.serializers = new EnumMap<>(DataFormat.class);
         this.serializers.put(DataFormat.JSON, new JsonSerializer());

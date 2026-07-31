@@ -15,7 +15,9 @@ package io.github.kimbongjune.geoserverclient.serialization;
  */
 public enum DataFormat {
 
+    /** JSON format ({@code application/json}). */
     JSON("application/json", ".json"),
+    /** XML format ({@code application/xml}). */
     XML("application/xml", "");
 
     private final String contentType;
@@ -28,6 +30,8 @@ public enum DataFormat {
 
     /**
      * HTTP Content-Type / Accept header value.
+     *
+     * @return the content type string
      */
     public String getContentType() {
         return contentType;
@@ -36,6 +40,8 @@ public enum DataFormat {
     /**
      * URL path extension for format negotiation (e.g., ".json").
      * Empty string for XML (GeoServer default).
+     *
+     * @return the path extension
      */
     public String getPathExtension() {
         return pathExtension;

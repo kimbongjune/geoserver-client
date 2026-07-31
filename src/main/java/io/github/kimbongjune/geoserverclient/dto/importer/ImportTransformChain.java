@@ -10,7 +10,7 @@ import java.util.Collections;
  * DTO for an import transform chain.
  *
  * <p>Maps the {@code "transformChain"} object returned by
- * {@code GET /rest/imports/{id}/tasks/{taskId}/transforms}.</p>
+ * {@code GET /rest/imports/{id}/tasks/{taskId}/transforms}.
  */
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -20,15 +20,26 @@ public class ImportTransformChain {
     private String type;
     private List<ImportTransform> transforms;
 
+    /** Constructs an empty {@code ImportTransformChain} for deserialization. */
     public ImportTransformChain() {}
 
-    public String getType() { return type; }
-    public List<ImportTransform> getTransforms() { return transforms == null ? null : Collections.unmodifiableList(transforms); }
+    /** @return the chain type ({@code "vector"} or {@code "raster"}) */
+    public String getType() {
+        return type;
+    }
+    /** @return the list of transforms in this chain */
+    public List<ImportTransform> getTransforms() {
+        return transforms == null ? null : Collections.unmodifiableList(transforms);
+    }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         ImportTransformChain that = (ImportTransformChain) o;
         return Objects.equals(type, that.type)
                 && Objects.equals(transforms, that.transforms);

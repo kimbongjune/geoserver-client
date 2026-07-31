@@ -51,16 +51,34 @@ public class UpdateCoverageRequest {
         this.defaultInterpolationMethod = b.defaultInterpolationMethod;
     }
 
-    public static Builder builder() { return new Builder(); }
+    public static Builder builder() {
+        return new Builder();
+    }
 
-    public String  getName()                       { return name; }
-    public String  getTitle()                      { return title; }
-    public String  getDescription()                { return description; }
-    public String  getSrs()                        { return srs; }
-    public String  getProjectionPolicy()           { return projectionPolicy; }
-    public Boolean getEnabled()                    { return enabled; }
-    public Boolean getAdvertised()                 { return advertised; }
-    public String  getDefaultInterpolationMethod() { return defaultInterpolationMethod; }
+    public String  getName() {
+        return name;
+    }
+    public String  getTitle() {
+        return title;
+    }
+    public String  getDescription() {
+        return description;
+    }
+    public String  getSrs() {
+        return srs;
+    }
+    public String  getProjectionPolicy() {
+        return projectionPolicy;
+    }
+    public Boolean getEnabled() {
+        return enabled;
+    }
+    public Boolean getAdvertised() {
+        return advertised;
+    }
+    public String  getDefaultInterpolationMethod() {
+        return defaultInterpolationMethod;
+    }
 
     public static class Builder {
         private String  name;
@@ -72,20 +90,42 @@ public class UpdateCoverageRequest {
         private Boolean advertised;
         private String  defaultInterpolationMethod;
 
-        public Builder name(String name)                              { this.name = name;                           return this; }
-        public Builder title(String title)                            { this.title = title;                         return this; }
-        public Builder description(String description)                { this.description = description;             return this; }
-        public Builder srs(String srs)                                { this.srs = srs;                             return this; }
-        public Builder projectionPolicy(String projectionPolicy)      { this.projectionPolicy = projectionPolicy;   return this; }
-        public Builder enabled(Boolean enabled)                       { this.enabled = enabled;                     return this; }
-        public Builder advertised(Boolean advertised)                 { this.advertised = advertised;               return this; }
-        public Builder defaultInterpolationMethod(String method)      { this.defaultInterpolationMethod = method;   return this; }
-        public UpdateCoverageRequest build()                          { return new UpdateCoverageRequest(this); }
+        public Builder name(String name) {
+            this.name = name;                           return this;
+        }
+        public Builder title(String title) {
+            this.title = title;                         return this;
+        }
+        public Builder description(String description) {
+            this.description = description;             return this;
+        }
+        public Builder srs(String srs) {
+            this.srs = srs;                             return this;
+        }
+        public Builder projectionPolicy(String projectionPolicy) {
+            this.projectionPolicy = projectionPolicy;   return this;
+        }
+        public Builder enabled(Boolean enabled) {
+            this.enabled = enabled;                     return this;
+        }
+        public Builder advertised(Boolean advertised) {
+            this.advertised = advertised;               return this;
+        }
+        public Builder defaultInterpolationMethod(String method) {
+            this.defaultInterpolationMethod = method;   return this;
+        }
+        public UpdateCoverageRequest build() {
+            return new UpdateCoverageRequest(this);
+        }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             Builder that = (Builder) o;
             return Objects.equals(name, that.name)
                     && Objects.equals(title, that.title)
@@ -119,8 +159,12 @@ public class UpdateCoverageRequest {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         UpdateCoverageRequest that = (UpdateCoverageRequest) o;
         return Objects.equals(name, that.name)
                 && Objects.equals(title, that.title)

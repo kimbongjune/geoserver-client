@@ -67,38 +67,82 @@ public class WorkspaceSettings {
         return workspace != null && workspace.getName() != null;
     }
 
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
+    public String getId() {
+        return id;
+    }
+    public void setId(String id) {
+        this.id = id;
+    }
 
-    public WorkspaceRef getWorkspace() { return workspace; }
-    public void setWorkspace(WorkspaceRef workspace) { this.workspace = workspace; }
+    public WorkspaceRef getWorkspace() {
+        return workspace;
+    }
+    public void setWorkspace(WorkspaceRef workspace) {
+        this.workspace = workspace;
+    }
 
-    public Contact getContact() { return contact; }
-    public void setContact(Contact contact) { this.contact = contact; }
+    public Contact getContact() {
+        return contact;
+    }
+    public void setContact(Contact contact) {
+        this.contact = contact;
+    }
 
-    public String getCharset() { return charset; }
-    public void setCharset(String charset) { this.charset = charset; }
+    public String getCharset() {
+        return charset;
+    }
+    public void setCharset(String charset) {
+        this.charset = charset;
+    }
 
-    public Integer getNumDecimals() { return numDecimals; }
-    public void setNumDecimals(Integer numDecimals) { this.numDecimals = numDecimals; }
+    public Integer getNumDecimals() {
+        return numDecimals;
+    }
+    public void setNumDecimals(Integer numDecimals) {
+        this.numDecimals = numDecimals;
+    }
 
-    public Boolean getVerbose() { return verbose; }
-    public void setVerbose(Boolean verbose) { this.verbose = verbose; }
+    public Boolean getVerbose() {
+        return verbose;
+    }
+    public void setVerbose(Boolean verbose) {
+        this.verbose = verbose;
+    }
 
-    public Boolean getVerboseExceptions() { return verboseExceptions; }
-    public void setVerboseExceptions(Boolean verboseExceptions) { this.verboseExceptions = verboseExceptions; }
+    public Boolean getVerboseExceptions() {
+        return verboseExceptions;
+    }
+    public void setVerboseExceptions(Boolean verboseExceptions) {
+        this.verboseExceptions = verboseExceptions;
+    }
 
-    public Boolean getLocalWorkspaceIncludesPrefix() { return localWorkspaceIncludesPrefix; }
-    public void setLocalWorkspaceIncludesPrefix(Boolean localWorkspaceIncludesPrefix) { this.localWorkspaceIncludesPrefix = localWorkspaceIncludesPrefix; }
+    public Boolean getLocalWorkspaceIncludesPrefix() {
+        return localWorkspaceIncludesPrefix;
+    }
+    public void setLocalWorkspaceIncludesPrefix(Boolean localWorkspaceIncludesPrefix) {
+        this.localWorkspaceIncludesPrefix = localWorkspaceIncludesPrefix;
+    }
 
-    public Boolean getShowCreatedTimeColumnsInAdminList() { return showCreatedTimeColumnsInAdminList; }
-    public void setShowCreatedTimeColumnsInAdminList(Boolean v) { this.showCreatedTimeColumnsInAdminList = v; }
+    public Boolean getShowCreatedTimeColumnsInAdminList() {
+        return showCreatedTimeColumnsInAdminList;
+    }
+    public void setShowCreatedTimeColumnsInAdminList(Boolean v) {
+        this.showCreatedTimeColumnsInAdminList = v;
+    }
 
-    public Boolean getShowModifiedTimeColumnsInAdminList() { return showModifiedTimeColumnsInAdminList; }
-    public void setShowModifiedTimeColumnsInAdminList(Boolean v) { this.showModifiedTimeColumnsInAdminList = v; }
+    public Boolean getShowModifiedTimeColumnsInAdminList() {
+        return showModifiedTimeColumnsInAdminList;
+    }
+    public void setShowModifiedTimeColumnsInAdminList(Boolean v) {
+        this.showModifiedTimeColumnsInAdminList = v;
+    }
 
-    public Boolean getShowModifiedUserAdminList() { return showModifiedUserAdminList; }
-    public void setShowModifiedUserAdminList(Boolean v) { this.showModifiedUserAdminList = v; }
+    public Boolean getShowModifiedUserAdminList() {
+        return showModifiedUserAdminList;
+    }
+    public void setShowModifiedUserAdminList(Boolean v) {
+        this.showModifiedUserAdminList = v;
+    }
 
     //  Nested: WorkspaceRef 
 
@@ -117,19 +161,35 @@ public class WorkspaceSettings {
 
         public WorkspaceRef() {}
 
-        public String getName() { return name; }
-        public void setName(String name) { this.name = name; }
+        public String getName() {
+            return name;
+        }
+        public void setName(String name) {
+            this.name = name;
+        }
 
-        public Boolean getIsolated() { return isolated; }
-        public void setIsolated(Boolean isolated) { this.isolated = isolated; }
+        public Boolean getIsolated() {
+            return isolated;
+        }
+        public void setIsolated(Boolean isolated) {
+            this.isolated = isolated;
+        }
 
-        public String getDateCreated() { return dateCreated; }
-        public void setDateCreated(String dateCreated) { this.dateCreated = dateCreated; }
+        public String getDateCreated() {
+            return dateCreated;
+        }
+        public void setDateCreated(String dateCreated) {
+            this.dateCreated = dateCreated;
+        }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             WorkspaceRef that = (WorkspaceRef) o;
             return Objects.equals(name, that.name)
                     && Objects.equals(isolated, that.isolated)
@@ -153,8 +213,12 @@ public class WorkspaceSettings {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         WorkspaceSettings that = (WorkspaceSettings) o;
         return Objects.equals(id, that.id)
                 && Objects.equals(workspace, that.workspace)

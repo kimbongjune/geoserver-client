@@ -10,7 +10,7 @@ import java.util.Collections;
  * Request DTO for publishing a WMS (cascading) layer.
  *
  * <p>Builds the request body for
- * {@code POST /rest/workspaces/{ws}/wmsstores/{store}/wmslayers}.</p>
+ * {@code POST /rest/workspaces/{ws}/wmsstores/{store}/wmslayers}.
  *
  * <h2>Required fields</h2>
  * <ul>
@@ -51,6 +51,7 @@ public class PublishWmsLayerRequest {
      *
      * @param name       local layer name (required)
      * @param nativeName layer name in the remote WMS GetCapabilities (e.g. "ws:layerName")
+     * @return a new {@code PublishWmsLayerRequest}
      */
     public static PublishWmsLayerRequest of(String name, String nativeName) {
         return new PublishWmsLayerRequest(name, nativeName);
@@ -60,48 +61,209 @@ public class PublishWmsLayerRequest {
      * Alias for {@link #of(String, String)}, for callers who prefer the
      * {@code builder(...)...build()} spelling used by every {@code UpdateXxxRequest} in this
      * library. {@link #build()} is a no-op terminal call.
+     *
+     * @param name       local layer name (required)
+     * @param nativeName layer name in the remote WMS GetCapabilities
+     * @return a new {@code PublishWmsLayerRequest}
      */
     public static PublishWmsLayerRequest builder(String name, String nativeName) {
         return of(name, nativeName);
     }
 
-    public PublishWmsLayerRequest title(String title)                           { this.title = title; return this; }
-    public PublishWmsLayerRequest description(String description)               { this.description = description; return this; }
-    public PublishWmsLayerRequest abstractText(String abstractText)             { this.abstractText = abstractText; return this; }
-    public PublishWmsLayerRequest enabled(boolean enabled)                      { this.enabled = enabled; return this; }
-    public PublishWmsLayerRequest forcedRemoteStyle(String style)               { this.forcedRemoteStyle = style; return this; }
-    public PublishWmsLayerRequest preferredFormat(String format)                { this.preferredFormat = format; return this; }
-    public PublishWmsLayerRequest minScale(double minScale)                     { this.minScale = minScale; return this; }
-    public PublishWmsLayerRequest maxScale(double maxScale)                     { this.maxScale = maxScale; return this; }
-    public PublishWmsLayerRequest metadataBBoxRespected(boolean v)              { this.metadataBBoxRespected = v; return this; }
-    public PublishWmsLayerRequest selectedRemoteStyles(List<String> styles)     { this.selectedRemoteStyles = styles; return this; }
-    public PublishWmsLayerRequest vendorParameters(StringMap params)            { this.vendorParameters = params; return this; }
-    public PublishWmsLayerRequest srs(String srs)                               { this.srs = srs; return this; }
-    public PublishWmsLayerRequest projectionPolicy(String policy)               { this.projectionPolicy = policy; return this; }
+    /**
+     * Sets the layer title.
+     * @param title the title
+     * @return this instance for chaining
+     */
+    public PublishWmsLayerRequest title(String title) {
+        this.title = title; return this;
+    }
 
-    /** Terminal no-op for {@code builder(...)...build()} chains — returns {@code this}. */
-    public PublishWmsLayerRequest build() { return this; }
+    /**
+     * Sets the layer description.
+     * @param description the description
+     * @return this instance for chaining
+     */
+    public PublishWmsLayerRequest description(String description) {
+        this.description = description; return this;
+    }
 
-    public String getName()                         { return name; }
-    public String getNativeName()                   { return nativeName; }
-    public String getTitle()                        { return title; }
-    public String getDescription()                  { return description; }
-    public String getAbstractText()                 { return abstractText; }
-    public Boolean getEnabled()                     { return enabled; }
-    public String getForcedRemoteStyle()            { return forcedRemoteStyle; }
-    public String getPreferredFormat()              { return preferredFormat; }
-    public Double getMinScale()                     { return minScale; }
-    public Double getMaxScale()                     { return maxScale; }
-    public Boolean getMetadataBBoxRespected()       { return metadataBBoxRespected; }
-    public List<String> getSelectedRemoteStyles()   { return selectedRemoteStyles == null ? null : Collections.unmodifiableList(selectedRemoteStyles); }
-    public StringMap getVendorParameters()             { return vendorParameters; }
-    public String getSrs()                          { return srs; }
-    public String getProjectionPolicy()             { return projectionPolicy; }
+    /**
+     * Sets the layer abstract text.
+     * @param abstractText the abstract text
+     * @return this instance for chaining
+     */
+    public PublishWmsLayerRequest abstractText(String abstractText) {
+        this.abstractText = abstractText; return this;
+    }
+
+    /**
+     * Sets whether the layer is enabled.
+     * @param enabled {@code true} to enable
+     * @return this instance for chaining
+     */
+    public PublishWmsLayerRequest enabled(boolean enabled) {
+        this.enabled = enabled; return this;
+    }
+
+    /**
+     * Sets the forced remote style name.
+     * @param style the remote style name
+     * @return this instance for chaining
+     */
+    public PublishWmsLayerRequest forcedRemoteStyle(String style) {
+        this.forcedRemoteStyle = style; return this;
+    }
+
+    /**
+     * Sets the preferred remote image format.
+     * @param format the MIME type of the preferred format
+     * @return this instance for chaining
+     */
+    public PublishWmsLayerRequest preferredFormat(String format) {
+        this.preferredFormat = format; return this;
+    }
+
+    /**
+     * Sets the minimum scale denominator.
+     * @param minScale the minimum scale
+     * @return this instance for chaining
+     */
+    public PublishWmsLayerRequest minScale(double minScale) {
+        this.minScale = minScale; return this;
+    }
+
+    /**
+     * Sets the maximum scale denominator.
+     * @param maxScale the maximum scale
+     * @return this instance for chaining
+     */
+    public PublishWmsLayerRequest maxScale(double maxScale) {
+        this.maxScale = maxScale; return this;
+    }
+
+    /**
+     * Sets whether the remote server's bounding box is respected.
+     * @param v {@code true} to respect the remote bounding box
+     * @return this instance for chaining
+     */
+    public PublishWmsLayerRequest metadataBBoxRespected(boolean v) {
+        this.metadataBBoxRespected = v; return this;
+    }
+
+    /**
+     * Sets the list of selected remote styles.
+     * @param styles the style names to select
+     * @return this instance for chaining
+     */
+    public PublishWmsLayerRequest selectedRemoteStyles(List<String> styles) {
+        this.selectedRemoteStyles = styles; return this;
+    }
+
+    /**
+     * Sets the vendor parameters map.
+     * @param params the vendor parameters
+     * @return this instance for chaining
+     */
+    public PublishWmsLayerRequest vendorParameters(StringMap params) {
+        this.vendorParameters = params; return this;
+    }
+
+    /**
+     * Sets the SRS (spatial reference system).
+     * @param srs the SRS (e.g. {@code "EPSG:4326"})
+     * @return this instance for chaining
+     */
+    public PublishWmsLayerRequest srs(String srs) {
+        this.srs = srs; return this;
+    }
+
+    /**
+     * Sets the projection policy.
+     * @param policy the projection policy (e.g. {@code "REPROJECT_TO_DECLARED"})
+     * @return this instance for chaining
+     */
+    public PublishWmsLayerRequest projectionPolicy(String policy) {
+        this.projectionPolicy = policy; return this;
+    }
+
+    /**
+     * Terminal no-op for {@code builder(...)...build()} chains.
+     * @return this instance
+     */
+    public PublishWmsLayerRequest build() {
+        return this;
+    }
+
+    /** @return the local layer name */
+    public String getName() {
+        return name;
+    }
+    /** @return the native layer name in the remote WMS */
+    public String getNativeName() {
+        return nativeName;
+    }
+    /** @return the layer title */
+    public String getTitle() {
+        return title;
+    }
+    /** @return the layer description */
+    public String getDescription() {
+        return description;
+    }
+    /** @return the layer abstract text */
+    public String getAbstractText() {
+        return abstractText;
+    }
+    /** @return {@code true} if the layer is enabled */
+    public Boolean getEnabled() {
+        return enabled;
+    }
+    /** @return the forced remote style name */
+    public String getForcedRemoteStyle() {
+        return forcedRemoteStyle;
+    }
+    /** @return the preferred remote image format */
+    public String getPreferredFormat() {
+        return preferredFormat;
+    }
+    /** @return the minimum scale denominator */
+    public Double getMinScale() {
+        return minScale;
+    }
+    /** @return the maximum scale denominator */
+    public Double getMaxScale() {
+        return maxScale;
+    }
+    /** @return {@code true} if the remote bounding box is respected */
+    public Boolean getMetadataBBoxRespected() {
+        return metadataBBoxRespected;
+    }
+    /** @return the selected remote style names */
+    public List<String> getSelectedRemoteStyles() {
+        return selectedRemoteStyles == null ? null : Collections.unmodifiableList(selectedRemoteStyles);
+    }
+    /** @return the vendor parameters map */
+    public StringMap getVendorParameters() {
+        return vendorParameters;
+    }
+    /** @return the SRS (e.g. {@code "EPSG:4326"}) */
+    public String getSrs() {
+        return srs;
+    }
+    /** @return the projection policy */
+    public String getProjectionPolicy() {
+        return projectionPolicy;
+    }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         PublishWmsLayerRequest that = (PublishWmsLayerRequest) o;
         return Objects.equals(name, that.name)
                 && Objects.equals(nativeName, that.nativeName)

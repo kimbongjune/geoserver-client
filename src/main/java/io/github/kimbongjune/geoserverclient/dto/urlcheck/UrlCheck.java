@@ -19,15 +19,27 @@ public class UrlCheck {
 
     public UrlCheck() {}
 
-    public String getName()        { return name; }
-    public String getDescription() { return description; }
-    public boolean isEnabled()     { return enabled; }
-    public String getRegex()       { return regex; }
+    public String getName() {
+        return name;
+    }
+    public String getDescription() {
+        return description;
+    }
+    public boolean isEnabled() {
+        return enabled;
+    }
+    public String getRegex() {
+        return regex;
+    }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         UrlCheck that = (UrlCheck) o;
         return Objects.equals(name, that.name)
                 && Objects.equals(description, that.description)
