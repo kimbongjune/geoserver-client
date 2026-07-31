@@ -8,7 +8,7 @@
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.kimbongjune/geoserver-client.svg)](https://central.sonatype.com/artifact/io.github.kimbongjune/geoserver-client)
 [![Java](https://img.shields.io/badge/Java-8%2B-blue)](#requirements)
 [![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
-[![Javadoc](https://img.shields.io/badge/javadoc-1.0.0-blue)](https://kimbongjune.github.io/geoserver-client/apidocs/)
+[![Javadoc](https://img.shields.io/badge/javadoc-1.0.1-blue)](https://kimbongjune.github.io/geoserver-client/apidocs/)
 
 A modern Java 8+ client library for the GeoServer REST API — a complete, actively-tested replacement for the legacy `geoserver-manager` library.
 
