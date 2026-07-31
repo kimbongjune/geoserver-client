@@ -181,7 +181,6 @@
                     <charset>UTF-8</charset>
                     <encoding>UTF-8</encoding>
                     <docencoding>UTF-8</docencoding>
-</stylesheetfile>
                     <bottom>&lt;small&gt;Copyright &amp;copy; 2026 Kim Bongjune. Licensed under the MIT License.&lt;/small&gt;</bottom>
                 </configuration>
                 <executions>
