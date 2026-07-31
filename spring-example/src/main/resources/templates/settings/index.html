@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Settings — geoserver-client explorer</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header th:replace="~{fragments/nav :: nav}"></header>
+<main>
+    <h1>Settings</h1>
+    <div class="flash ok" th:if="${ok}" th:text="${ok}"></div>
+    <div class="flash err" th:if="${err}" th:text="${err}"></div>
+
+    <div class="form-panel">
+        <h3>Global settings</h3>
+        <form action="/settings/global" method="post">
+            <div class="field">
+                <label>Number of decimals</label>
+                <input type="number" name="numDecimals" th:value="${global.numDecimals}"/>
+            </div>
+            <div class="checkline">
+                <input type="checkbox" name="verbose" value="true" id="verbose" th:checked="${global.verbose}"/>
+                <label for="verbose">Verbose</label>
+            </div>
+            <button class="btn" type="submit">Save</button>
+        </form>
+    </div>
+
+    <div class="form-panel">
+        <h3>Contact</h3>
+        <form action="/settings/contact" method="post">
+            <div class="field">
+                <label>Organization</label>
+                <input type="text" name="organization" th:value="${contact.contactOrganization}"/>
+            </div>
+            <button class="btn" type="submit">Save</button>
+        </form>
+    </div>
+
+    <div class="form-panel">
+        <h3>Logging</h3>
+        <form action="/settings/logging" method="post">
+            <div class="field">
+                <label>Level</label>
+                <input type="text" name="level" th:value="${logging.level}"/>
+            </div>
+            <div class="checkline">
+                <input type="checkbox" name="stdOutLogging" value="true" id="stdout" th:checked="${logging.stdOutLogging}"/>
+                <label for="stdout">stdout logging</label>
+            </div>
+            <button class="btn" type="submit">Save</button>
+        </form>
+    </div>
+
+    <h2>Global service settings</h2>
+    <div class="form-panel" th:each="svcName : ${ {'wms','wfs','wcs','wmts'} }">
+        <h3 th:text="${svcName.toUpperCase()} + ' service'"></h3>
+        <form th:action="@{'/settings/service/' + ${svcName} + '/update'}" method="post"
+              th:with="svc=${svcName == 'wms' ? wms : (svcName == 'wfs' ? wfs : (svcName == 'wcs' ? wcs : wmts))}">
+            <div class="field">
+                <label>Title</label>
+                <input type="text" name="title" th:value="${svc.title}"/>
+            </div>
+            <div class="checkline">
+                <input type="checkbox" name="enabled" value="true" th:id="${svcName} + '_enabled'" th:checked="${svc.enabled}"/>
+                <label th:for="${svcName} + '_enabled'">Enabled</label>
+            </div>
+            <div class="checkline">
+                <input type="checkbox" name="verbose" value="true" th:id="${svcName} + '_verbose'" th:checked="${svc.verbose}"/>
+                <label th:for="${svcName} + '_verbose'">Verbose</label>
+            </div>
+            <button class="btn" type="submit">Save</button>
+        </form>
+    </div>
+
+    <h2>Workspace-scoped settings</h2>
+    <div class="form-panel">
+        <form action="/settings" method="get">
+            <label style="color:#9aa0a6;font-size:13px">Workspace:</label>
+            <select name="ws" onchange="this.form.submit()">
+                <option value="">-- choose --</option>
+                <option th:each="w : ${workspaces}" th:value="${w.name}" th:text="${w.name}"
+                        th:selected="${w.name == selectedWs}"></option>
+            </select>
+        </form>
+    </div>
+
+    <div th:if="${selectedWs != null and !selectedWs.isEmpty()}">
+        <div class="form-panel">
+            <h3>General workspace settings</h3>
+            <p class="sub" th:if="${workspaceSettings == null}">No local settings override yet for '<span th:text="${selectedWs}"></span>' — falls back to global settings.</p>
+            <form th:if="${workspaceSettings == null}" action="/settings/workspace/create" method="post">
+                <input type="hidden" name="ws" th:value="${selectedWs}"/>
+                <button class="btn" type="submit">Create local settings</button>
+            </form>
+            <form th:if="${workspaceSettings != null}" th:action="@{'/settings/workspace/' + ${selectedWs} + '/update'}" method="post">
+                <div class="field">
+                    <label>Number of decimals</label>
+                    <input type="number" name="numDecimals" th:value="${workspaceSettings.numDecimals}"/>
+                </div>
+                <div class="checkline">
+                    <input type="checkbox" name="verbose" value="true" id="ws_verbose" th:checked="${workspaceSettings.verbose}"/>
+                    <label for="ws_verbose">Verbose</label>
+                </div>
+                <button class="btn small secondary" type="submit">Save</button>
+            </form>
+            <form th:if="${workspaceSettings != null}" th:action="@{'/settings/workspace/' + ${selectedWs} + '/delete'}" method="post" style="margin-top:6px">
+                <button class="btn small danger" type="submit">Delete local settings</button>
+            </form>
+        </div>
+
+        <div class="form-panel" th:each="svcName : ${ {'wms','wfs','wcs','wmts'} }">
+            <h3 th:text="${svcName.toUpperCase()} + ' — workspace override'"></h3>
+            <p class="sub"
+               th:with="wsSvc=${svcName == 'wms' ? wsWms : (svcName == 'wfs' ? wsWfs : (svcName == 'wcs' ? wsWcs : wsWmts))}"
+               th:if="${wsSvc == null}">No workspace override — falls back to the global <span th:text="${svcName.toUpperCase()}"></span> settings above.</p>
+            <form th:action="@{'/settings/service/' + ${svcName} + '/workspace/' + ${selectedWs} + '/save'}" method="post"
+                  th:with="wsSvc=${svcName == 'wms' ? wsWms : (svcName == 'wfs' ? wsWfs : (svcName == 'wcs' ? wsWcs : wsWmts))}">
+                <div class="field">
+                    <label>Title</label>
+                    <input type="text" name="title" th:value="${wsSvc != null ? wsSvc.title : ''}"/>
+                </div>
+                <div class="checkline">
+                    <input type="checkbox" name="enabled" value="true" th:id="'ws_' + ${svcName} + '_enabled'"
+                           th:checked="${wsSvc == null or wsSvc.enabled}"/>
+                    <label th:for="'ws_' + ${svcName} + '_enabled'">Enabled</label>
+                </div>
+                <div class="checkline">
+                    <input type="checkbox" name="verbose" value="true" th:id="'ws_' + ${svcName} + '_verbose'"
+                           th:checked="${wsSvc != null and wsSvc.verbose}"/>
+                    <label th:for="'ws_' + ${svcName} + '_verbose'">Verbose</label>
+                </div>
+                <button class="btn small secondary" type="submit">Save override</button>
+            </form>
+            <form th:if="${(svcName == 'wms' ? wsWms : (svcName == 'wfs' ? wsWfs : (svcName == 'wcs' ? wsWcs : wsWmts)) ) != null}"
+                  th:action="@{'/settings/service/' + ${svcName} + '/workspace/' + ${selectedWs} + '/delete'}" method="post" style="margin-top:6px">
+                <button class="btn small danger" type="submit">Remove override</button>
+            </form>
+        </div>
+    </div>
+</main>
+</body>
+</html>

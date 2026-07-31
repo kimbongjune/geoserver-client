@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Layers — geoserver-client explorer</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header th:replace="~{fragments/nav :: nav}"></header>
+<main>
+    <h1>Layers</h1>
+    <p class="sub">Every published layer across every workspace.</p>
+    <table class="datatable">
+        <thead><tr><th>Name</th><th></th></tr></thead>
+        <tbody>
+        <tr th:each="l : ${layers}">
+            <td th:text="${l.name}"></td>
+            <td class="actions">
+                <a class="btn small secondary" th:href="@{'/layers/' + ${l.name}}">Edit</a>
+                <a class="btn small secondary" th:href="@{'/map'(layer=${l.name})}">View on map</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</main>
+</body>
+</html>

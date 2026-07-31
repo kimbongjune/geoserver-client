@@ -1,0 +1,19 @@
+<header th:fragment="nav">
+    <div class="brand"><a th:href="@{/}">geoserver-client explorer</a></div>
+    <nav class="navlinks">
+        <a th:href="@{/workspaces}">Workspaces</a>
+        <a th:href="@{/vector}">Vector Data</a>
+        <a th:href="@{/raster}">Raster Data</a>
+        <a th:href="@{/styles}">Styles</a>
+        <a th:href="@{/layers}">Layers</a>
+        <a th:href="@{/layergroups}">Layer Groups</a>
+        <a th:href="@{/security}">Security</a>
+        <a th:href="@{/settings}">Settings</a>
+        <a th:href="@{/gwc}">GWC</a>
+        <a th:href="@{/importer}">Importer</a>
+        <a th:href="@{/cascading}">WMS/WMTS Cascading</a>
+        <a th:href="@{/templates}">Templates</a>
+        <a th:href="@{/about}">About</a>
+        <a th:href="@{/map}" class="highlight">Map</a>
+    </nav>
+</header>

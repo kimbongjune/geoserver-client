@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Workspaces — geoserver-client explorer</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header th:replace="~{fragments/nav :: nav}"></header>
+<main>
+    <h1>Workspaces &amp; Namespaces</h1>
+    <p class="sub">Current default workspace: <code th:text="${defaultWorkspace}"></code></p>
+    <div class="flash ok" th:if="${ok}" th:text="${ok}"></div>
+    <div class="flash err" th:if="${err}" th:text="${err}"></div>
+
+    <div class="form-panel">
+        <h3>Create workspace</h3>
+        <form action="/workspaces/create" method="post">
+            <div class="field">
+                <label>Name</label>
+                <input type="text" name="name" required placeholder="my_workspace"/>
+            </div>
+            <div class="checkline">
+                <input type="checkbox" name="isolated" value="true" id="ws_iso"/>
+                <label for="ws_iso">Isolated</label>
+            </div>
+            <div class="checkline">
+                <input type="checkbox" name="setAsDefault" value="true" id="ws_def"/>
+                <label for="ws_def">Set as default</label>
+            </div>
+            <button class="btn" type="submit">Create</button>
+        </form>
+    </div>
+
+    <table class="datatable">
+        <thead><tr><th>Name</th><th>Default</th><th></th></tr></thead>
+        <tbody>
+        <tr th:each="w : ${workspaces}">
+            <td th:text="${w.name}"></td>
+            <td>
+                <span th:if="${w.name == defaultWorkspace}" class="badge on">default</span>
+            </td>
+            <td class="actions">
+                <form th:action="@{'/workspaces/' + ${w.name} + '/update'}" method="post" style="display:inline-flex;gap:4px;align-items:center">
+                    <input type="text" name="newName" placeholder="rename to..." style="width:110px"/>
+                    <input type="checkbox" name="isolated" value="true" th:id="'iso_' + ${w.name}"/>
+                    <label th:for="'iso_' + ${w.name}" style="margin:0;font-size:11px">isolated</label>
+                    <button class="btn small secondary" type="submit">Update</button>
+                </form>
+                <form th:action="@{'/workspaces/' + ${w.name} + '/set-default'}" method="post">
+                    <button class="btn small secondary" type="submit">Set default</button>
+                </form>
+                <form th:action="@{'/workspaces/' + ${w.name} + '/delete'}" method="post">
+                    <button class="btn small danger" type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h2>Namespaces</h2>
+    <div class="form-panel">
+        <h3>Create standalone namespace</h3>
+        <form action="/workspaces/namespaces/create" method="post">
+            <div class="field">
+                <label>Prefix</label>
+                <input type="text" name="prefix" required placeholder="acme"/>
+            </div>
+            <div class="field">
+                <label>URI</label>
+                <input type="text" name="uri" required placeholder="http://acme.example.com"/>
+            </div>
+            <div class="checkline">
+                <input type="checkbox" name="isolated" value="true" id="ns_iso"/>
+                <label for="ns_iso">Isolated</label>
+            </div>
+            <button class="btn" type="submit">Create</button>
+        </form>
+    </div>
+
+    <table class="datatable">
+        <thead><tr><th>Prefix</th><th></th></tr></thead>
+        <tbody>
+        <tr th:each="ns : ${namespaces}">
+            <td th:text="${ns.name}"></td>
+            <td class="actions">
+                <form th:action="@{'/workspaces/namespaces/' + ${ns.name} + '/update'}" method="post" style="display:inline-flex;gap:4px">
+                    <input type="text" name="uri" placeholder="new URI" style="min-width:160px"/>
+                    <button class="btn small secondary" type="submit">Update URI</button>
+                </form>
+                <form th:action="@{'/workspaces/namespaces/' + ${ns.name} + '/set-default'}" method="post">
+                    <button class="btn small secondary" type="submit">Set default</button>
+                </form>
+                <form th:action="@{'/workspaces/namespaces/' + ${ns.name} + '/delete'}" method="post">
+                    <button class="btn small danger" type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</main>
+</body>
+</html>

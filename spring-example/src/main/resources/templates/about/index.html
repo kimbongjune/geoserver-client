@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>About — geoserver-client explorer</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header th:replace="~{fragments/nav :: nav}"></header>
+<main>
+    <h1>About &amp; Resources</h1>
+    <div class="flash ok" th:if="${ok}" th:text="${ok}"></div>
+
+    <div class="form-panel">
+        <h3>Server maintenance</h3>
+        <p class="sub">Fonts registered: <span th:text="${fonts}"></span> —
+            Root templates: <span th:text="${rootTemplates}"></span> —
+            App-schema transform available: <span th:text="${transformAvailable}"></span></p>
+        <form action="/about/reset" method="post" style="display:inline">
+            <button class="btn secondary" type="submit">Reset caches</button>
+        </form>
+        <form action="/about/reload" method="post" style="display:inline;margin-left:8px">
+            <button class="btn secondary" type="submit">Reload catalog</button>
+        </form>
+    </div>
+
+    <h2>Version</h2>
+    <table class="datatable">
+        <thead><tr><th>Component</th><th>Version</th></tr></thead>
+        <tbody>
+        <tr th:each="v : ${version}">
+            <td th:text="${v.name}"></td>
+            <td th:text="${v.properties.get('Version')}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h2>Module status (first 8)</h2>
+    <table class="datatable">
+        <thead><tr><th>Module</th></tr></thead>
+        <tbody>
+        <tr th:each="m, iter : ${status}" th:if="${iter.index} lt 8">
+            <td th:text="${m.name}"></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h2>Data directory browser</h2>
+    <p class="sub">Currently browsing: <code th:text="${dir != null ? dir : '(root)'}"></code>
+        <a th:if="${dir != null and !dir.isEmpty()}" th:href="@{/about}" style="margin-left:10px">&#8593; root</a>
+    </p>
+
+    <div th:if="${isFile}" class="form-panel">
+        <h3>File content</h3>
+        <pre style="white-space:pre-wrap;word-break:break-all;max-height:400px;overflow:auto" th:text="${fileContent}"></pre>
+    </div>
+
+    <table class="datatable" th:unless="${isFile}">
+        <thead><tr><th>Name</th></tr></thead>
+        <tbody>
+        <tr th:each="r : ${resources}">
+            <td>
+                <a th:href="@{/about(dir=${dir != null and !dir.isEmpty() ? dir + '/' + r.name : r.name})}"
+                   th:text="${r.name}"></a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h2>Recent monitored requests</h2>
+    <table class="datatable">
+        <thead><tr><th>ID</th></tr></thead>
+        <tbody>
+        <tr th:each="r : ${recentRequests}"><td th:text="${r.name}"></td></tr>
+        </tbody>
+    </table>
+</main>
+</body>
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Raster Data — geoserver-client explorer</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header th:replace="~{fragments/nav :: nav}"></header>
+<main>
+    <h1>Raster Data</h1>
+    <p class="sub">GeoTIFF, ArcGrid, WorldImage, GeoPackage, and ImageMosaic coverage stores.</p>
+    <div class="flash ok" th:if="${ok}" th:text="${ok}"></div>
+    <div class="flash err" th:if="${err}" th:text="${err}"></div>
+
+    <form action="/raster" method="get" style="margin-bottom:16px">
+        <label style="color:#9aa0a6;font-size:13px">Workspace:</label>
+        <select name="ws" onchange="this.form.submit()">
+            <option value="">-- choose --</option>
+            <option th:each="w : ${workspaces}" th:value="${w.name}" th:text="${w.name}"
+                    th:selected="${w.name == selectedWs}"></option>
+        </select>
+    </form>
+
+    <div class="form-panel" th:if="${selectedWs != null and !selectedWs.isEmpty()}">
+        <h3>Upload a raster file (configure=first — auto-creates store + coverage + layer)</h3>
+        <form action="/raster/upload" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="ws" th:value="${selectedWs}"/>
+            <div class="field">
+                <label>Store name</label>
+                <input type="text" name="storeName" required placeholder="my_raster_store"/>
+            </div>
+            <div class="field">
+                <label>Format</label>
+                <select name="format">
+                    <option value="geotiff">GeoTIFF</option>
+                    <option value="arcgrid">ArcGrid (.asc)</option>
+                    <option value="worldimage">WorldImage (ZIP of image + world file)</option>
+                    <option value="geopackage%20(mosaic)">GeoPackage (raster)</option>
+                    <option value="imagemosaic">ImageMosaic (ZIP of one starter tile)</option>
+                </select>
+            </div>
+            <div class="field">
+                <label>File</label>
+                <input type="file" name="file" required/>
+            </div>
+            <button class="btn" type="submit">Upload &amp; publish</button>
+        </form>
+    </div>
+
+    <table class="datatable" th:if="${stores != null}">
+        <thead><tr><th>Store</th><th></th></tr></thead>
+        <tbody>
+        <tr th:each="s : ${stores}">
+            <td th:text="${s.name}"></td>
+            <td class="actions">
+                <a class="btn small secondary" th:href="@{'/raster'(ws=${selectedWs},store=${s.name})}">Coverages</a>
+                <form th:action="@{'/raster/' + ${selectedWs} + '/' + ${s.name} + '/reset'}" method="post">
+                    <button class="btn small secondary" type="submit">Reset</button>
+                </form>
+                <form th:action="@{'/raster/' + ${selectedWs} + '/' + ${s.name} + '/delete'}" method="post">
+                    <button class="btn small danger" type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div th:if="${selectedStore != null and !selectedStore.isEmpty()}">
+        <h2>Coverages in <code th:text="${selectedWs} + ':' + ${selectedStore} + ' (' + ${storeType} + ')'"></code></h2>
+
+        <div class="form-panel" th:if="${storeDetail != null}">
+            <h3>Store details</h3>
+            <p class="sub">Type: <code th:text="${storeDetail.type}"></code> —
+                URL: <code th:text="${storeDetail.url}"></code> —
+                Created: <code th:text="${storeDetail.dateCreated}"></code> —
+                Modified: <code th:text="${storeDetail.dateModified}"></code></p>
+            <form th:action="@{'/raster/' + ${selectedWs} + '/' + ${selectedStore} + '/update'}" method="post">
+                <div class="field">
+                    <label>Rename store to</label>
+                    <input type="text" name="newName" placeholder="leave blank to keep name"/>
+                </div>
+                <div class="field">
+                    <label>URL</label>
+                    <input type="text" name="url" th:value="${storeDetail.url}" style="min-width:320px"/>
+                </div>
+                <div class="field">
+                    <label>Description</label>
+                    <input type="text" name="description" th:value="${storeDetail.description}" placeholder="optional description"/>
+                </div>
+                <div class="checkline">
+                    <input type="checkbox" name="enabled" value="true" id="rstore_en" th:checked="${storeDetail.enabled}"/>
+                    <label for="rstore_en">Enabled</label>
+                </div>
+                <div class="checkline">
+                    <input type="checkbox" name="disableOnConnFailure" value="true" id="rstore_dcf" th:checked="${storeDetail.disableOnConnFailure}"/>
+                    <label for="rstore_dcf">Disable on connection failure</label>
+                </div>
+                <button class="btn small secondary" type="submit">Update store</button>
+            </form>
+        </div>
+
+        <table class="datatable">
+            <thead><tr><th>Name</th><th>SRS</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+            <tr th:each="c : ${coverages}">
+                <td th:text="${c.name}"></td>
+                <td th:text="${c.srs}"></td>
+                <td>
+                    <span th:if="${c.enabled}" class="badge on">enabled</span>
+                    <span th:unless="${c.enabled}" class="badge off">disabled</span>
+                </td>
+                <td class="actions">
+                    <form th:action="@{'/raster/' + ${selectedWs} + '/' + ${selectedStore} + '/coverages/' + ${c.name} + '/enable'}" method="post">
+                        <input type="hidden" name="enabled" th:value="${!c.enabled}"/>
+                        <button class="btn small secondary" type="submit" th:text="${c.enabled} ? 'Disable' : 'Enable'"></button>
+                    </form>
+                    <a class="btn small secondary" th:href="@{'/map'(layer=${selectedWs} + ':' + ${c.name})}">View on map</a>
+                    <form th:action="@{'/raster/' + ${selectedWs} + '/' + ${selectedStore} + '/coverages/' + ${c.name} + '/delete'}" method="post">
+                        <button class="btn small danger" type="submit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            <tr th:each="c : ${coverages}">
+                <td colspan="4">
+                    <form th:action="@{'/raster/' + ${selectedWs} + '/' + ${selectedStore} + '/coverages/' + ${c.name} + '/update'}"
+                          method="post" style="display:inline-flex;gap:4px;align-items:center;flex-wrap:wrap">
+                        <span class="sub" style="font-size:11px" th:text="${c.name} + ':'"></span>
+                        <input type="text" name="newName" placeholder="rename to..." style="width:120px"/>
+                        <input type="text" name="title" th:value="${c.title}" placeholder="title" style="width:120px"/>
+                        <input type="text" name="srs" th:value="${c.srs}" placeholder="SRS" style="width:110px"/>
+                        <input type="text" name="projectionPolicy" placeholder="projectionPolicy" style="width:110px"/>
+                        <input type="text" name="defaultInterpolationMethod" placeholder="interpolation" style="width:100px"/>
+                        <div class="checkline">
+                            <input type="checkbox" name="advertised" value="true" th:id="'adv_' + ${c.name}" checked/>
+                            <label th:for="'adv_' + ${c.name}" style="margin:0;font-size:11px">advertised</label>
+                        </div>
+                        <button class="btn small secondary" type="submit">Save</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div th:if="${storeType == 'ImageMosaic'}">
+            <h3>ImageMosaic — harvest another granule</h3>
+            <div class="form-panel">
+                <form th:action="@{'/raster/' + ${selectedWs} + '/' + ${selectedStore} + '/harvest'}"
+                      method="post" enctype="multipart/form-data">
+                    <div class="field">
+                        <label>Granule's own format (not "imagemosaic")</label>
+                        <select name="format">
+                            <option value="geotiff">GeoTIFF</option>
+                            <option value="arcgrid">ArcGrid</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>File</label>
+                        <input type="file" name="file" required/>
+                    </div>
+                    <button class="btn" type="submit">Harvest</button>
+                </form>
+            </div>
+
+            <h3>Granules</h3>
+            <table class="datatable">
+                <thead><tr><th>Granule ID</th><th>Location</th><th></th></tr></thead>
+                <tbody>
+                <tr th:each="g : ${granules}">
+                    <td th:text="${g.id}"></td>
+                    <td th:text="${g.properties.get('location')}"></td>
+                    <td class="actions">
+                        <form th:action="@{'/raster/' + ${selectedWs} + '/' + ${selectedStore} + '/granules/' + ${g.id} + '/delete'}" method="post">
+                            <button class="btn small danger" type="submit">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Importer — geoserver-client explorer</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header th:replace="~{fragments/nav :: nav}"></header>
+<main>
+    <h1>Importer</h1>
+    <p class="sub">Upload arbitrary files (e.g. GeoJSON) with explicit target-store control.</p>
+    <div class="flash ok" th:if="${ok}" th:text="${ok}"></div>
+    <div class="flash err" th:if="${err}" th:text="${err}"></div>
+
+    <div class="form-panel">
+        <h3>Create import context</h3>
+        <form action="/importer/create" method="post">
+            <select name="ws">
+                <option th:each="w : ${workspaces}" th:value="${w.name}" th:text="${w.name}"></option>
+            </select>
+            <button class="btn" type="submit">Create</button>
+        </form>
+    </div>
+
+    <table class="datatable">
+        <thead><tr><th>Import ID</th><th>State</th><th></th></tr></thead>
+        <tbody>
+        <tr th:each="i : ${imports}">
+            <td th:text="${i.id}"></td>
+            <td th:text="${i.state}"></td>
+            <td class="actions">
+                <a class="btn small secondary" th:href="@{'/importer'(importId=${i.id})}">Open</a>
+                <form th:action="@{'/importer/' + ${i.id} + '/delete'}" method="post">
+                    <button class="btn small danger" type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div th:if="${selectedImport != null}">
+        <h2>Import #<span th:text="${selectedImport.id}"></span> (<span th:text="${selectedImport.state}"></span>)</h2>
+
+        <div class="form-panel">
+            <h3>Upload a file (e.g. .geojson)</h3>
+            <form th:action="@{'/importer/' + ${selectedImport.id} + '/upload'}" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="ws" th:value="${selectedWs}"/>
+                <input type="file" name="file" required/>
+                <button class="btn" type="submit">Upload</button>
+            </form>
+        </div>
+
+        <div th:if="${firstTaskId != null}">
+            <h3>Task #<span th:text="${firstTaskId}"></span></h3>
+            <p class="sub" th:if="${target != null}">Current target: <code th:text="${target}"></code></p>
+
+            <div class="form-panel" th:if="${selectedWs != null}">
+                <h3>Set task target (required before running a GeoJSON import)</h3>
+                <form th:action="@{'/importer/' + ${selectedImport.id} + '/' + ${firstTaskId} + '/target'}" method="post">
+                    <input type="hidden" name="ws" th:value="${selectedWs}"/>
+                    <select name="storeName">
+                        <option th:each="d : ${datastores}" th:value="${d.name}" th:text="${d.name}"></option>
+                    </select>
+                    <button class="btn" type="submit">Set target</button>
+                </form>
+            </div>
+
+            <form th:action="@{'/importer/' + ${selectedImport.id} + '/run'}" method="post">
+                <input type="hidden" name="ws" th:value="${selectedWs}"/>
+                <button class="btn" type="submit">Run import</button>
+            </form>
+        </div>
+    </div>
+</main>
+</body>
+</html>
