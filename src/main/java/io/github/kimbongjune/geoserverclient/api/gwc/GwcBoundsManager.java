@@ -18,9 +18,24 @@ import io.github.kimbongjune.geoserverclient.serialization.SerializerFactory;
  * POST/PUT/DELETE are not supported (405). Only {@code type=java} is accepted.
  *
  * <p>Returns tile-index bounds, not geographic coordinates. See {@link GwcTileBounds}.
+ *
+ * <h2>Usage example</h2>
+ * <pre>{@code
+ * GwcBoundsManager mgr = client.gwcBounds();
+ * GwcTileBounds bounds = mgr.getBounds("sf%3Aarchsites", "EPSG:4326");
+ * }</pre>
+ *
+ * @since 1.0.0
  */
 public class GwcBoundsManager extends AbstractManager {
 
+    /**
+     * Constructs a new GwcBoundsManager.
+     *
+     * @param httpClient        HTTP client used to communicate with GeoServer
+     * @param serializerFactory factory for JSON/XML serializers
+     * @param defaultFormat     default serialization format (typically JSON)
+     */
     public GwcBoundsManager(GeoServerHttpClient httpClient,
                             SerializerFactory serializerFactory,
                             DataFormat defaultFormat) {
@@ -35,6 +50,7 @@ public class GwcBoundsManager extends AbstractManager {
      *
      * @param layer URL-encoded layer name (e.g., {@code sf%3Aarchsites} for {@code sf:archsites})
      * @param srs   the SRS/GridSet identifier (e.g., {@code EPSG:4326}, {@code EPSG:900913})
+     * @return tile-index bounds (min tile x/y/z and max tile x/y/z)
      */
     public GwcTileBounds getBounds(String layer, String srs) {
         requireNonEmpty(layer, "layer");

@@ -11,9 +11,9 @@ import java.util.Collections;
  * DTO for cascading WMS layer details.
  *
  * <p>Maps the response body of
- * {@code GET /rest/workspaces/{ws}/wmsstores/{store}/wmslayers/{layer}}.</p>
+ * {@code GET /rest/workspaces/{ws}/wmsstores/{store}/wmslayers/{layer}}.
  *
- * <p>Verified against GeoServer 2.28.2.</p>
+ * <p>Verified against GeoServer 2.28.2.
  *
  * <h2>Known bugs (GeoServer 2.28.2)</h2>
  * <ul>
@@ -92,29 +92,75 @@ public class WmsLayer {
 
     public WmsLayer() {}
 
-    public String getName()                       { return name; }
-    public String getNativeName()                 { return nativeName; }
-    public NamespaceLink getNamespace()           { return namespace; }
-    public String getTitle()                      { return title; }
-    public String getDescription()               { return description; }
-    public String getAbstractText()              { return abstractText; }
-    public Keywords getKeywords()                { return keywords; }
-    public Object getNativeCRS()                 { return nativeCRS; }
-    public String getSrs()                       { return srs; }
-    public BoundingBox getNativeBoundingBox()     { return nativeBoundingBox; }
-    public BoundingBox getLatLonBoundingBox()     { return latLonBoundingBox; }
-    public String getProjectionPolicy()           { return projectionPolicy; }
-    public Boolean getEnabled()                  { return enabled; }
-    public boolean isEnabled()                   { return Boolean.TRUE.equals(enabled); }
-    public StoreLink getStore()                  { return store; }
-    public Boolean getServiceConfiguration()      { return serviceConfiguration; }
-    public String getForcedRemoteStyle()          { return forcedRemoteStyle; }
-    public String getPreferredFormat()            { return preferredFormat; }
-    public Double getMinScale()                   { return minScale; }
-    public Double getMaxScale()                   { return maxScale; }
-    public Boolean getMetadataBBoxRespected()     { return metadataBBoxRespected; }
-    public List<String> getSelectedRemoteStyles() { return selectedRemoteStyles == null ? null : Collections.unmodifiableList(selectedRemoteStyles); }
-    public VendorParameters getVendorParameters() { return vendorParameters; }
+    public String getName() {
+        return name;
+    }
+    public String getNativeName() {
+        return nativeName;
+    }
+    public NamespaceLink getNamespace() {
+        return namespace;
+    }
+    public String getTitle() {
+        return title;
+    }
+    public String getDescription() {
+        return description;
+    }
+    public String getAbstractText() {
+        return abstractText;
+    }
+    public Keywords getKeywords() {
+        return keywords;
+    }
+    public Object getNativeCRS() {
+        return nativeCRS;
+    }
+    public String getSrs() {
+        return srs;
+    }
+    public BoundingBox getNativeBoundingBox() {
+        return nativeBoundingBox;
+    }
+    public BoundingBox getLatLonBoundingBox() {
+        return latLonBoundingBox;
+    }
+    public String getProjectionPolicy() {
+        return projectionPolicy;
+    }
+    public Boolean getEnabled() {
+        return enabled;
+    }
+    public boolean isEnabled() {
+        return Boolean.TRUE.equals(enabled);
+    }
+    public StoreLink getStore() {
+        return store;
+    }
+    public Boolean getServiceConfiguration() {
+        return serviceConfiguration;
+    }
+    public String getForcedRemoteStyle() {
+        return forcedRemoteStyle;
+    }
+    public String getPreferredFormat() {
+        return preferredFormat;
+    }
+    public Double getMinScale() {
+        return minScale;
+    }
+    public Double getMaxScale() {
+        return maxScale;
+    }
+    public Boolean getMetadataBBoxRespected() {
+        return metadataBBoxRespected;
+    }
+    public List<String> getSelectedRemoteStyles() {
+        return selectedRemoteStyles == null ? null : Collections.unmodifiableList(selectedRemoteStyles);
+    }
+    public VendorParameters getVendorParameters() {
+        return vendorParameters;
+    }
 
     // Inner DTOs
 
@@ -123,13 +169,21 @@ public class WmsLayer {
         @JsonProperty("name") private String name;
         @JsonProperty("href") private String href;
         public NamespaceLink() {}
-        public String getName() { return name; }
-        public String getHref() { return href; }
+        public String getName() {
+            return name;
+        }
+        public String getHref() {
+            return href;
+        }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             NamespaceLink that = (NamespaceLink) o;
             return Objects.equals(name, that.name)
                     && Objects.equals(href, that.href);
@@ -161,14 +215,24 @@ public class WmsLayer {
         @JsonProperty("name")   private String name;
         @JsonProperty("href")   private String href;
         public StoreLink() {}
-        public String getStoreClass() { return storeClass; }
-        public String getName()       { return name; }
-        public String getHref()       { return href; }
+        public String getStoreClass() {
+            return storeClass;
+        }
+        public String getName() {
+            return name;
+        }
+        public String getHref() {
+            return href;
+        }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             StoreLink that = (StoreLink) o;
             return Objects.equals(storeClass, that.storeClass)
                     && Objects.equals(name, that.name)
@@ -202,16 +266,30 @@ public class WmsLayer {
         @JsonProperty("maxy") private Double maxy;
         @JsonProperty("crs")  private Object crs;
         public BoundingBox() {}
-        public Double getMinx() { return minx; }
-        public Double getMaxx() { return maxx; }
-        public Double getMiny() { return miny; }
-        public Double getMaxy() { return maxy; }
-        public Object getCrs()  { return crs; }
+        public Double getMinx() {
+            return minx;
+        }
+        public Double getMaxx() {
+            return maxx;
+        }
+        public Double getMiny() {
+            return miny;
+        }
+        public Double getMaxy() {
+            return maxy;
+        }
+        public Object getCrs() {
+            return crs;
+        }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             BoundingBox that = (BoundingBox) o;
             return Objects.equals(minx, that.minx)
                     && Objects.equals(maxx, that.maxx)
@@ -241,12 +319,18 @@ public class WmsLayer {
     public static class Keywords {
         @JsonProperty("string") private List<String> strings;
         public Keywords() {}
-        public List<String> getStrings() { return strings == null ? null : Collections.unmodifiableList(strings); }
+        public List<String> getStrings() {
+            return strings == null ? null : Collections.unmodifiableList(strings);
+        }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             Keywords that = (Keywords) o;
             return Objects.equals(strings, that.strings);
         }
@@ -267,7 +351,7 @@ public class WmsLayer {
     /**
      * Wrapper for {@code vendorParameters}.
      *
-     * <p>The {@code entry} field in the GET response may be a single map or a list of maps:</p>
+     * <p>The {@code entry} field in the GET response may be a single map or a list of maps:
      * <pre>
      * Single: {"entry": {"@key": "K", "$": "V"}}
      * Multiple: {"entry": [{"@key": "K1", "$": "V1"}, ...]}
@@ -278,12 +362,18 @@ public class WmsLayer {
         @JsonProperty("entry") private Object entry;
         public VendorParameters() {}
         /** Raw {@code entry} value — either a single {@code Map} or a {@code List<Map>}. */
-        public Object getEntry() { return entry; }
+        public Object getEntry() {
+            return entry;
+        }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             VendorParameters that = (VendorParameters) o;
             return Objects.equals(entry, that.entry);
         }
@@ -303,8 +393,12 @@ public class WmsLayer {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         WmsLayer that = (WmsLayer) o;
         return Objects.equals(name, that.name)
                 && Objects.equals(nativeName, that.nativeName)

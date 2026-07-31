@@ -45,43 +45,142 @@ public class GlobalSettings {
     @JsonProperty("resourceErrorHandling")
     private String resourceErrorHandling;
 
+    /** Constructs an empty {@code GlobalSettings} for deserialization. */
     public GlobalSettings() {}
 
-    public GeoServerSettings getSettings() { return settings; }
-    public void setSettings(GeoServerSettings settings) { this.settings = settings; }
+    /** @return the GeoServer settings block */
+    public GeoServerSettings getSettings() {
+        return settings;
+    }
+    /**
+     * Sets the GeoServer settings block.
+     * @param settings the settings
+     */
+    public void setSettings(GeoServerSettings settings) {
+        this.settings = settings;
+    }
 
-    public Jai getJai() { return jai; }
-    public void setJai(Jai jai) { this.jai = jai; }
+    /** @return the JAI settings block */
+    public Jai getJai() {
+        return jai;
+    }
+    /**
+     * Sets the JAI settings block.
+     * @param jai the JAI settings
+     */
+    public void setJai(Jai jai) {
+        this.jai = jai;
+    }
 
-    public CoverageAccess getCoverageAccess() { return coverageAccess; }
-    public void setCoverageAccess(CoverageAccess coverageAccess) { this.coverageAccess = coverageAccess; }
+    /** @return the coverage access settings block */
+    public CoverageAccess getCoverageAccess() {
+        return coverageAccess;
+    }
+    /**
+     * Sets the coverage access settings block.
+     * @param coverageAccess the coverage access settings
+     */
+    public void setCoverageAccess(CoverageAccess coverageAccess) {
+        this.coverageAccess = coverageAccess;
+    }
 
-    public Integer getUpdateSequence() { return updateSequence; }
-    public void setUpdateSequence(Integer updateSequence) { this.updateSequence = updateSequence; }
+    /** @return the update sequence number */
+    public Integer getUpdateSequence() {
+        return updateSequence;
+    }
+    /**
+     * Sets the update sequence number.
+     * @param updateSequence the update sequence
+     */
+    public void setUpdateSequence(Integer updateSequence) {
+        this.updateSequence = updateSequence;
+    }
 
-    public Integer getFeatureTypeCacheSize() { return featureTypeCacheSize; }
-    public void setFeatureTypeCacheSize(Integer featureTypeCacheSize) { this.featureTypeCacheSize = featureTypeCacheSize; }
+    /** @return the feature type cache size */
+    public Integer getFeatureTypeCacheSize() {
+        return featureTypeCacheSize;
+    }
+    /**
+     * Sets the feature type cache size.
+     * @param featureTypeCacheSize the cache size
+     */
+    public void setFeatureTypeCacheSize(Integer featureTypeCacheSize) {
+        this.featureTypeCacheSize = featureTypeCacheSize;
+    }
 
-    public Boolean getGlobalServices() { return globalServices; }
-    public void setGlobalServices(Boolean globalServices) { this.globalServices = globalServices; }
+    /** @return {@code true} if global services are enabled */
+    public Boolean getGlobalServices() {
+        return globalServices;
+    }
+    /**
+     * Sets whether global services are enabled.
+     * @param globalServices {@code true} to enable
+     */
+    public void setGlobalServices(Boolean globalServices) {
+        this.globalServices = globalServices;
+    }
 
-    public Integer getXmlPostRequestLogBufferSize() { return xmlPostRequestLogBufferSize; }
-    public void setXmlPostRequestLogBufferSize(Integer xmlPostRequestLogBufferSize) { this.xmlPostRequestLogBufferSize = xmlPostRequestLogBufferSize; }
+    /** @return the XML POST request log buffer size */
+    public Integer getXmlPostRequestLogBufferSize() {
+        return xmlPostRequestLogBufferSize;
+    }
+    /**
+     * Sets the XML POST request log buffer size.
+     * @param xmlPostRequestLogBufferSize the buffer size
+     */
+    public void setXmlPostRequestLogBufferSize(Integer xmlPostRequestLogBufferSize) {
+        this.xmlPostRequestLogBufferSize = xmlPostRequestLogBufferSize;
+    }
 
-    public Boolean getTrailingSlashMatch() { return trailingSlashMatch; }
-    public void setTrailingSlashMatch(Boolean trailingSlashMatch) { this.trailingSlashMatch = trailingSlashMatch; }
+    /** @return {@code true} if trailing slash matching is enabled */
+    public Boolean getTrailingSlashMatch() {
+        return trailingSlashMatch;
+    }
+    /**
+     * Sets whether trailing slash matching is enabled.
+     * @param trailingSlashMatch {@code true} to enable
+     */
+    public void setTrailingSlashMatch(Boolean trailingSlashMatch) {
+        this.trailingSlashMatch = trailingSlashMatch;
+    }
 
-    public String getWebUIMode() { return webUIMode; }
-    public void setWebUIMode(String webUIMode) { this.webUIMode = webUIMode; }
+    /** @return the web UI mode */
+    public String getWebUIMode() {
+        return webUIMode;
+    }
+    /**
+     * Sets the web UI mode.
+     * @param webUIMode the web UI mode
+     */
+    public void setWebUIMode(String webUIMode) {
+        this.webUIMode = webUIMode;
+    }
 
-    public Boolean getAllowStoredQueriesPerWorkspace() { return allowStoredQueriesPerWorkspace; }
-    public void setAllowStoredQueriesPerWorkspace(Boolean allowStoredQueriesPerWorkspace) { this.allowStoredQueriesPerWorkspace = allowStoredQueriesPerWorkspace; }
+    /** @return {@code true} if stored queries per workspace are allowed */
+    public Boolean getAllowStoredQueriesPerWorkspace() {
+        return allowStoredQueriesPerWorkspace;
+    }
+    /**
+     * Sets whether stored queries per workspace are allowed.
+     * @param allowStoredQueriesPerWorkspace {@code true} to allow
+     */
+    public void setAllowStoredQueriesPerWorkspace(Boolean allowStoredQueriesPerWorkspace) {
+        this.allowStoredQueriesPerWorkspace = allowStoredQueriesPerWorkspace;
+    }
 
-    public String getResourceErrorHandling() { return resourceErrorHandling; }
-    public void setResourceErrorHandling(String resourceErrorHandling) { this.resourceErrorHandling = resourceErrorHandling; }
+    /** @return the resource error handling mode */
+    public String getResourceErrorHandling() {
+        return resourceErrorHandling;
+    }
+    /**
+     * Sets the resource error handling mode.
+     * @param resourceErrorHandling the mode
+     */
+    public void setResourceErrorHandling(String resourceErrorHandling) {
+        this.resourceErrorHandling = resourceErrorHandling;
+    }
 
-    //  Nested: GeoServerSettings 
-
+    /** Nested GeoServer-specific settings (contact, charset, decimal places, etc.). */
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class GeoServerSettings {
@@ -119,45 +218,149 @@ public class GlobalSettings {
         @JsonProperty("useHeadersProxyURL")
         private Boolean useHeadersProxyURL;
 
+        /** Constructs an empty {@code GeoServerSettings} for deserialization. */
         public GeoServerSettings() {}
 
-        public String getId() { return id; }
-        public void setId(String id) { this.id = id; }
+        /** @return the settings ID */
+        public String getId() {
+            return id;
+        }
+        /**
+         * Sets the settings ID.
+         * @param id the ID
+         */
+        public void setId(String id) {
+            this.id = id;
+        }
 
-        public Contact getContact() { return contact; }
-        public void setContact(Contact contact) { this.contact = contact; }
+        /** @return the contact information */
+        public Contact getContact() {
+            return contact;
+        }
+        /**
+         * Sets the contact information.
+         * @param contact the contact
+         */
+        public void setContact(Contact contact) {
+            this.contact = contact;
+        }
 
-        public String getCharset() { return charset; }
-        public void setCharset(String charset) { this.charset = charset; }
+        /** @return the default character set */
+        public String getCharset() {
+            return charset;
+        }
+        /**
+         * Sets the default character set.
+         * @param charset the charset
+         */
+        public void setCharset(String charset) {
+            this.charset = charset;
+        }
 
-        public Integer getNumDecimals() { return numDecimals; }
-        public void setNumDecimals(Integer numDecimals) { this.numDecimals = numDecimals; }
+        /** @return the number of decimal places */
+        public Integer getNumDecimals() {
+            return numDecimals;
+        }
+        /**
+         * Sets the number of decimal places.
+         * @param numDecimals the decimal count
+         */
+        public void setNumDecimals(Integer numDecimals) {
+            this.numDecimals = numDecimals;
+        }
 
-        public Boolean getVerbose() { return verbose; }
-        public void setVerbose(Boolean verbose) { this.verbose = verbose; }
+        /** @return {@code true} if verbose output is enabled */
+        public Boolean getVerbose() {
+            return verbose;
+        }
+        /**
+         * Sets verbose output.
+         * @param verbose {@code true} to enable
+         */
+        public void setVerbose(Boolean verbose) {
+            this.verbose = verbose;
+        }
 
-        public Boolean getVerboseExceptions() { return verboseExceptions; }
-        public void setVerboseExceptions(Boolean verboseExceptions) { this.verboseExceptions = verboseExceptions; }
+        /** @return {@code true} if verbose exceptions are enabled */
+        public Boolean getVerboseExceptions() {
+            return verboseExceptions;
+        }
+        /**
+         * Sets verbose exceptions.
+         * @param verboseExceptions {@code true} to enable
+         */
+        public void setVerboseExceptions(Boolean verboseExceptions) {
+            this.verboseExceptions = verboseExceptions;
+        }
 
-        public Boolean getLocalWorkspaceIncludesPrefix() { return localWorkspaceIncludesPrefix; }
-        public void setLocalWorkspaceIncludesPrefix(Boolean localWorkspaceIncludesPrefix) { this.localWorkspaceIncludesPrefix = localWorkspaceIncludesPrefix; }
+        /** @return {@code true} if the local workspace includes the prefix */
+        public Boolean getLocalWorkspaceIncludesPrefix() {
+            return localWorkspaceIncludesPrefix;
+        }
+        /**
+         * Sets whether local workspace includes prefix.
+         * @param localWorkspaceIncludesPrefix {@code true} to include
+         */
+        public void setLocalWorkspaceIncludesPrefix(Boolean localWorkspaceIncludesPrefix) {
+            this.localWorkspaceIncludesPrefix = localWorkspaceIncludesPrefix;
+        }
 
-        public Boolean getShowCreatedTimeColumnsInAdminList() { return showCreatedTimeColumnsInAdminList; }
-        public void setShowCreatedTimeColumnsInAdminList(Boolean v) { this.showCreatedTimeColumnsInAdminList = v; }
+        /** @return {@code true} if created-time columns are shown in admin list */
+        public Boolean getShowCreatedTimeColumnsInAdminList() {
+            return showCreatedTimeColumnsInAdminList;
+        }
+        /**
+         * Sets whether created-time columns are shown.
+         * @param v {@code true} to show
+         */
+        public void setShowCreatedTimeColumnsInAdminList(Boolean v) {
+            this.showCreatedTimeColumnsInAdminList = v;
+        }
 
-        public Boolean getShowModifiedTimeColumnsInAdminList() { return showModifiedTimeColumnsInAdminList; }
-        public void setShowModifiedTimeColumnsInAdminList(Boolean v) { this.showModifiedTimeColumnsInAdminList = v; }
+        /** @return {@code true} if modified-time columns are shown in admin list */
+        public Boolean getShowModifiedTimeColumnsInAdminList() {
+            return showModifiedTimeColumnsInAdminList;
+        }
+        /**
+         * Sets whether modified-time columns are shown.
+         * @param v {@code true} to show
+         */
+        public void setShowModifiedTimeColumnsInAdminList(Boolean v) {
+            this.showModifiedTimeColumnsInAdminList = v;
+        }
 
-        public Boolean getShowModifiedUserAdminList() { return showModifiedUserAdminList; }
-        public void setShowModifiedUserAdminList(Boolean v) { this.showModifiedUserAdminList = v; }
+        /** @return {@code true} if modified-user column is shown in admin list */
+        public Boolean getShowModifiedUserAdminList() {
+            return showModifiedUserAdminList;
+        }
+        /**
+         * Sets whether modified-user column is shown.
+         * @param v {@code true} to show
+         */
+        public void setShowModifiedUserAdminList(Boolean v) {
+            this.showModifiedUserAdminList = v;
+        }
 
-        public Boolean getUseHeadersProxyURL() { return useHeadersProxyURL; }
-        public void setUseHeadersProxyURL(Boolean useHeadersProxyURL) { this.useHeadersProxyURL = useHeadersProxyURL; }
+        /** @return {@code true} if proxy URL from headers is used */
+        public Boolean getUseHeadersProxyURL() {
+            return useHeadersProxyURL;
+        }
+        /**
+         * Sets whether proxy URL from headers is used.
+         * @param useHeadersProxyURL {@code true} to use
+         */
+        public void setUseHeadersProxyURL(Boolean useHeadersProxyURL) {
+            this.useHeadersProxyURL = useHeadersProxyURL;
+        }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             GeoServerSettings that = (GeoServerSettings) o;
             return Objects.equals(id, that.id)
                     && Objects.equals(contact, that.contact)
@@ -195,8 +398,7 @@ public class GlobalSettings {
         }
     }
 
-    //  Nested: Jai 
-
+    /** Java Advanced Imaging (JAI) settings (tile size, memory, PNG encoder, etc.). */
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class Jai {
@@ -225,36 +427,113 @@ public class GlobalSettings {
         @JsonProperty("pngEncoderType")
         private String pngEncoderType;
 
+        /** Constructs an empty {@code Jai} for deserialization. */
         public Jai() {}
 
-        public Boolean getAllowInterpolation() { return allowInterpolation; }
-        public void setAllowInterpolation(Boolean allowInterpolation) { this.allowInterpolation = allowInterpolation; }
+        /** @return {@code true} if interpolation is allowed */
+        public Boolean getAllowInterpolation() {
+            return allowInterpolation;
+        }
+        /**
+         * Sets whether interpolation is allowed.
+         * @param allowInterpolation {@code true} to allow
+         */
+        public void setAllowInterpolation(Boolean allowInterpolation) {
+            this.allowInterpolation = allowInterpolation;
+        }
 
-        public Boolean getRecycling() { return recycling; }
-        public void setRecycling(Boolean recycling) { this.recycling = recycling; }
+        /** @return {@code true} if tile recycling is enabled */
+        public Boolean getRecycling() {
+            return recycling;
+        }
+        /**
+         * Sets whether tile recycling is enabled.
+         * @param recycling {@code true} to enable
+         */
+        public void setRecycling(Boolean recycling) {
+            this.recycling = recycling;
+        }
 
-        public Integer getTilePriority() { return tilePriority; }
-        public void setTilePriority(Integer tilePriority) { this.tilePriority = tilePriority; }
+        /** @return the tile processing priority */
+        public Integer getTilePriority() {
+            return tilePriority;
+        }
+        /**
+         * Sets the tile processing priority.
+         * @param tilePriority the priority
+         */
+        public void setTilePriority(Integer tilePriority) {
+            this.tilePriority = tilePriority;
+        }
 
-        public Integer getTileThreads() { return tileThreads; }
-        public void setTileThreads(Integer tileThreads) { this.tileThreads = tileThreads; }
+        /** @return the number of tile processing threads */
+        public Integer getTileThreads() {
+            return tileThreads;
+        }
+        /**
+         * Sets the number of tile processing threads.
+         * @param tileThreads the thread count
+         */
+        public void setTileThreads(Integer tileThreads) {
+            this.tileThreads = tileThreads;
+        }
 
-        public Double getMemoryCapacity() { return memoryCapacity; }
-        public void setMemoryCapacity(Double memoryCapacity) { this.memoryCapacity = memoryCapacity; }
+        /** @return the memory capacity fraction (0.0-1.0) */
+        public Double getMemoryCapacity() {
+            return memoryCapacity;
+        }
+        /**
+         * Sets the memory capacity fraction.
+         * @param memoryCapacity the fraction (0.0-1.0)
+         */
+        public void setMemoryCapacity(Double memoryCapacity) {
+            this.memoryCapacity = memoryCapacity;
+        }
 
-        public Double getMemoryThreshold() { return memoryThreshold; }
-        public void setMemoryThreshold(Double memoryThreshold) { this.memoryThreshold = memoryThreshold; }
+        /** @return the memory threshold fraction (0.0-1.0) */
+        public Double getMemoryThreshold() {
+            return memoryThreshold;
+        }
+        /**
+         * Sets the memory threshold fraction.
+         * @param memoryThreshold the fraction (0.0-1.0)
+         */
+        public void setMemoryThreshold(Double memoryThreshold) {
+            this.memoryThreshold = memoryThreshold;
+        }
 
-        public Boolean getImageIOCache() { return imageIOCache; }
-        public void setImageIOCache(Boolean imageIOCache) { this.imageIOCache = imageIOCache; }
+        /** @return {@code true} if ImageIO caching is enabled */
+        public Boolean getImageIOCache() {
+            return imageIOCache;
+        }
+        /**
+         * Sets whether ImageIO caching is enabled.
+         * @param imageIOCache {@code true} to enable
+         */
+        public void setImageIOCache(Boolean imageIOCache) {
+            this.imageIOCache = imageIOCache;
+        }
 
-        public String getPngEncoderType() { return pngEncoderType; }
-        public void setPngEncoderType(String pngEncoderType) { this.pngEncoderType = pngEncoderType; }
+        /** @return the PNG encoder type */
+        public String getPngEncoderType() {
+            return pngEncoderType;
+        }
+        /**
+         * Sets the PNG encoder type.
+         * @param pngEncoderType the encoder type
+         */
+        public void setPngEncoderType(String pngEncoderType) {
+            this.pngEncoderType = pngEncoderType;
+        }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             Jai that = (Jai) o;
             return Objects.equals(allowInterpolation, that.allowInterpolation)
                     && Objects.equals(recycling, that.recycling)
@@ -286,8 +565,7 @@ public class GlobalSettings {
         }
     }
 
-    //  Nested: CoverageAccess 
-
+    /** Coverage access thread pool settings (pool size, queue type, cache threshold). */
     @JsonIgnoreProperties(ignoreUnknown = true)
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class CoverageAccess {
@@ -307,27 +585,77 @@ public class GlobalSettings {
         @JsonProperty("imageIOCacheThreshold")
         private Long imageIOCacheThreshold;
 
+        /** Constructs an empty {@code CoverageAccess} for deserialization. */
         public CoverageAccess() {}
 
-        public Integer getMaxPoolSize() { return maxPoolSize; }
-        public void setMaxPoolSize(Integer maxPoolSize) { this.maxPoolSize = maxPoolSize; }
+        /** @return the maximum thread pool size */
+        public Integer getMaxPoolSize() {
+            return maxPoolSize;
+        }
+        /**
+         * Sets the maximum thread pool size.
+         * @param maxPoolSize the pool size
+         */
+        public void setMaxPoolSize(Integer maxPoolSize) {
+            this.maxPoolSize = maxPoolSize;
+        }
 
-        public Integer getCorePoolSize() { return corePoolSize; }
-        public void setCorePoolSize(Integer corePoolSize) { this.corePoolSize = corePoolSize; }
+        /** @return the core thread pool size */
+        public Integer getCorePoolSize() {
+            return corePoolSize;
+        }
+        /**
+         * Sets the core thread pool size.
+         * @param corePoolSize the pool size
+         */
+        public void setCorePoolSize(Integer corePoolSize) {
+            this.corePoolSize = corePoolSize;
+        }
 
-        public Long getKeepAliveTime() { return keepAliveTime; }
-        public void setKeepAliveTime(Long keepAliveTime) { this.keepAliveTime = keepAliveTime; }
+        /** @return the thread keep-alive time in milliseconds */
+        public Long getKeepAliveTime() {
+            return keepAliveTime;
+        }
+        /**
+         * Sets the thread keep-alive time.
+         * @param keepAliveTime the keep-alive time in milliseconds
+         */
+        public void setKeepAliveTime(Long keepAliveTime) {
+            this.keepAliveTime = keepAliveTime;
+        }
 
-        public String getQueueType() { return queueType; }
-        public void setQueueType(String queueType) { this.queueType = queueType; }
+        /** @return the work queue type */
+        public String getQueueType() {
+            return queueType;
+        }
+        /**
+         * Sets the work queue type.
+         * @param queueType the queue type
+         */
+        public void setQueueType(String queueType) {
+            this.queueType = queueType;
+        }
 
-        public Long getImageIOCacheThreshold() { return imageIOCacheThreshold; }
-        public void setImageIOCacheThreshold(Long imageIOCacheThreshold) { this.imageIOCacheThreshold = imageIOCacheThreshold; }
+        /** @return the ImageIO cache threshold in bytes */
+        public Long getImageIOCacheThreshold() {
+            return imageIOCacheThreshold;
+        }
+        /**
+         * Sets the ImageIO cache threshold.
+         * @param imageIOCacheThreshold the threshold in bytes
+         */
+        public void setImageIOCacheThreshold(Long imageIOCacheThreshold) {
+            this.imageIOCacheThreshold = imageIOCacheThreshold;
+        }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             CoverageAccess that = (CoverageAccess) o;
             return Objects.equals(maxPoolSize, that.maxPoolSize)
                     && Objects.equals(corePoolSize, that.corePoolSize)
@@ -355,8 +683,12 @@ public class GlobalSettings {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         GlobalSettings that = (GlobalSettings) o;
         return Objects.equals(settings, that.settings)
                 && Objects.equals(jai, that.jai)

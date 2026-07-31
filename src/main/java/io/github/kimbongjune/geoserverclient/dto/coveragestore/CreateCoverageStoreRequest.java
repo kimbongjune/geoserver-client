@@ -25,7 +25,7 @@ import java.util.Objects;
  *
  * <p>On POST the {@code workspace.name} field must be present; otherwise GeoServer returns
  * HTTP 500 ("Store must be part of a workspace").
- * {@link io.github.kimbongjune.geoserverclient.api.coveragestore.CoverageStoreManager} injects it automatically.</p>
+ * {@link io.github.kimbongjune.geoserverclient.api.coveragestore.CoverageStoreManager} injects it automatically.
  */
 public class CreateCoverageStoreRequest {
 
@@ -43,6 +43,11 @@ public class CreateCoverageStoreRequest {
         this.name = name.trim();
     }
 
+    /**
+     * Creates a new request for a coverage store with the given name.
+     * @param name the coverage store name (must not be null or empty)
+     * @return a new request instance
+     */
     public static CreateCoverageStoreRequest of(String name) {
         return new CreateCoverageStoreRequest(name);
     }
@@ -51,50 +56,104 @@ public class CreateCoverageStoreRequest {
      * Alias for {@link #of(String)}, for callers who prefer the {@code builder(...)...build()}
      * spelling used by every {@code UpdateXxxRequest} in this library. {@link #build()} is a
      * no-op terminal call.
+     * @param name the coverage store name
+     * @return a new request instance
      */
     public static CreateCoverageStoreRequest builder(String name) {
         return of(name);
     }
 
+    /**
+     * Sets the store type.
+     * @param type the store type (e.g. {@code "GeoTIFF"})
+     * @return this request
+     */
     public CreateCoverageStoreRequest type(String type) {
         this.type = type;
         return this;
     }
 
+    /**
+     * Sets the store description.
+     * @param description the description
+     * @return this request
+     */
     public CreateCoverageStoreRequest description(String description) {
         this.description = description;
         return this;
     }
 
+    /**
+     * Sets the store data URL.
+     * @param url the data URL
+     * @return this request
+     */
     public CreateCoverageStoreRequest url(String url) {
         this.url = url;
         return this;
     }
 
+    /**
+     * Sets whether this store is enabled.
+     * @param enabled {@code true} to enable
+     * @return this request
+     */
     public CreateCoverageStoreRequest enabled(Boolean enabled) {
         this.enabled = enabled;
         return this;
     }
 
+    /**
+     * Sets whether to disable the store on connection failure.
+     * @param disableOnConnFailure {@code true} to disable on connection failure
+     * @return this request
+     */
     public CreateCoverageStoreRequest disableOnConnFailure(Boolean disableOnConnFailure) {
         this.disableOnConnFailure = disableOnConnFailure;
         return this;
     }
 
-    /** Terminal no-op for {@code builder(...)...build()} chains — returns {@code this}. */
-    public CreateCoverageStoreRequest build() { return this; }
+    /**
+     * Terminal no-op for {@code builder(...)...build()} chains.
+     * @return this request
+     */
+    public CreateCoverageStoreRequest build() {
+        return this;
+    }
 
-    public String getName()                   { return name; }
-    public String getType()                   { return type; }
-    public String getDescription()            { return description; }
-    public String getUrl()                    { return url; }
-    public Boolean getEnabled()               { return enabled; }
-    public Boolean getDisableOnConnFailure()  { return disableOnConnFailure; }
+    /** @return the store name */
+    public String getName() {
+        return name;
+    }
+    /** @return the store type */
+    public String getType() {
+        return type;
+    }
+    /** @return the store description */
+    public String getDescription() {
+        return description;
+    }
+    /** @return the store data URL */
+    public String getUrl() {
+        return url;
+    }
+    /** @return {@code true} if enabled */
+    public Boolean getEnabled() {
+        return enabled;
+    }
+    /** @return {@code true} if store is disabled on connection failure */
+    public Boolean getDisableOnConnFailure() {
+        return disableOnConnFailure;
+    }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         CreateCoverageStoreRequest that = (CreateCoverageStoreRequest) o;
         return Objects.equals(name, that.name)
                 && Objects.equals(type, that.type)

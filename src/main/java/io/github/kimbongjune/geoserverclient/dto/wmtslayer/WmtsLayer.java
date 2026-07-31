@@ -11,14 +11,14 @@ import java.util.Collections;
  * DTO for cascading WMTS layer details.
  *
  * <p>Maps the response body of
- * {@code GET /rest/workspaces/{ws}/wmtsstores/{store}/layers/{layer}}.</p>
+ * {@code GET /rest/workspaces/{ws}/wmtsstores/{store}/layers/{layer}}.
  *
- * <p>Verified against GeoServer 2.28.2.</p>
+ * <p>Verified against GeoServer 2.28.2.
  *
  * <p><b>Differences from WmsLayer:</b><br>
  * WmtsLayer does not have WMS-specific fields ({@code forcedRemoteStyle}, {@code preferredFormat},
  * {@code minScale}, {@code maxScale}, {@code metadataBBoxRespected}, {@code selectedRemoteStyles},
- * {@code vendorParameters}). Instead, it includes the {@code advertised} field.</p>
+ * {@code vendorParameters}). Instead, it includes the {@code advertised} field.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WmtsLayer {
@@ -76,24 +76,60 @@ public class WmtsLayer {
 
     public WmtsLayer() {}
 
-    public String getName()                       { return name; }
-    public String getNativeName()                 { return nativeName; }
-    public NamespaceLink getNamespace()           { return namespace; }
-    public String getTitle()                      { return title; }
-    public String getDescription()               { return description; }
-    public String getAbstractText()              { return abstractText; }
-    public Keywords getKeywords()                { return keywords; }
-    public Object getNativeCRS()                 { return nativeCRS; }
-    public String getSrs()                       { return srs; }
-    public BoundingBox getNativeBoundingBox()     { return nativeBoundingBox; }
-    public BoundingBox getLatLonBoundingBox()     { return latLonBoundingBox; }
-    public String getProjectionPolicy()           { return projectionPolicy; }
-    public Boolean getEnabled()                  { return enabled; }
-    public boolean isEnabled()                   { return Boolean.TRUE.equals(enabled); }
-    public Boolean getAdvertised()               { return advertised; }
-    public StoreLink getStore()                  { return store; }
-    public Boolean getServiceConfiguration()      { return serviceConfiguration; }
-    public Metadata getMetadata()                { return metadata; }
+    public String getName() {
+        return name;
+    }
+    public String getNativeName() {
+        return nativeName;
+    }
+    public NamespaceLink getNamespace() {
+        return namespace;
+    }
+    public String getTitle() {
+        return title;
+    }
+    public String getDescription() {
+        return description;
+    }
+    public String getAbstractText() {
+        return abstractText;
+    }
+    public Keywords getKeywords() {
+        return keywords;
+    }
+    public Object getNativeCRS() {
+        return nativeCRS;
+    }
+    public String getSrs() {
+        return srs;
+    }
+    public BoundingBox getNativeBoundingBox() {
+        return nativeBoundingBox;
+    }
+    public BoundingBox getLatLonBoundingBox() {
+        return latLonBoundingBox;
+    }
+    public String getProjectionPolicy() {
+        return projectionPolicy;
+    }
+    public Boolean getEnabled() {
+        return enabled;
+    }
+    public boolean isEnabled() {
+        return Boolean.TRUE.equals(enabled);
+    }
+    public Boolean getAdvertised() {
+        return advertised;
+    }
+    public StoreLink getStore() {
+        return store;
+    }
+    public Boolean getServiceConfiguration() {
+        return serviceConfiguration;
+    }
+    public Metadata getMetadata() {
+        return metadata;
+    }
 
     // Inner DTOs
 
@@ -102,13 +138,21 @@ public class WmtsLayer {
         @JsonProperty("name") private String name;
         @JsonProperty("href") private String href;
         public NamespaceLink() {}
-        public String getName() { return name; }
-        public String getHref() { return href; }
+        public String getName() {
+            return name;
+        }
+        public String getHref() {
+            return href;
+        }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             NamespaceLink that = (NamespaceLink) o;
             return Objects.equals(name, that.name)
                     && Objects.equals(href, that.href);
@@ -140,14 +184,24 @@ public class WmtsLayer {
         @JsonProperty("name")   private String name;
         @JsonProperty("href")   private String href;
         public StoreLink() {}
-        public String getStoreClass() { return storeClass; }
-        public String getName()       { return name; }
-        public String getHref()       { return href; }
+        public String getStoreClass() {
+            return storeClass;
+        }
+        public String getName() {
+            return name;
+        }
+        public String getHref() {
+            return href;
+        }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             StoreLink that = (StoreLink) o;
             return Objects.equals(storeClass, that.storeClass)
                     && Objects.equals(name, that.name)
@@ -181,16 +235,30 @@ public class WmtsLayer {
         @JsonProperty("maxy") private Double maxy;
         @JsonProperty("crs")  private Object crs;
         public BoundingBox() {}
-        public Double getMinx() { return minx; }
-        public Double getMaxx() { return maxx; }
-        public Double getMiny() { return miny; }
-        public Double getMaxy() { return maxy; }
-        public Object getCrs()  { return crs; }
+        public Double getMinx() {
+            return minx;
+        }
+        public Double getMaxx() {
+            return maxx;
+        }
+        public Double getMiny() {
+            return miny;
+        }
+        public Double getMaxy() {
+            return maxy;
+        }
+        public Object getCrs() {
+            return crs;
+        }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             BoundingBox that = (BoundingBox) o;
             return Objects.equals(minx, that.minx)
                     && Objects.equals(maxx, that.maxx)
@@ -220,12 +288,18 @@ public class WmtsLayer {
     public static class Keywords {
         @JsonProperty("string") private List<String> strings;
         public Keywords() {}
-        public List<String> getStrings() { return strings == null ? null : Collections.unmodifiableList(strings); }
+        public List<String> getStrings() {
+            return strings == null ? null : Collections.unmodifiableList(strings);
+        }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             Keywords that = (Keywords) o;
             return Objects.equals(strings, that.strings);
         }
@@ -247,18 +321,24 @@ public class WmtsLayer {
      * Layer metadata entries.
      *
      * <p>Single entry: {@code {"entry": {"@key": "K", "$": "V"}}}<br>
-     * Multiple entries: {@code {"entry": [{"@key": "K1", "$": "V1"}, ...]}}</p>
+     * Multiple entries: {@code {"entry": [{"@key": "K1", "$": "V1"}, ...]}}
      */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Metadata {
         @JsonProperty("entry") private Object entry;
         public Metadata() {}
-        public Object getEntry() { return entry; }
+        public Object getEntry() {
+            return entry;
+        }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             Metadata that = (Metadata) o;
             return Objects.equals(entry, that.entry);
         }
@@ -278,8 +358,12 @@ public class WmtsLayer {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         WmtsLayer that = (WmtsLayer) o;
         return Objects.equals(name, that.name)
                 && Objects.equals(nativeName, that.nativeName)

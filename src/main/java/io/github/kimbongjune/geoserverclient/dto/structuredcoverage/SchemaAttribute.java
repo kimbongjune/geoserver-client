@@ -28,17 +28,39 @@ public class SchemaAttribute {
     @JsonProperty("length")
     private Integer length;
 
-    public String  getName()      { return name; }
-    public Integer getMinOccurs() { return minOccurs; }
-    public Integer getMaxOccurs() { return maxOccurs; }
-    public Boolean getNillable()  { return nillable; }
-    public String  getBinding()   { return binding; }
-    public Integer getLength()    { return length; }
+    /** @return the attribute name */
+    public String  getName() {
+        return name;
+    }
+    /** @return the minimum number of occurrences */
+    public Integer getMinOccurs() {
+        return minOccurs;
+    }
+    /** @return the maximum number of occurrences */
+    public Integer getMaxOccurs() {
+        return maxOccurs;
+    }
+    /** @return {@code true} if this attribute is nillable */
+    public Boolean getNillable() {
+        return nillable;
+    }
+    /** @return the Java class binding for this attribute (e.g. {@code "java.lang.String"}) */
+    public String  getBinding() {
+        return binding;
+    }
+    /** @return the maximum length for string attributes */
+    public Integer getLength() {
+        return length;
+    }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         SchemaAttribute that = (SchemaAttribute) o;
         return Objects.equals(name, that.name)
                 && Objects.equals(minOccurs, that.minOccurs)

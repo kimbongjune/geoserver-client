@@ -16,7 +16,7 @@ import java.util.Arrays;
  *
  * <p>PUT requires XML — JSON PUT causes an XStream "Duplicate field coords" 500 error
  * (see GwcGridSetManager). The {@link #description} and {@link #scaleNames} fields
- * are returned by GET but ignored on PUT.</p>
+ * are returned by GET but ignored on PUT.
  */
 @JacksonXmlRootElement(localName = "gridSet")
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -43,59 +43,153 @@ public class GwcGridSet {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<String> scaleNames;
 
+    /** Constructs an empty {@code GwcGridSet} for deserialization. */
     public GwcGridSet() {}
 
+    /**
+     * Constructs a {@code GwcGridSet} with name, SRS, and bounding extent.
+     * @param name       the grid set name
+     * @param epsgNumber the EPSG code (e.g. {@code 4326})
+     * @param minx       the minimum x coordinate
+     * @param miny       the minimum y coordinate
+     * @param maxx       the maximum x coordinate
+     * @param maxy       the maximum y coordinate
+     */
     public GwcGridSet(String name, int epsgNumber, double minx, double miny, double maxx, double maxy) {
         this.name = name;
         this.srs = new Srs(epsgNumber);
         this.extent = new Extent(minx, miny, maxx, maxy);
     }
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    /** @return the grid set name */
+    public String getName() {
+        return name;
+    }
+    /** @param name the grid set name */
+    public void setName(String name) {
+        this.name = name;
+    }
 
-    public Srs getSrs() { return srs; }
-    public void setSrs(Srs srs) { this.srs = srs; }
+    /** @return the SRS definition */
+    public Srs getSrs() {
+        return srs;
+    }
+    /** @param srs the SRS definition */
+    public void setSrs(Srs srs) {
+        this.srs = srs;
+    }
 
-    public Extent getExtent() { return extent; }
-    public void setExtent(Extent extent) { this.extent = extent; }
+    /** @return the bounding extent */
+    public Extent getExtent() {
+        return extent;
+    }
+    /** @param extent the bounding extent */
+    public void setExtent(Extent extent) {
+        this.extent = extent;
+    }
 
-    public Boolean getAlignTopLeft() { return alignTopLeft; }
-    public void setAlignTopLeft(Boolean alignTopLeft) { this.alignTopLeft = alignTopLeft; }
+    /** @return {@code true} if tiles are aligned from the top-left */
+    public Boolean getAlignTopLeft() {
+        return alignTopLeft;
+    }
+    /** @param alignTopLeft {@code true} to align from top-left */
+    public void setAlignTopLeft(Boolean alignTopLeft) {
+        this.alignTopLeft = alignTopLeft;
+    }
 
-    public List<Double> getResolutions() { return resolutions == null ? null : Collections.unmodifiableList(resolutions); }
-    public void setResolutions(List<Double> resolutions) { this.resolutions = resolutions; }
+    /** @return the tile resolutions list */
+    public List<Double> getResolutions() {
+        return resolutions == null ? null : Collections.unmodifiableList(resolutions);
+    }
+    /** @param resolutions the tile resolutions */
+    public void setResolutions(List<Double> resolutions) {
+        this.resolutions = resolutions;
+    }
 
-    public Double getMetersPerUnit() { return metersPerUnit; }
-    public void setMetersPerUnit(Double metersPerUnit) { this.metersPerUnit = metersPerUnit; }
+    /** @return the meters-per-unit conversion factor */
+    public Double getMetersPerUnit() {
+        return metersPerUnit;
+    }
+    /** @param metersPerUnit the meters-per-unit factor */
+    public void setMetersPerUnit(Double metersPerUnit) {
+        this.metersPerUnit = metersPerUnit;
+    }
 
-    public Double getPixelSize() { return pixelSize; }
-    public void setPixelSize(Double pixelSize) { this.pixelSize = pixelSize; }
+    /** @return the pixel size in meters */
+    public Double getPixelSize() {
+        return pixelSize;
+    }
+    /** @param pixelSize the pixel size in meters */
+    public void setPixelSize(Double pixelSize) {
+        this.pixelSize = pixelSize;
+    }
 
-    public Integer getTileWidth() { return tileWidth; }
-    public void setTileWidth(Integer tileWidth) { this.tileWidth = tileWidth; }
+    /** @return the tile width in pixels */
+    public Integer getTileWidth() {
+        return tileWidth;
+    }
+    /** @param tileWidth the tile width in pixels */
+    public void setTileWidth(Integer tileWidth) {
+        this.tileWidth = tileWidth;
+    }
 
-    public Integer getTileHeight() { return tileHeight; }
-    public void setTileHeight(Integer tileHeight) { this.tileHeight = tileHeight; }
+    /** @return the tile height in pixels */
+    public Integer getTileHeight() {
+        return tileHeight;
+    }
+    /** @param tileHeight the tile height in pixels */
+    public void setTileHeight(Integer tileHeight) {
+        this.tileHeight = tileHeight;
+    }
 
-    public Boolean getYCoordinateFirst() { return yCoordinateFirst; }
-    public void setYCoordinateFirst(Boolean yCoordinateFirst) { this.yCoordinateFirst = yCoordinateFirst; }
+    /** @return {@code true} if the Y coordinate comes first */
+    public Boolean getYCoordinateFirst() {
+        return yCoordinateFirst;
+    }
+    /** @param yCoordinateFirst {@code true} if Y coordinate is first */
+    public void setYCoordinateFirst(Boolean yCoordinateFirst) {
+        this.yCoordinateFirst = yCoordinateFirst;
+    }
 
-    public String getDescription() { return description; }
-    public List<String> getScaleNames() { return scaleNames == null ? null : Collections.unmodifiableList(scaleNames); }
+    /** @return the grid set description (read-only, not sent on PUT) */
+    public String getDescription() {
+        return description;
+    }
+    /** @return the scale names list (read-only, not sent on PUT) */
+    public List<String> getScaleNames() {
+        return scaleNames == null ? null : Collections.unmodifiableList(scaleNames);
+    }
 
+    /** SRS definition containing the EPSG number. */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Srs {
         private Integer number;
+        /** Constructs an empty {@code Srs} for deserialization. */
         public Srs() {}
-        public Srs(Integer number) { this.number = number; }
-        public Integer getNumber() { return number; }
-        public void setNumber(Integer number) { this.number = number; }
+        /**
+         * Constructs an {@code Srs} with the given EPSG number.
+         * @param number the EPSG code
+         */
+        public Srs(Integer number) {
+            this.number = number;
+        }
+        /** @return the EPSG number */
+        public Integer getNumber() {
+            return number;
+        }
+        /** @param number the EPSG number */
+        public void setNumber(Integer number) {
+            this.number = number;
+        }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             Srs that = (Srs) o;
             return Objects.equals(number, that.number);
         }
@@ -113,23 +207,42 @@ public class GwcGridSet {
         }
     }
 
+    /** Bounding extent defined as a coordinate list {@code [minx, miny, maxx, maxy]}. */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Extent {
         @JacksonXmlElementWrapper(localName = "coords")
         @JacksonXmlProperty(localName = "double")
         private List<Double> coords;
 
+        /** Constructs an empty {@code Extent} for deserialization. */
         public Extent() {}
+        /**
+         * Constructs an {@code Extent} from bounding coordinates.
+         * @param minx the minimum x
+         * @param miny the minimum y
+         * @param maxx the maximum x
+         * @param maxy the maximum y
+         */
         public Extent(double minx, double miny, double maxx, double maxy) {
             this.coords = Arrays.asList(minx, miny, maxx, maxy);
         }
-        public List<Double> getCoords() { return coords == null ? null : Collections.unmodifiableList(coords); }
-        public void setCoords(List<Double> coords) { this.coords = coords; }
+        /** @return the coordinate list {@code [minx, miny, maxx, maxy]} */
+        public List<Double> getCoords() {
+            return coords == null ? null : Collections.unmodifiableList(coords);
+        }
+        /** @param coords the coordinate list {@code [minx, miny, maxx, maxy]} */
+        public void setCoords(List<Double> coords) {
+            this.coords = coords;
+        }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             Extent that = (Extent) o;
             return Objects.equals(coords, that.coords);
         }
@@ -149,8 +262,12 @@ public class GwcGridSet {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         GwcGridSet that = (GwcGridSet) o;
         return Objects.equals(name, that.name)
                 && Objects.equals(srs, that.srs)

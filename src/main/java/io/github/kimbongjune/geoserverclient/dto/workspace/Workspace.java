@@ -43,20 +43,42 @@ public class Workspace {
 
     public Workspace() {}
 
-    public String getName() { return name; }
-    public Boolean getIsolated() { return isolated; }
-    public boolean isIsolated() { return Boolean.TRUE.equals(isolated); }
-    public String getDateCreated() { return dateCreated; }
-    public String getDateModified() { return dateModified; }
-    public String getDataStores() { return dataStores; }
-    public String getCoverageStores() { return coverageStores; }
-    public String getWmsStores() { return wmsStores; }
-    public String getWmtsStores() { return wmtsStores; }
+    public String getName() {
+        return name;
+    }
+    public Boolean getIsolated() {
+        return isolated;
+    }
+    public boolean isIsolated() {
+        return Boolean.TRUE.equals(isolated);
+    }
+    public String getDateCreated() {
+        return dateCreated;
+    }
+    public String getDateModified() {
+        return dateModified;
+    }
+    public String getDataStores() {
+        return dataStores;
+    }
+    public String getCoverageStores() {
+        return coverageStores;
+    }
+    public String getWmsStores() {
+        return wmsStores;
+    }
+    public String getWmtsStores() {
+        return wmtsStores;
+    }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Workspace that = (Workspace) o;
         return Objects.equals(name, that.name)
                 && Objects.equals(isolated, that.isolated)

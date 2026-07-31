@@ -8,7 +8,7 @@ import java.util.Objects;
  * Summary entry returned when listing WMS layers (name + href only).
  *
  * <p>Maps each item in the array returned by
- * {@code GET /rest/workspaces/{ws}/wmsstores/{store}/wmslayers}.</p>
+ * {@code GET /rest/workspaces/{ws}/wmsstores/{store}/wmslayers}.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WmsLayerSummary {
@@ -21,13 +21,21 @@ public class WmsLayerSummary {
 
     public WmsLayerSummary() {}
 
-    public String getName() { return name; }
-    public String getHref() { return href; }
+    public String getName() {
+        return name;
+    }
+    public String getHref() {
+        return href;
+    }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         WmsLayerSummary that = (WmsLayerSummary) o;
         return Objects.equals(name, that.name)
                 && Objects.equals(href, that.href);

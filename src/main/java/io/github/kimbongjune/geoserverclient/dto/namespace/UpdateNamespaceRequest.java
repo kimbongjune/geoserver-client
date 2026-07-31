@@ -7,7 +7,7 @@ import java.util.Objects;
  * Request DTO for updating a namespace. Supports partial updates.
  *
  * <p><b>Important:</b> the prefix cannot be changed — GeoServer returns 403 on PUT.
- * Only {@code uri} and {@code isolated} can be modified.</p>
+ * Only {@code uri} and {@code isolated} can be modified.
  *
  * <pre>{@code
  * // Change URI only
@@ -37,10 +37,16 @@ public class UpdateNamespaceRequest {
         this.isolated = isolated;
     }
 
-    public static Builder builder() { return new Builder(); }
+    public static Builder builder() {
+        return new Builder();
+    }
 
-    public String  getUri()      { return uri; }
-    public Boolean getIsolated() { return isolated; }
+    public String  getUri() {
+        return uri;
+    }
+    public Boolean getIsolated() {
+        return isolated;
+    }
 
     public static class Builder {
         private String  uri;
@@ -60,8 +66,12 @@ public class UpdateNamespaceRequest {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             Builder that = (Builder) o;
             return Objects.equals(uri, that.uri)
                     && Objects.equals(isolated, that.isolated);
@@ -83,8 +93,12 @@ public class UpdateNamespaceRequest {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         UpdateNamespaceRequest that = (UpdateNamespaceRequest) o;
         return Objects.equals(uri, that.uri)
                 && Objects.equals(isolated, that.isolated);

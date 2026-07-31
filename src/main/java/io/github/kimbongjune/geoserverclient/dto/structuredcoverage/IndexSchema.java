@@ -11,7 +11,7 @@ import java.util.Collections;
  * DTO for the index schema of a structured coverage.
  *
  * <p>Maps the response of
- * {@code GET /rest/workspaces/{ws}/coveragestores/{cs}/coverages/{cov}/index}.</p>
+ * {@code GET /rest/workspaces/{ws}/coveragestores/{cs}/coverages/{cov}/index}.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class IndexSchema {
@@ -22,20 +22,34 @@ public class IndexSchema {
     @JsonProperty("href")
     private String href;
 
-    public Attributes getAttributes() { return attributes; }
-    public String getHref()           { return href; }
+    /** @return the schema attributes */
+    public Attributes getAttributes() {
+        return attributes;
+    }
+    /** @return the href to the index schema resource */
+    public String getHref() {
+        return href;
+    }
 
+    /** Container for the list of schema attributes. */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Attributes {
         @JsonProperty("Attribute")
         private List<SchemaAttribute> attribute;
 
-        public List<SchemaAttribute> getAttribute() { return attribute == null ? null : Collections.unmodifiableList(attribute); }
+        /** @return the list of schema attributes */
+        public List<SchemaAttribute> getAttribute() {
+            return attribute == null ? null : Collections.unmodifiableList(attribute);
+        }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             Attributes that = (Attributes) o;
             return Objects.equals(attribute, that.attribute);
         }
@@ -55,8 +69,12 @@ public class IndexSchema {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         IndexSchema that = (IndexSchema) o;
         return Objects.equals(attributes, that.attributes)
                 && Objects.equals(href, that.href);

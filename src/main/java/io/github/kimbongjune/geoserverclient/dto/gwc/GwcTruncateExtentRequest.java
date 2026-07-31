@@ -23,8 +23,19 @@ public class GwcTruncateExtentRequest implements GwcTruncateRequest {
     private String format;
     private Bounds bounds;
 
+    /** Constructs an empty {@code GwcTruncateExtentRequest} for deserialization. */
     public GwcTruncateExtentRequest() {}
 
+    /**
+     * Constructs a {@code GwcTruncateExtentRequest} with all required fields.
+     * @param layerName the layer name
+     * @param gridSetId the grid set ID
+     * @param format    the tile MIME format (e.g. {@code "image/png"})
+     * @param minx      the minimum x coordinate
+     * @param miny      the minimum y coordinate
+     * @param maxx      the maximum x coordinate
+     * @param maxy      the maximum y coordinate
+     */
     public GwcTruncateExtentRequest(String layerName, String gridSetId, String format,
                                      double minx, double miny, double maxx, double maxy) {
         this.layerName = layerName;
@@ -33,36 +44,81 @@ public class GwcTruncateExtentRequest implements GwcTruncateRequest {
         this.bounds = new Bounds(minx, miny, maxx, maxy);
     }
 
-    public String getLayerName() { return layerName; }
-    public void setLayerName(String layerName) { this.layerName = layerName; }
+    /** @return the layer name */
+    public String getLayerName() {
+        return layerName;
+    }
+    /** @param layerName the layer name */
+    public void setLayerName(String layerName) {
+        this.layerName = layerName;
+    }
 
-    public String getGridSetId() { return gridSetId; }
-    public void setGridSetId(String gridSetId) { this.gridSetId = gridSetId; }
+    /** @return the grid set ID */
+    public String getGridSetId() {
+        return gridSetId;
+    }
+    /** @param gridSetId the grid set ID */
+    public void setGridSetId(String gridSetId) {
+        this.gridSetId = gridSetId;
+    }
 
-    public String getFormat() { return format; }
-    public void setFormat(String format) { this.format = format; }
+    /** @return the tile MIME format */
+    public String getFormat() {
+        return format;
+    }
+    /** @param format the tile MIME format */
+    public void setFormat(String format) {
+        this.format = format;
+    }
 
-    public Bounds getBounds() { return bounds; }
-    public void setBounds(Bounds bounds) { this.bounds = bounds; }
+    /** @return the bounding box */
+    public Bounds getBounds() {
+        return bounds;
+    }
+    /** @param bounds the bounding box */
+    public void setBounds(Bounds bounds) {
+        this.bounds = bounds;
+    }
 
-    /** {@code <bounds><coords><double>minx</double>...</coords></bounds>} —  (2026-07-29). */
+    /**
+     * Bounding box in the format {@code <bounds><coords><double>minx</double>...</coords></bounds>}.
+     * Server-verified 2026-07-29.
+     */
     public static class Bounds {
         @JacksonXmlElementWrapper(localName = "coords")
         @JacksonXmlProperty(localName = "double")
         private List<Double> coords;
 
+        /** Constructs an empty {@code Bounds} for deserialization. */
         public Bounds() {}
+        /**
+         * Constructs a {@code Bounds} from bounding coordinates.
+         * @param minx the minimum x
+         * @param miny the minimum y
+         * @param maxx the maximum x
+         * @param maxy the maximum y
+         */
         public Bounds(double minx, double miny, double maxx, double maxy) {
             this.coords = Arrays.asList(minx, miny, maxx, maxy);
         }
 
-        public List<Double> getCoords() { return coords == null ? null : Collections.unmodifiableList(coords); }
-        public void setCoords(List<Double> coords) { this.coords = coords; }
+        /** @return the coordinate list {@code [minx, miny, maxx, maxy]} */
+        public List<Double> getCoords() {
+            return coords == null ? null : Collections.unmodifiableList(coords);
+        }
+        /** @param coords the coordinate list {@code [minx, miny, maxx, maxy]} */
+        public void setCoords(List<Double> coords) {
+            this.coords = coords;
+        }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             Bounds that = (Bounds) o;
             return Objects.equals(coords, that.coords);
         }
@@ -82,8 +138,12 @@ public class GwcTruncateExtentRequest implements GwcTruncateRequest {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         GwcTruncateExtentRequest that = (GwcTruncateExtentRequest) o;
         return Objects.equals(layerName, that.layerName)
                 && Objects.equals(gridSetId, that.gridSetId)

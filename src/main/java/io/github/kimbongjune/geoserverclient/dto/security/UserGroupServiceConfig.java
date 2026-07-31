@@ -17,7 +17,7 @@ import java.util.Collections;
  * <p>{@link #getConfigClass()} is the JSON envelope key (filter type FQCN),
  * {@link #getClassName()} is the service implementation FQCN. The most common type
  * (XML-backed) is covered by {@link #xml}. LDAP/JDBC and other types use
- * {@link #getExtra()} for type-specific fields.</p>
+ * {@link #getExtra()} for type-specific fields.
  */
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -65,20 +65,34 @@ public class UserGroupServiceConfig {
         return config;
     }
 
-    public String getConfigClass() { return configClass; }
-    public void setConfigClass(String configClass) { this.configClass = configClass; }
+    public String getConfigClass() {
+        return configClass;
+    }
+    public void setConfigClass(String configClass) {
+        this.configClass = configClass;
+    }
 
-    public String getId() { return id; }
+    public String getId() {
+        return id;
+    }
 
-    public String getName() { return name; }
+    public String getName() {
+        return name;
+    }
 
-    public String getClassName() { return className; }
+    public String getClassName() {
+        return className;
+    }
 
     @JsonAnyGetter
-    public Map<String, Object> getExtra() { return Collections.unmodifiableMap(extra); }
+    public Map<String, Object> getExtra() {
+        return Collections.unmodifiableMap(extra);
+    }
 
     @JsonAnySetter
-    public void putExtra(String key, Object value) { extra.put(key, value); }
+    public void putExtra(String key, Object value) {
+        extra.put(key, value);
+    }
 
     /** Returns the named extra field as a String. Returns {@code null} if absent. */
     public String getExtraString(String key) {
@@ -89,21 +103,29 @@ public class UserGroupServiceConfig {
     /** Returns the named extra field as a Boolean. Returns {@code null} if absent. */
     public Boolean getExtraBoolean(String key) {
         Object v = extra.get(key);
-        if (v == null) return null;
+        if (v == null) {
+            return null;
+        }
         return (v instanceof Boolean) ? (Boolean) v : Boolean.parseBoolean(v.toString());
     }
 
     /** Returns the named extra field as a Long. Returns {@code null} if absent. */
     public Long getExtraLong(String key) {
         Object v = extra.get(key);
-        if (v == null) return null;
+        if (v == null) {
+            return null;
+        }
         return (v instanceof Number) ? ((Number) v).longValue() : Long.parseLong(v.toString());
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         UserGroupServiceConfig that = (UserGroupServiceConfig) o;
         return Objects.equals(configClass, that.configClass)
                 && Objects.equals(id, that.id)

@@ -8,7 +8,7 @@ import java.util.Objects;
  * DTO for an import transform.
  *
  * <p>Fields vary by transform type; unknown fields are ignored via
- * {@code @JsonIgnoreProperties(ignoreUnknown = true)}.</p>
+ * {@code @JsonIgnoreProperties(ignoreUnknown = true)}.
  *
  * <p>Known types and their fields:
  * <ul>
@@ -34,9 +34,15 @@ public class ImportTransform {
     /** DateFormatTransform: date format string. */
     private String format;
 
+    /** Constructs an empty {@code ImportTransform} for deserialization. */
     public ImportTransform() {}
 
-    /** Factory method for a ReprojectTransform. */
+    /**
+     * Factory method for a ReprojectTransform.
+     * @param source the source CRS (e.g. {@code "EPSG:4326"})
+     * @param target the target CRS (e.g. {@code "EPSG:3857"})
+     * @return a new {@code ImportTransform} configured as a ReprojectTransform
+     */
     public static ImportTransform reproject(String source, String target) {
         ImportTransform t = new ImportTransform();
         t.type = "ReprojectTransform";
@@ -45,17 +51,39 @@ public class ImportTransform {
         return t;
     }
 
-    public String getType() { return type; }
-    public String getHref() { return href; }
-    public String getSource() { return source; }
-    public String getTarget() { return target; }
-    public String getField() { return field; }
-    public String getFormat() { return format; }
+    /** @return the transform type name (e.g. {@code "ReprojectTransform"}) */
+    public String getType() {
+        return type;
+    }
+    /** @return the href to this transform resource */
+    public String getHref() {
+        return href;
+    }
+    /** @return the source CRS for a ReprojectTransform */
+    public String getSource() {
+        return source;
+    }
+    /** @return the target CRS or class name depending on transform type */
+    public String getTarget() {
+        return target;
+    }
+    /** @return the field name for field-based transforms */
+    public String getField() {
+        return field;
+    }
+    /** @return the date format string for a DateFormatTransform */
+    public String getFormat() {
+        return format;
+    }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         ImportTransform that = (ImportTransform) o;
         return Objects.equals(type, that.type)
                 && Objects.equals(href, that.href)

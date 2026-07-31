@@ -7,7 +7,7 @@ import java.util.Objects;
 /**
  * Summary entry returned when listing namespaces (name + href only).
  *
- * <p>Maps each item in the array returned by {@code GET /rest/namespaces}.</p>
+ * <p>Maps each item in the array returned by {@code GET /rest/namespaces}.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class NamespaceSummary {
@@ -18,15 +18,26 @@ public class NamespaceSummary {
     @JsonProperty("href")
     private String href;
 
+    /** Constructs an empty {@code NamespaceSummary} for deserialization. */
     public NamespaceSummary() {}
 
-    public String getName() { return name; }
-    public String getHref() { return href; }
+    /** @return the namespace prefix (equals the workspace name) */
+    public String getName() {
+        return name;
+    }
+    /** @return the href to the namespace detail resource */
+    public String getHref() {
+        return href;
+    }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         NamespaceSummary that = (NamespaceSummary) o;
         return Objects.equals(name, that.name)
                 && Objects.equals(href, that.href);

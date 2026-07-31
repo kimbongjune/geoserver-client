@@ -9,7 +9,7 @@ import java.util.Objects;
  * <p>
  * In Docker environments all metrics return {@code available=false, value="NOT AVAILABLE"}.
  * Categories: SYSTEM | CPU | MEMORY | SWAP | FILE_SYSTEM | NETWORK | SENSORS | GEOSERVER
- * </p>
+ * 
  */
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -58,8 +58,12 @@ public class SystemMetric {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         SystemMetric that = (SystemMetric) o;
         return Objects.equals(name, that.name)
                 && Objects.equals(identifier, that.identifier)

@@ -9,7 +9,12 @@ public enum GwcFilterUpdateType {
 
     private final String value;
 
-    GwcFilterUpdateType(String value) { this.value = value; }
+    GwcFilterUpdateType(String value) {
+      this.value = value;
+  }
 
-    public String getValue() { return value; }
+    /** @return the URL path segment value ({@code "xml"} or {@code "zip"}) */
+    public String getValue() {
+        return value;
+    }
 }

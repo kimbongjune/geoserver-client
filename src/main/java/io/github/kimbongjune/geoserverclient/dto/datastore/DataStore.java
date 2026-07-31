@@ -13,10 +13,10 @@ import java.util.Collections;
  * <p>The {@code connectionParameters.entry} array uses the format
  * {@code [{"@key":"url","$":"file:..."}]}. A GET response only includes parameters that were
  * explicitly set; defaults are omitted. Sending {@code connectionParameters} on PUT replaces
- * all existing parameters in full — partial updates are not supported.</p>
+ * all existing parameters in full — partial updates are not supported.
  *
  * <p>{@code dateCreated}, {@code dateModified}, and {@code disableOnConnFailure} are not in the
- * official Swagger spec but are returned by GeoServer 2.28.x.</p>
+ * official Swagger spec but are returned by GeoServer 2.28.x.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DataStore {
@@ -54,22 +54,65 @@ public class DataStore {
     @JsonProperty("featureTypes")
     private String featureTypes;
 
+    /** Constructs an empty {@code DataStore} for deserialization. */
     public DataStore() {}
 
-    public String getName()                           { return name; }
-    public String getDescription()                    { return description; }
-    public Boolean getEnabled()                       { return enabled; }
-    public boolean isEnabled()                        { return Boolean.TRUE.equals(enabled); }
-    public Boolean getDefaultStore()                  { return defaultStore; }
-    public boolean isDefaultStore()                   { return Boolean.TRUE.equals(defaultStore); }
-    public String getType()                           { return type; }
-    public WorkspaceLink getWorkspace()               { return workspace; }
-    public ConnectionParameters getConnectionParameters() { return connectionParameters; }
-    public String getDateCreated()                    { return dateCreated; }
-    public String getDateModified()                   { return dateModified; }
-    public Boolean getDisableOnConnFailure()          { return disableOnConnFailure; }
-    public boolean isDisableOnConnFailure()           { return Boolean.TRUE.equals(disableOnConnFailure); }
-    public String getFeatureTypes()                   { return featureTypes; }
+    /** @return the store name */
+    public String getName() {
+        return name;
+    }
+    /** @return the store description */
+    public String getDescription() {
+        return description;
+    }
+    /** @return {@code true} if enabled */
+    public Boolean getEnabled() {
+        return enabled;
+    }
+    /** @return {@code true} if this store is enabled */
+    public boolean isEnabled() {
+        return Boolean.TRUE.equals(enabled);
+    }
+    /** @return {@code true} if this is the default store */
+    public Boolean getDefaultStore() {
+        return defaultStore;
+    }
+    /** @return {@code true} if this is the default store */
+    public boolean isDefaultStore() {
+        return Boolean.TRUE.equals(defaultStore);
+    }
+    /** @return the store type */
+    public String getType() {
+        return type;
+    }
+    /** @return the workspace link */
+    public WorkspaceLink getWorkspace() {
+        return workspace;
+    }
+    /** @return the connection parameters */
+    public ConnectionParameters getConnectionParameters() {
+        return connectionParameters;
+    }
+    /** @return the date the store was created */
+    public String getDateCreated() {
+        return dateCreated;
+    }
+    /** @return the date the store was last modified */
+    public String getDateModified() {
+        return dateModified;
+    }
+    /** @return {@code true} if disabled on connection failure */
+    public Boolean getDisableOnConnFailure() {
+        return disableOnConnFailure;
+    }
+    /** @return {@code true} if this store is disabled on connection failure */
+    public boolean isDisableOnConnFailure() {
+        return Boolean.TRUE.equals(disableOnConnFailure);
+    }
+    /** @return the feature types href */
+    public String getFeatureTypes() {
+        return featureTypes;
+    }
 
     /** Workspace link embedded in the data store response. */
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -79,14 +122,25 @@ public class DataStore {
         @JsonProperty("href")
         private String href;
 
+        /** Constructs an empty {@code WorkspaceLink} for deserialization. */
         public WorkspaceLink() {}
-        public String getName() { return name; }
-        public String getHref() { return href; }
+        /** @return the workspace name */
+        public String getName() {
+            return name;
+        }
+        /** @return the workspace href */
+        public String getHref() {
+            return href;
+        }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             WorkspaceLink that = (WorkspaceLink) o;
             return Objects.equals(name, that.name)
                     && Objects.equals(href, that.href);
@@ -112,13 +166,21 @@ public class DataStore {
         @JsonProperty("entry")
         private List<Entry> entry;
 
+        /** Constructs an empty {@code ConnectionParameters} for deserialization. */
         public ConnectionParameters() {}
-        public List<Entry> getEntry() { return entry == null ? null : Collections.unmodifiableList(entry); }
+        /** @return the connection parameter entries */
+        public List<Entry> getEntry() {
+            return entry == null ? null : Collections.unmodifiableList(entry);
+        }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             ConnectionParameters that = (ConnectionParameters) o;
             return Objects.equals(entry, that.entry);
         }
@@ -144,18 +206,36 @@ public class DataStore {
         @JsonProperty("$")
         private String value;
 
+        /** Constructs an empty {@code Entry} for deserialization. */
         public Entry() {}
+
+        /**
+         * Constructs an {@code Entry} with the given key and value.
+         * @param key   the parameter key
+         * @param value the parameter value
+         */
         public Entry(String key, String value) {
             this.key   = key;
             this.value = value;
         }
-        public String getKey()   { return key; }
-        public String getValue() { return value; }
+
+        /** @return the parameter key */
+        public String getKey() {
+            return key;
+        }
+        /** @return the parameter value */
+        public String getValue() {
+            return value;
+        }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             Entry that = (Entry) o;
             return Objects.equals(key, that.key)
                     && Objects.equals(value, that.value);
@@ -177,8 +257,12 @@ public class DataStore {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         DataStore that = (DataStore) o;
         return Objects.equals(name, that.name)
                 && Objects.equals(description, that.description)

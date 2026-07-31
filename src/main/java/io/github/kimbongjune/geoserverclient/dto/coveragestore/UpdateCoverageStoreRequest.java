@@ -42,13 +42,25 @@ public class UpdateCoverageStoreRequest {
         this.disableOnConnFailure = b.disableOnConnFailure;
     }
 
-    public static Builder builder() { return new Builder(); }
+    public static Builder builder() {
+        return new Builder();
+    }
 
-    public String  getName()                  { return name; }
-    public String  getDescription()           { return description; }
-    public String  getUrl()                   { return url; }
-    public Boolean getEnabled()               { return enabled; }
-    public Boolean getDisableOnConnFailure()  { return disableOnConnFailure; }
+    public String  getName() {
+        return name;
+    }
+    public String  getDescription() {
+        return description;
+    }
+    public String  getUrl() {
+        return url;
+    }
+    public Boolean getEnabled() {
+        return enabled;
+    }
+    public Boolean getDisableOnConnFailure() {
+        return disableOnConnFailure;
+    }
 
     public static class Builder {
         private String  name;
@@ -57,17 +69,33 @@ public class UpdateCoverageStoreRequest {
         private Boolean enabled;
         private Boolean disableOnConnFailure;
 
-        public Builder name(String name)                          { this.name = name;                         return this; }
-        public Builder description(String description)            { this.description = description;           return this; }
-        public Builder url(String url)                            { this.url = url;                           return this; }
-        public Builder enabled(Boolean enabled)                   { this.enabled = enabled;                   return this; }
-        public Builder disableOnConnFailure(Boolean disable)      { this.disableOnConnFailure = disable;      return this; }
-        public UpdateCoverageStoreRequest build()                 { return new UpdateCoverageStoreRequest(this); }
+        public Builder name(String name) {
+            this.name = name;                         return this;
+        }
+        public Builder description(String description) {
+            this.description = description;           return this;
+        }
+        public Builder url(String url) {
+            this.url = url;                           return this;
+        }
+        public Builder enabled(Boolean enabled) {
+            this.enabled = enabled;                   return this;
+        }
+        public Builder disableOnConnFailure(Boolean disable) {
+            this.disableOnConnFailure = disable;      return this;
+        }
+        public UpdateCoverageStoreRequest build() {
+            return new UpdateCoverageStoreRequest(this);
+        }
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             Builder that = (Builder) o;
             return Objects.equals(name, that.name)
                     && Objects.equals(description, that.description)
@@ -95,8 +123,12 @@ public class UpdateCoverageStoreRequest {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         UpdateCoverageStoreRequest that = (UpdateCoverageStoreRequest) o;
         return Objects.equals(name, that.name)
                 && Objects.equals(description, that.description)

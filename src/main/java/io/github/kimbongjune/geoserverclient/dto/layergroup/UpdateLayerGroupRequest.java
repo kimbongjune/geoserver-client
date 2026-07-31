@@ -13,9 +13,9 @@ import java.util.Collections;
  *
  * <p>Supports partial updates — null fields are excluded from the request payload.
  * Renaming is not supported (server returns 403); workspace changes are also not supported (403).
- * Bounds are not recalculated automatically when publishables change — specify them explicitly.</p>
+ * Bounds are not recalculated automatically when publishables change — specify them explicitly.
  *
- * <p>Use {@link #builder()} to create instances.</p>
+ * <p>Use {@link #builder()} to create instances.
  */
 public class UpdateLayerGroupRequest {
 
@@ -47,18 +47,42 @@ public class UpdateLayerGroupRequest {
         this.metadata              = b.metadata;
     }
 
-    public List<CreateLayerGroupRequest.PublishableEntry> getPublishables() { return publishables == null ? null : Collections.unmodifiableList(publishables); }
-    public List<String> getStyles()                         { return styles == null ? null : Collections.unmodifiableList(styles); }
-    public String getMode()                                 { return mode; }
-    public String getTitle()                                { return title; }
-    public String getAbstractText()                         { return abstractText; }
-    public StringMap getInternationalTitle()                 { return internationalTitle; }
-    public StringMap getInternationalAbstract()               { return internationalAbstract; }
-    public Boolean getEnabled()                             { return enabled; }
-    public Boolean getAdvertised()                          { return advertised; }
-    public CreateLayerGroupRequest.BoundsSpec getBounds()   { return bounds; }
-    public List<String> getKeywords()                       { return keywords == null ? null : Collections.unmodifiableList(keywords); }
-    public StringMap getMetadata()                           { return metadata; }
+    public List<CreateLayerGroupRequest.PublishableEntry> getPublishables() {
+        return publishables == null ? null : Collections.unmodifiableList(publishables);
+    }
+    public List<String> getStyles() {
+        return styles == null ? null : Collections.unmodifiableList(styles);
+    }
+    public String getMode() {
+        return mode;
+    }
+    public String getTitle() {
+        return title;
+    }
+    public String getAbstractText() {
+        return abstractText;
+    }
+    public StringMap getInternationalTitle() {
+        return internationalTitle;
+    }
+    public StringMap getInternationalAbstract() {
+        return internationalAbstract;
+    }
+    public Boolean getEnabled() {
+        return enabled;
+    }
+    public Boolean getAdvertised() {
+        return advertised;
+    }
+    public CreateLayerGroupRequest.BoundsSpec getBounds() {
+        return bounds;
+    }
+    public List<String> getKeywords() {
+        return keywords == null ? null : Collections.unmodifiableList(keywords);
+    }
+    public StringMap getMetadata() {
+        return metadata;
+    }
 
     public static Builder builder() {
         return new Builder();
@@ -99,9 +123,15 @@ public class UpdateLayerGroupRequest {
             return this;
         }
 
-        public Builder mode(String mode)                 { this.mode = mode; return this; }
-        public Builder title(String title)               { this.title = title; return this; }
-        public Builder abstractText(String abstractText) { this.abstractText = abstractText; return this; }
+        public Builder mode(String mode) {
+            this.mode = mode; return this;
+        }
+        public Builder title(String title) {
+            this.title = title; return this;
+        }
+        public Builder abstractText(String abstractText) {
+            this.abstractText = abstractText; return this;
+        }
 
         public Builder internationalTitle(StringMap v) {
             this.internationalTitle = v; return this;
@@ -110,16 +140,24 @@ public class UpdateLayerGroupRequest {
             this.internationalAbstract = v; return this;
         }
 
-        public Builder enabled(boolean enabled)          { this.enabled = enabled; return this; }
-        public Builder advertised(boolean advertised)    { this.advertised = advertised; return this; }
+        public Builder enabled(boolean enabled) {
+            this.enabled = enabled; return this;
+        }
+        public Builder advertised(boolean advertised) {
+            this.advertised = advertised; return this;
+        }
 
         public Builder bounds(double minx, double maxx, double miny, double maxy, String crs) {
             this.bounds = new CreateLayerGroupRequest.BoundsSpec(minx, maxx, miny, maxy, crs);
             return this;
         }
 
-        public Builder keywords(List<String> keywords)   { this.keywords = keywords; return this; }
-        public Builder metadata(StringMap meta)           { this.metadata = meta; return this; }
+        public Builder keywords(List<String> keywords) {
+            this.keywords = keywords; return this;
+        }
+        public Builder metadata(StringMap meta) {
+            this.metadata = meta; return this;
+        }
 
         public UpdateLayerGroupRequest build() {
             return new UpdateLayerGroupRequest(this);
@@ -127,8 +165,12 @@ public class UpdateLayerGroupRequest {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
             Builder that = (Builder) o;
             return Objects.equals(publishables, that.publishables)
                     && Objects.equals(styles, that.styles)
@@ -170,8 +212,12 @@ public class UpdateLayerGroupRequest {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         UpdateLayerGroupRequest that = (UpdateLayerGroupRequest) o;
         return Objects.equals(publishables, that.publishables)
                 && Objects.equals(styles, that.styles)
