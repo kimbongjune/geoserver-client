@@ -60,7 +60,7 @@ jobs:
             clean verify \
             org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
             -Dsonar.projectKey=geoserver-client \
-            -Dsonar.organization=nocdev \
+            -Dsonar.organization=kimbongjune \
             -Dsonar.host.url=https://sonarcloud.io
 
       - name: Stop docker-compose
