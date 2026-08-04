@@ -24,11 +24,29 @@ jobs:
       - name: Generate Javadoc
         run: mvn javadoc:javadoc -DskipTests --no-transfer-progress
 
+      - name: Assemble Pages site (root redirect + apidocs/)
+        run: |
+          mkdir -p target/site/pages-root
+          cp -r target/site/apidocs target/site/pages-root/apidocs
+          cat > target/site/pages-root/index.html <<'EOF'
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+            <meta charset="utf-8">
+            <title>geoserver-client Javadoc</title>
+            <meta http-equiv="refresh" content="0; url=./apidocs/">
+            <link rel="canonical" href="./apidocs/">
+          </head>
+          <body>
+            <p>Redirecting to <a href="./apidocs/">Javadoc</a>&hellip;</p>
+          </body>
+          </html>
+          EOF
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./target/site/apidocs
-          destination_dir: apidocs
+          publish_dir: ./target/site/pages-root
           keep_files: false
           commit_message: "docs: update Javadoc [skip ci]"

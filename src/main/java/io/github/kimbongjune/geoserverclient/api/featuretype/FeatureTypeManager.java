@@ -45,7 +45,13 @@ import java.util.List;
  * PUT     /rest/workspaces/{workspaceName}/featuretypes/{featureTypeName}
  * DELETE  /rest/workspaces/{workspaceName}/featuretypes/{featureTypeName}
  * PUT     /rest/workspaces/{workspaceName}/datastores/{storeName}/featuretypes/{featureTypeName}/reset
+ * PUT     /rest/workspaces/{workspaceName}/featuretypes/{featureTypeName}/reset
  * </pre>
+ *
+ * <p>The workspace-level ({@code storeName}-less) variants above operate across all datastores
+ * in the workspace: GeoServer resolves the target store automatically on create (there must be
+ * an unambiguous default/only store), and reads/updates/deletes locate the featureType by name
+ * regardless of which store it lives in. Verified directly against GeoServer 2.28.2.</p>
  */
 public class FeatureTypeManager extends AbstractManager {
 
@@ -222,6 +228,7 @@ public class FeatureTypeManager extends AbstractManager {
 
     /**
      * Reset the featureType cache so GeoServer re-reads the schema from the store.
+     * PUT and POST behave identically; implemented as PUT. Verified against GeoServer 2.28.2.
      */
     public void reset(String workspaceName, String storeName, String featureTypeName) {
         requireNonEmpty(workspaceName, "workspaceName");
@@ -233,10 +240,138 @@ public class FeatureTypeManager extends AbstractManager {
         handleErrorResponse(response, "PUT", path);
     }
 
+    /**
+     * List configured featureTypes across the whole workspace (all datastores combined).
+     */
+    public List<FeatureTypeSummary> listByWorkspace(String workspaceName) {
+        requireNonEmpty(workspaceName, "workspaceName");
+        String path = basePath(workspaceName);
+        GeoServerResponse response = httpClient.get(path, "application/json");
+        handleErrorResponse(response, "GET", path);
+        return parseFeatureTypeConfiguredList(response.getBody());
+    }
+
+    /**
+     * Get featureType details without specifying a store (looked up by name within the workspace).
+     *
+     * @throws FeatureTypeNotFoundException if the featureType does not exist
+     */
+    public FeatureType getByWorkspace(String workspaceName, String featureTypeName) {
+        requireNonEmpty(workspaceName, "workspaceName");
+        requireNonEmpty(featureTypeName, "featureTypeName");
+        String path = basePath(workspaceName) + "/" + featureTypeName;
+        GeoServerResponse response = httpClient.get(path, "application/json");
+        if (response.isNotFound()) {
+            throw new FeatureTypeNotFoundException(workspaceName, "-", featureTypeName, response.getBody());
+        }
+        handleErrorResponse(response, "GET", path);
+        return parseFeatureType(response.getBody());
+    }
+
+    /**
+     * Create a new featureType without specifying a store. GeoServer resolves the target
+     * datastore automatically, which requires the workspace to have a single unambiguous
+     * (default) datastore. Also auto-creates an associated Layer.
+     *
+     * @return the created FeatureType (fetched via GET after POST)
+     * @throws ResourceAlreadyExistsException if a featureType with the same name already exists
+     */
+    public FeatureType createByWorkspace(String workspaceName, CreateFeatureTypeRequest request) {
+        requireNonEmpty(workspaceName, "workspaceName");
+        requireNonNull(request, "request");
+
+        String path = basePath(workspaceName);
+        String body = buildCreatePayload(request);
+        GeoServerResponse response = httpClient.post(path, body, "application/json", "application/json");
+        if (response.getStatusCode() == 500
+                && response.getBody() != null
+                && response.getBody().contains("already exists")) {
+            throw new ResourceAlreadyExistsException("FeatureType",
+                    workspaceName + "/" + request.getName(), null);
+        }
+        handleErrorResponse(response, "POST", path);
+        return getByWorkspace(workspaceName, request.getName());
+    }
+
+    /**
+     * Update featureType fields without specifying a store (partial update supported).
+     *
+     * @return the updated FeatureType (fetched via GET after PUT)
+     * @throws FeatureTypeNotFoundException if the featureType does not exist
+     */
+    public FeatureType updateByWorkspace(String workspaceName, String featureTypeName,
+                                         UpdateFeatureTypeRequest request) {
+        requireNonEmpty(workspaceName, "workspaceName");
+        requireNonEmpty(featureTypeName, "featureTypeName");
+        requireNonNull(request, "request");
+
+        StringBuilder sb = new StringBuilder(basePath(workspaceName)).append('/').append(featureTypeName);
+        if (request.getRecalculate() != null && !request.getRecalculate().isEmpty()) {
+            sb.append("?recalculate=").append(request.getRecalculate());
+        }
+        String path = sb.toString();
+
+        String body = buildUpdatePayload(request);
+        GeoServerResponse response = httpClient.put(path, body, "application/json", "application/json");
+        if (response.isNotFound()) {
+            throw new FeatureTypeNotFoundException(workspaceName, "-", featureTypeName, response.getBody());
+        }
+        handleErrorResponse(response, "PUT", path);
+
+        String resolvedName = request.getName() != null ? request.getName() : featureTypeName;
+        return getByWorkspace(workspaceName, resolvedName);
+    }
+
+    /**
+     * Delete a featureType without specifying a store, with recurse=true (also deletes the associated Layer).
+     *
+     * @throws FeatureTypeNotFoundException if the featureType does not exist
+     */
+    public void deleteByWorkspace(String workspaceName, String featureTypeName) {
+        deleteByWorkspace(workspaceName, featureTypeName, true);
+    }
+
+    /**
+     * Delete a featureType without specifying a store.
+     * If recurse=false and a Layer is associated, GeoServer returns 403.
+     *
+     * @param recurse true to also delete associated Layers
+     * @throws FeatureTypeNotFoundException if the featureType does not exist
+     */
+    public void deleteByWorkspace(String workspaceName, String featureTypeName, boolean recurse) {
+        requireNonEmpty(workspaceName, "workspaceName");
+        requireNonEmpty(featureTypeName, "featureTypeName");
+
+        String path = basePath(workspaceName) + "/" + featureTypeName + "?recurse=" + recurse;
+        GeoServerResponse response = httpClient.delete(path);
+        if (response.isNotFound()) {
+            throw new FeatureTypeNotFoundException(workspaceName, "-", featureTypeName, response.getBody());
+        }
+        handleErrorResponse(response, "DELETE", path);
+    }
+
+    /**
+     * Reset the featureType cache without specifying a store, so GeoServer re-reads the schema
+     * from the store. GeoServer accepts both PUT and POST for this action with identical effect;
+     * this method uses PUT.
+     */
+    public void resetByWorkspace(String workspaceName, String featureTypeName) {
+        requireNonEmpty(workspaceName, "workspaceName");
+        requireNonEmpty(featureTypeName, "featureTypeName");
+
+        String path = basePath(workspaceName) + "/" + featureTypeName + "/reset";
+        GeoServerResponse response = httpClient.put(path, null, "application/json", "application/json");
+        handleErrorResponse(response, "PUT", path);
+    }
+
     // [2] Private helpers
 
     private String basePath(String ws, String ds) {
         return "/rest/workspaces/" + ws + "/datastores/" + ds + "/featuretypes";
+    }
+
+    private String basePath(String ws) {
+        return "/rest/workspaces/" + ws + "/featuretypes";
     }
 
     private String buildCreatePayload(CreateFeatureTypeRequest request) {

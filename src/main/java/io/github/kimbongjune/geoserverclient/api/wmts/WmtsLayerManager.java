@@ -32,7 +32,20 @@ import java.util.Map;
  *
  * <h2>Endpoints</h2>
  * <pre>
+ * GET  /rest/workspaces/{ws}/wmtsstores/{store}/layers
+ * GET  /rest/workspaces/{ws}/wmtslayers
+ * POST /rest/workspaces/{ws}/wmtsstores/{store}/layers
+ * POST /rest/workspaces/{ws}/wmtslayers
+ * GET  /rest/workspaces/{ws}/wmtsstores/{store}/layers/{layer}
+ * GET  /rest/workspaces/{ws}/wmtslayers/{layer}
+ * PUT  /rest/workspaces/{ws}/wmtsstores/{store}/layers/{layer}
+ * DELETE /rest/workspaces/{ws}/wmtsstores/{store}/layers/{layer}
+ * DELETE /rest/workspaces/{ws}/wmtslayers/{layer}
  * </pre>
+ *
+ * <p>{@code POST /workspaces/{ws}/wmtslayers} (no store in the URL) requires the target store
+ * to be named explicitly in the request body — see {@link #publishByWorkspace}. Verified against
+ * GeoServer 2.28.2.</p>
  */
 public class WmtsLayerManager extends AbstractManager {
 
@@ -128,6 +141,37 @@ public class WmtsLayerManager extends AbstractManager {
 
         String path = "/rest/workspaces/" + workspaceName + "/wmtsstores/" + storeName + "/layers";
         String body = buildPublishPayload(request);
+        GeoServerResponse response = httpClient.post(path, body, "application/json", "application/json");
+        handleErrorResponse(response, "POST", path);
+        return get(workspaceName, storeName, request.getName());
+    }
+
+    /**
+     * Publishes a remote WMTS layer without a store segment in the URL. The target store must be
+     * named explicitly in the request body (via {@code storeName}), since GeoServer does not
+     * auto-resolve it the way it does for FeatureTypes. Verified against GeoServer 2.28.2.
+     *
+     * @param workspaceName workspace name (required)
+     * @param storeName     WMTS store the new layer belongs to (required)
+     * @param request       publish parameters (name + nativeName required)
+     * @return the published WMTS layer details
+     * @throws ResourceAlreadyExistsException if a WMTS layer with the same name already exists
+     */
+    public WmtsLayer publishByWorkspace(String workspaceName, String storeName,
+                                        PublishWmtsLayerRequest request) {
+        requireNonEmpty(workspaceName, "workspaceName");
+        requireNonEmpty(storeName, "storeName");
+        requireNonNull(request, "request");
+
+        if (exists(workspaceName, storeName, request.getName())) {
+            throw new ResourceAlreadyExistsException(
+                    "WmtsLayer",
+                    workspaceName + "/" + storeName + "/" + request.getName(),
+                    null);
+        }
+
+        String path = "/rest/workspaces/" + workspaceName + "/wmtslayers";
+        String body = buildPublishByWorkspacePayload(workspaceName, storeName, request);
         GeoServerResponse response = httpClient.post(path, body, "application/json", "application/json");
         handleErrorResponse(response, "POST", path);
         return get(workspaceName, storeName, request.getName());
@@ -339,7 +383,7 @@ public class WmtsLayerManager extends AbstractManager {
 
     // Payload builders
 
-    private String buildPublishPayload(PublishWmtsLayerRequest req) {
+    private Map<String, Object> buildPublishFields(PublishWmtsLayerRequest req) {
         Map<String, Object> layer = new LinkedHashMap<>();
         layer.put("name", req.getName());
         layer.put("nativeName", req.getNativeName());
@@ -350,6 +394,21 @@ public class WmtsLayerManager extends AbstractManager {
         if (req.getAdvertised() != null)       layer.put("advertised",       req.getAdvertised());
         if (req.getSrs() != null)              layer.put("srs",              req.getSrs());
         if (req.getProjectionPolicy() != null) layer.put("projectionPolicy", req.getProjectionPolicy());
+        return layer;
+    }
+
+    private String buildPublishPayload(PublishWmtsLayerRequest req) {
+        return serializeToJson(Collections.singletonMap("wmtsLayer", buildPublishFields(req)));
+    }
+
+    private String buildPublishByWorkspacePayload(String workspaceName, String storeName, PublishWmtsLayerRequest req) {
+        Map<String, Object> layer = buildPublishFields(req);
+
+        Map<String, Object> store = new LinkedHashMap<>();
+        store.put("@class", "wmtsStore");
+        store.put("name", workspaceName + ":" + storeName);
+        layer.put("store", store);
+
         return serializeToJson(Collections.singletonMap("wmtsLayer", layer));
     }
 

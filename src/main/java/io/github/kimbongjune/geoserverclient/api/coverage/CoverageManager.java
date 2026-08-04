@@ -37,8 +37,10 @@ import java.util.Map;
  * GET     /rest/workspaces/{workspaceName}/coveragestores/{storeName}/coverages
  * GET     /rest/workspaces/{workspaceName}/coveragestores/{storeName}/coverages/{coverageName}
  * POST    /rest/workspaces/{workspaceName}/coveragestores/{storeName}/coverages
+ * POST    /rest/workspaces/{workspaceName}/coverages
  * PUT     /rest/workspaces/{workspaceName}/coveragestores/{storeName}/coverages/{coverageName}
  * DELETE  /rest/workspaces/{workspaceName}/coveragestores/{storeName}/coverages/{coverageName}
+ * PUT     /rest/workspaces/{workspaceName}/coveragestores/{storeName}/coverages/{coverageName}/reset
  * </pre>
  */
 public class CoverageManager extends AbstractManager {
@@ -213,6 +215,41 @@ public class CoverageManager extends AbstractManager {
     }
 
     /**
+     * Register a new coverage without a store segment in the URL. Unlike FeatureTypeManager's
+     * workspace-level create, GeoServer does <b>not</b> auto-resolve the target store here —
+     * the store must be named explicitly in the request body, which this method does via
+     * {@code storeName}. {@code request.getNativeCoverageName()} must match a name
+     * returned by {@link #listNative(String, String)} for that store (usually the store name itself
+     * for a single-file GeoTIFF store). Verified against GeoServer 2.28.2.
+     *
+     * @param workspaceName workspace name (required)
+     * @param storeName     coverage store the new coverage belongs to (required)
+     * @param request       creation parameters (required, name is required)
+     * @return created coverage (GET after POST)
+     * @throws InvalidParameterException      if any parameter is null/empty
+     * @throws ResourceAlreadyExistsException if a coverage with the same name already exists
+     */
+    public Coverage createByWorkspace(String workspaceName, String storeName, CreateCoverageRequest request) {
+        requireNonEmpty(workspaceName, "workspaceName");
+        requireNonEmpty(storeName, "storeName");
+        requireNonNull(request, "request");
+
+        String path = "/rest/workspaces/" + workspaceName + "/coverages";
+        String body = buildCreateByWorkspacePayload(workspaceName, storeName, request);
+        GeoServerResponse response = httpClient.post(
+                path, body, "application/json", "application/json");
+        if (response.getStatusCode() == 500
+                && response.getBody() != null
+                && response.getBody().contains("already exists")) {
+            throw new ResourceAlreadyExistsException("Coverage",
+                    workspaceName + "/" + storeName + "/" + request.getName(), null);
+        }
+        handleErrorResponse(response, "POST", path);
+
+        return get(workspaceName, storeName, request.getName());
+    }
+
+    /**
      * Update coverage attributes. Partial update is supported.
      *
      * @param workspaceName workspace name (required)
@@ -296,6 +333,7 @@ public class CoverageManager extends AbstractManager {
 
     /**
      * Reset the coverage resource pool cache.
+     * PUT and POST behave identically; implemented as PUT. Verified against GeoServer 2.28.2.
      *
      * @param workspaceName workspace name (required)
      * @param storeName     coverage store name (required)
@@ -363,7 +401,7 @@ public class CoverageManager extends AbstractManager {
 
     // Payload builders
 
-    private String buildCreatePayload(CreateCoverageRequest request) {
+    private Map<String, Object> buildCreateFields(CreateCoverageRequest request) {
         Map<String, Object> cov = new LinkedHashMap<>();
         cov.put("name", request.getName());
         // If nativeCoverageName is not set, default to name — omitting it may cause GeoServer 500
@@ -377,6 +415,21 @@ public class CoverageManager extends AbstractManager {
         if (request.getProjectionPolicy() != null)   cov.put("projectionPolicy",   request.getProjectionPolicy());
         if (request.getEnabled() != null)            cov.put("enabled",            request.getEnabled());
         if (request.getNativeFormat() != null)       cov.put("nativeFormat",       request.getNativeFormat());
+        return cov;
+    }
+
+    private String buildCreatePayload(CreateCoverageRequest request) {
+        return serializeToJson(Collections.singletonMap("coverage", buildCreateFields(request)));
+    }
+
+    private String buildCreateByWorkspacePayload(String workspaceName, String storeName, CreateCoverageRequest request) {
+        Map<String, Object> cov = buildCreateFields(request);
+
+        Map<String, Object> store = new LinkedHashMap<>();
+        store.put("@class", "coverageStore");
+        store.put("name", workspaceName + ":" + storeName);
+        cov.put("store", store);
+
         return serializeToJson(Collections.singletonMap("coverage", cov));
     }
 

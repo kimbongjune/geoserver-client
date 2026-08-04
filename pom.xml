@@ -6,7 +6,7 @@
 
     <groupId>io.github.kimbongjune</groupId>
     <artifactId>geoserver-client</artifactId>
-    <version>1.0.1</version>
+    <version>1.1.0</version>
     <packaging>jar</packaging>
 
     <name>GeoServer Client</name>
@@ -169,8 +169,8 @@
                 <configuration>
                     <doclint>none</doclint>
                     <source>8</source>
-                    <windowtitle>GeoServer Client 1.0.1 API</windowtitle>
-                    <doctitle>GeoServer Client 1.0.1 API</doctitle>
+                    <windowtitle>GeoServer Client 1.1.0 API</windowtitle>
+                    <doctitle>GeoServer Client 1.1.0 API</doctitle>
                     <author>false</author>
                     <version>false</version>
                     <detectOfflineLinks>false</detectOfflineLinks>

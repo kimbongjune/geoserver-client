@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.kimbongjune.geoserverclient.api.AbstractManager;
 import io.github.kimbongjune.geoserverclient.dto.importer.ImportContext;
 import io.github.kimbongjune.geoserverclient.dto.importer.ImportContextSummary;
+import io.github.kimbongjune.geoserverclient.dto.importer.ImportData;
 import io.github.kimbongjune.geoserverclient.dto.importer.ImportLayer;
 import io.github.kimbongjune.geoserverclient.dto.importer.ImportTarget;
 import io.github.kimbongjune.geoserverclient.dto.importer.ImportTask;
@@ -331,6 +332,147 @@ public class ImporterManager extends AbstractManager {
         handleErrorResponse(response, "DELETE", path);
     }
 
+    // ── ImporterData ─────────────────────────────────────────────────────
+    //
+    // Endpoint reality check performed against a live GeoServer 2.28.2 (OPTIONS + real calls),
+    // since the general REST API coverage audit this section is based on got several of these
+    // wrong (marked as valid-but-missing when some routes don't actually exist / don't support
+    // the verb claimed):
+    //   - GET  /rest/imports/{id}/data                                real (500 NPE bug when the
+    //                                                                  import has no import-level
+    //                                                                  data, e.g. task-based imports)
+    //   - GET  /rest/imports/{id}/tasks/{taskId}/data                 real, 200
+    //   - GET  /rest/imports/{id}/data/files                          real (400 "Data is not a
+    //                                                                  directory" unless data.type
+    //                                                                  == "directory")
+    //   - GET  /rest/imports/{id}/tasks/{taskId}/data/files           real, same directory-only rule
+    //   - GET/DELETE /rest/imports/{id}/data/files/{filename}         real (OPTIONS confirms
+    //                                                                  Allow: GET,HEAD,DELETE,OPTIONS)
+    //   - DELETE /rest/imports/{id}/data/files (bulk)                 NOT supported — OPTIONS
+    //                                                                  confirms Allow: GET,HEAD,OPTIONS
+    //   - DELETE /rest/imports/{id}/tasks/{taskId}/data/files (bulk)  NOT supported, same reason
+    //   - GET/DELETE /rest/imports/{id}/tasks/{taskId}/data/files/{filename}
+    //                                                                  route DOES NOT EXIST at all
+    //                                                                  on 2.28.2 (OPTIONS itself
+    //                                                                  returns 404) — not implemented
+
+    // [32] GET /rest/imports/{id}/data
+
+    /**
+     * Gets the data source attached directly to an import (not a specific task).
+     *
+     * <p><b>GeoServer 2.28.2 bug:</b> throws 500 ({@code NullPointerException}) when the import
+     * has no import-level data assigned — the common case for task-based imports, where data
+     * lives on each {@link ImportTask} instead (see {@link #getTaskData(long, long)}).
+     *
+     * @param importId the import ID (required)
+     * @return the import-level data source
+     */
+    public ImportData getImportData(long importId) {
+        String path = "/rest/imports/" + importId + "/data";
+        GeoServerResponse response = httpClient.get(path, "application/json");
+        if (response.isNotFound()) {
+            throw new ResourceNotFoundException("ImportData", String.valueOf(importId), response.getBody());
+        }
+        handleErrorResponse(response, "GET", path);
+        return parseImportData(response.getBody());
+    }
+
+    // [33] GET /rest/imports/{id}/tasks/{taskId}/data
+
+    /**
+     * Gets the data source attached to a specific import task.
+     *
+     * @param importId the import ID (required)
+     * @param taskId   the task ID (required)
+     * @return the task's data source
+     */
+    public ImportData getTaskData(long importId, long taskId) {
+        String path = "/rest/imports/" + importId + "/tasks/" + taskId + "/data";
+        GeoServerResponse response = httpClient.get(path, "application/json");
+        if (response.isNotFound()) {
+            throw new ResourceNotFoundException("ImportData", importId + "/tasks/" + taskId, response.getBody());
+        }
+        handleErrorResponse(response, "GET", path);
+        return parseImportData(response.getBody());
+    }
+
+    // [34] GET /rest/imports/{id}/data/files
+
+    /**
+     * Lists file names under an import's data source. Only meaningful when the import-level
+     * data is a directory ({@code getImportData(importId).getType().equals("directory")});
+     * GeoServer returns 400 ("Data is not a directory") otherwise.
+     *
+     * @param importId the import ID (required)
+     * @return file names in the directory
+     */
+    public List<String> listImportDataFiles(long importId) {
+        String path = "/rest/imports/" + importId + "/data/files";
+        GeoServerResponse response = httpClient.get(path, "application/json");
+        handleErrorResponse(response, "GET", path);
+        return parseFileList(response.getBody());
+    }
+
+    // [35] GET /rest/imports/{id}/tasks/{taskId}/data/files
+
+    /**
+     * Lists file names under a task's data source. Only meaningful when the task-level data is
+     * a directory; GeoServer returns 400 ("Data is not a directory") otherwise.
+     *
+     * @param importId the import ID (required)
+     * @param taskId   the task ID (required)
+     * @return file names in the directory
+     */
+    public List<String> listTaskDataFiles(long importId, long taskId) {
+        String path = "/rest/imports/" + importId + "/tasks/" + taskId + "/data/files";
+        GeoServerResponse response = httpClient.get(path, "application/json");
+        handleErrorResponse(response, "GET", path);
+        return parseFileList(response.getBody());
+    }
+
+    // [36] GET /rest/imports/{id}/data/files/{filename}
+
+    /**
+     * Downloads a single file's raw bytes from an import's (directory-type) data source.
+     *
+     * @param importId the import ID (required)
+     * @param filename the file name (required)
+     * @return the raw file bytes
+     * @throws ResourceNotFoundException if the file does not exist
+     */
+    public byte[] getImportDataFile(long importId, String filename) {
+        requireNonEmpty(filename, "filename");
+        String path = "/rest/imports/" + importId + "/data/files/" + filename;
+        GeoServerResponse response = httpClient.getBinary(path, "application/octet-stream");
+        if (response.isNotFound()) {
+            throw new ResourceNotFoundException("ImportDataFile", importId + "/" + filename, response.getBody());
+        }
+        handleErrorResponse(response, "GET", path);
+        return response.getBinaryBody();
+    }
+
+    // [37] DELETE /rest/imports/{id}/data/files/{filename}
+
+    /**
+     * Deletes a single file from an import's (directory-type) data source. Confirmed supported
+     * via {@code OPTIONS} ({@code Allow: GET,HEAD,DELETE,OPTIONS}) — unlike the bulk
+     * {@code DELETE .../data/files} collection endpoint, which GeoServer does not support.
+     *
+     * @param importId the import ID (required)
+     * @param filename the file name (required)
+     * @throws ResourceNotFoundException if the file does not exist
+     */
+    public void deleteImportDataFile(long importId, String filename) {
+        requireNonEmpty(filename, "filename");
+        String path = "/rest/imports/" + importId + "/data/files/" + filename;
+        GeoServerResponse response = httpClient.delete(path);
+        if (response.isNotFound()) {
+            throw new ResourceNotFoundException("ImportDataFile", importId + "/" + filename, response.getBody());
+        }
+        handleErrorResponse(response, "DELETE", path);
+    }
+
     // Parsing helpers
 
     private List<ImportContextSummary> parseImportList(
@@ -539,6 +681,32 @@ public class ImporterManager extends AbstractManager {
         } catch (IOException e) {
             throw new SerializationException(
                     "Failed to serialize transform", e);
+        }
+    }
+
+    private ImportData parseImportData(String body) {
+        try {
+            return getObjectMapper().readValue(body, ImportData.class);
+        } catch (IOException e) {
+            throw new SerializationException("Failed to parse import data response", e);
+        }
+    }
+
+    private List<String> parseFileList(String body) {
+        if (body == null || body.isEmpty()) return Collections.emptyList();
+        try {
+            JsonNode root = getObjectMapper().readTree(body);
+            JsonNode files = root.path("files");
+            if (files.isArray()) {
+                List<String> result = new ArrayList<>();
+                for (JsonNode item : files) {
+                    result.add(item.isTextual() ? item.asText() : item.path("file").asText(null));
+                }
+                return result;
+            }
+            return Collections.emptyList();
+        } catch (IOException e) {
+            throw new SerializationException("Failed to parse data file list response", e);
         }
     }
 }
