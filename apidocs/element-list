@@ -46,6 +46,7 @@ io.github.kimbongjune.geoserverclient.dto.settings
 io.github.kimbongjune.geoserverclient.dto.structuredcoverage
 io.github.kimbongjune.geoserverclient.dto.style
 io.github.kimbongjune.geoserverclient.dto.template
+io.github.kimbongjune.geoserverclient.dto.transform
 io.github.kimbongjune.geoserverclient.dto.urlcheck
 io.github.kimbongjune.geoserverclient.dto.wmslayer
 io.github.kimbongjune.geoserverclient.dto.wmsstore
