@@ -231,9 +231,11 @@
 
     <h3>Layer ACL</h3>
     <div class="form-panel">
-        <form action="/security/acl/layers/add" method="post" style="display:inline-flex;gap:6px">
-            <input type="text" name="rule" required placeholder="*.*.r" style="width:140px"/>
-            <input type="text" name="roles" required placeholder="ROLE_ADMIN or *" style="width:180px"/>
+        <form action="/security/acl/layers/add" method="post" style="display:inline-flex;gap:6px;align-items:center">
+            <label for="layer_acl_rule" style="color:#9aa0a6;font-size:11px">Rule</label>
+            <input type="text" id="layer_acl_rule" name="rule" required placeholder="*.*.r" style="width:140px"/>
+            <label for="layer_acl_roles" style="color:#9aa0a6;font-size:11px">Roles</label>
+            <input type="text" id="layer_acl_roles" name="roles" required placeholder="ROLE_ADMIN or *" style="width:180px"/>
             <button class="btn small" type="submit">Add rule</button>
         </form>
         <form action="/security/acl/layers/delete-all" method="post" style="display:inline-flex;margin-left:8px">
@@ -258,9 +260,11 @@
 
     <h3>Service ACL</h3>
     <div class="form-panel">
-        <form action="/security/acl/services/add" method="post" style="display:inline-flex;gap:6px">
-            <input type="text" name="rule" required placeholder="wms.GetMap" style="width:140px"/>
-            <input type="text" name="roles" required placeholder="ROLE_ADMIN or *" style="width:180px"/>
+        <form action="/security/acl/services/add" method="post" style="display:inline-flex;gap:6px;align-items:center">
+            <label for="service_acl_rule" style="color:#9aa0a6;font-size:11px">Rule</label>
+            <input type="text" id="service_acl_rule" name="rule" required placeholder="wms.GetMap" style="width:140px"/>
+            <label for="service_acl_roles" style="color:#9aa0a6;font-size:11px">Roles</label>
+            <input type="text" id="service_acl_roles" name="roles" required placeholder="ROLE_ADMIN or *" style="width:180px"/>
             <button class="btn small" type="submit">Add rule</button>
         </form>
         <form action="/security/acl/services/delete-all" method="post" style="display:inline-flex;margin-left:8px">
@@ -285,9 +289,11 @@
 
     <h3>REST ACL</h3>
     <div class="form-panel">
-        <form action="/security/acl/rest/add" method="post" style="display:inline-flex;gap:6px">
-            <input type="text" name="rule" required placeholder="workspaces/**:GET" style="width:180px"/>
-            <input type="text" name="roles" required placeholder="ROLE_ADMINISTRATOR" style="width:180px"/>
+        <form action="/security/acl/rest/add" method="post" style="display:inline-flex;gap:6px;align-items:center">
+            <label for="rest_acl_rule" style="color:#9aa0a6;font-size:11px">Rule</label>
+            <input type="text" id="rest_acl_rule" name="rule" required placeholder="workspaces/**:GET" style="width:180px"/>
+            <label for="rest_acl_roles" style="color:#9aa0a6;font-size:11px">Roles</label>
+            <input type="text" id="rest_acl_roles" name="roles" required placeholder="ROLE_ADMINISTRATOR" style="width:180px"/>
             <button class="btn small" type="submit">Add rule</button>
         </form>
         <form action="/security/acl/rest/delete-all" method="post" style="display:inline-flex;margin-left:8px">
