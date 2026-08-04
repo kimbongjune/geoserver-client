@@ -2,6 +2,7 @@ package com.example.geoserverexample.gwc.service;
 
 import io.github.kimbongjune.geoserverclient.dto.gwc.GwcDiskQuotaConfig;
 import io.github.kimbongjune.geoserverclient.dto.gwc.GwcGlobalSettings;
+import io.github.kimbongjune.geoserverclient.dto.gwc.GwcIndexResult;
 import io.github.kimbongjune.geoserverclient.dto.gwc.GwcLayer;
 import io.github.kimbongjune.geoserverclient.dto.gwc.GwcReloadResult;
 import io.github.kimbongjune.geoserverclient.dto.layer.LayerSummary;
@@ -54,4 +55,6 @@ public interface GwcService {
     String inspectLayer(String layer);
 
     String filterUpdate(String filterName);
+
+    GwcIndexResult getIndex();
 }

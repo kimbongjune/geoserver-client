@@ -2,6 +2,7 @@ package io.github.kimbongjune.geoserverclient.api.resource;
 
 import io.github.kimbongjune.geoserverclient.BaseIntegrationTest;
 import io.github.kimbongjune.geoserverclient.dto.resource.ResourceChild;
+import io.github.kimbongjune.geoserverclient.dto.resource.ResourceHeadInfo;
 import io.github.kimbongjune.geoserverclient.dto.resource.ResourceMetadata;
 import io.github.kimbongjune.geoserverclient.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.*;
@@ -199,5 +200,39 @@ class ResourceManagerIntegrationTest extends BaseIntegrationTest {
         assertThrows(ResourceNotFoundException.class,
                 () -> resources.delete("nonexistent-file-copilot-99999.txt"),
                 "delete of non-existent resource must throw ResourceNotFoundException");
+    }
+
+    // ── [18] headMetadata() — existing resource ──────────────────────────
+
+    @Test @Order(18)
+    @DisplayName("[18] headMetadata(\"global.xml\") returns resource type, content type, and file name")
+    void headMetadata_globalXml_returnsInfo() {
+        ResourceHeadInfo info = resources.headMetadata("global.xml");
+
+        assertNotNull(info, "headMetadata() must not be null for an existing resource");
+        assertEquals("resource", info.getResourceType(), "global.xml is a file, not a directory");
+        assertNotNull(info.getLastModified(), "Last-Modified header must be present");
+        assertEquals("application/xml", info.getContentType());
+        assertEquals("global.xml", info.getFileName());
+    }
+
+    // ── [19] headMetadata() — directory resource ─────────────────────────
+
+    @Test @Order(19)
+    @DisplayName("[19] headMetadata(\"styles\") returns directory resource type")
+    void headMetadata_stylesDir_returnsDirectoryType() {
+        ResourceHeadInfo info = resources.headMetadata("styles");
+
+        assertNotNull(info, "headMetadata() must not be null for an existing directory");
+        assertEquals("directory", info.getResourceType());
+    }
+
+    // ── [20] headMetadata() — non-existing resource ──────────────────────
+
+    @Test @Order(20)
+    @DisplayName("[20] headMetadata(\"nonexistent-file-copilot-99999.txt\") returns null")
+    void headMetadata_nonExistent_returnsNull() {
+        assertNull(resources.headMetadata("nonexistent-file-copilot-99999.txt"),
+                "headMetadata() of a non-existent resource must return null (404)");
     }
 }

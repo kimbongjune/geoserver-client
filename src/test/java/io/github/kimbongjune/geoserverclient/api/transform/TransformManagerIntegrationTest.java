@@ -3,6 +3,8 @@ package io.github.kimbongjune.geoserverclient.api.transform;
 import io.github.kimbongjune.geoserverclient.BaseIntegrationTest;
 import org.junit.jupiter.api.*;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -48,5 +50,17 @@ class TransformManagerIntegrationTest extends BaseIntegrationTest {
         boolean first  = transforms.isAvailable();
         boolean second = transforms.isAvailable();
         assertEquals(first, second, "isAvailable() must return stable result across calls");
+    }
+
+    // ── [4] list() ─────────────────────────────────────────────────────────
+
+    @Test
+    @Order(4)
+    @DisplayName("[4] list() returns an empty list (plugin not installed -> 404 -> empty per javadoc)")
+    void list_pluginNotInstalled_returnsEmptyList() {
+        List<String> transformNames = transforms.list();
+        assertNotNull(transformNames, "list() must never return null");
+        assertTrue(transformNames.isEmpty(),
+                "XSLT Transform plugin is not installed; list() must return an empty list on 404");
     }
 }

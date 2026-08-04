@@ -162,6 +162,19 @@
             <button class="btn small secondary" type="submit">Update</button>
         </form>
     </div>
+
+    <h2>GWC REST index</h2>
+    <p class="sub">Raw <code>GET /gwc/rest</code> resource index (HTML-only endpoint — .json/.xml return 406).</p>
+    <div class="form-panel">
+        <p class="sub">Resource links:</p>
+        <ul>
+            <li th:each="link : ${gwcIndex.resourceLinks}"><code th:text="${link}"></code></li>
+        </ul>
+        <details>
+            <summary class="sub">Raw HTML response</summary>
+            <pre th:text="${gwcIndex.rawHtml}" style="white-space:pre-wrap;font-size:11px"></pre>
+        </details>
+    </div>
 </main>
 </body>
 </html>

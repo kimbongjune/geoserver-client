@@ -2,6 +2,7 @@ package com.example.geoserverexample.security.service.impl;
 
 import com.example.geoserverexample.security.service.SecurityService;
 import io.github.kimbongjune.geoserverclient.GeoServerClient;
+import io.github.kimbongjune.geoserverclient.dto.security.AclRules;
 import io.github.kimbongjune.geoserverclient.dto.security.AuthFilterConfig;
 import io.github.kimbongjune.geoserverclient.dto.security.AuthProviderConfig;
 import io.github.kimbongjune.geoserverclient.dto.security.FilterChainEntry;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class SecurityServiceImpl implements SecurityService {
@@ -183,5 +185,70 @@ public class SecurityServiceImpl implements SecurityService {
     @Override
     public void setCatalogMode(String mode) {
         client.security().setCatalogMode(mode);
+    }
+
+    // ACL rules
+
+    @Override
+    public Map<String, String> getLayerAcl() {
+        return client.security().getLayerAcl().getEntries();
+    }
+
+    @Override
+    public Map<String, String> getServiceAcl() {
+        return client.security().getServiceAcl().getEntries();
+    }
+
+    @Override
+    public Map<String, String> getRestAcl() {
+        return client.security().getRestAcl().getEntries();
+    }
+
+    @Override
+    public void addLayerAcl(String rule, String roles) {
+        client.security().addLayerAcl(AclRules.of(rule, roles));
+    }
+
+    @Override
+    public void addServiceAcl(String rule, String roles) {
+        client.security().addServiceAcl(AclRules.of(rule, roles));
+    }
+
+    @Override
+    public void addRestAcl(String rule, String roles) {
+        client.security().addRestAcl(AclRules.of(rule, roles));
+    }
+
+    @Override
+    public void deleteLayerAcl(String rule) {
+        client.security().deleteLayerAcl(rule);
+    }
+
+    @Override
+    public void deleteServiceAcl(String rule) {
+        client.security().deleteServiceAcl(rule);
+    }
+
+    @Override
+    public void deleteRestAcl(String rule) {
+        client.security().deleteRestAcl(rule);
+    }
+
+    @Override
+    @SuppressWarnings("deprecation")
+    public void deleteAllLayerAcl() {
+        client.security().deleteAllLayerAcl();
+    }
+
+    @Override
+    @SuppressWarnings("deprecation")
+    public void deleteAllServiceAcl() {
+        client.security().deleteAllServiceAcl();
+    }
+
+    @Override
+    @SuppressWarnings("deprecation")
+    public void deleteAllRestAcl() {
+        client.security().deleteAllRestAcl();
     }
 }

@@ -3,10 +3,12 @@ package io.github.kimbongjune.geoserverclient.api.importer;
 import io.github.kimbongjune.geoserverclient.BaseIntegrationTest;
 import io.github.kimbongjune.geoserverclient.dto.importer.ImportContext;
 import io.github.kimbongjune.geoserverclient.dto.importer.ImportContextSummary;
+import io.github.kimbongjune.geoserverclient.dto.importer.ImportData;
 import io.github.kimbongjune.geoserverclient.dto.importer.ImportTask;
 import io.github.kimbongjune.geoserverclient.dto.importer.ImportTransform;
 import io.github.kimbongjune.geoserverclient.dto.importer.ImportTransformChain;
 import io.github.kimbongjune.geoserverclient.dto.workspace.CreateWorkspaceRequest;
+import io.github.kimbongjune.geoserverclient.exception.GeoServerResponseException;
 import io.github.kimbongjune.geoserverclient.exception.ResourceNotFoundException;
 import org.junit.jupiter.api.*;
 
@@ -226,10 +228,73 @@ class ImporterManagerIntegrationTest extends BaseIntegrationTest {
                 "addTransform() must not throw for vector task");
     }
 
-    // ── [5] runImport ─────────────────────────────────────────────────────
+    // ── [33] getTaskData ─────────────────────────────────────────────────
 
     @Test
     @Order(12)
+    @DisplayName("[33] getTaskData() - returns Shapefile ImportData for the uploaded task")
+    void getTaskData_shouldReturnShapefileData() {
+        Assumptions.assumeTrue(importId >= 0 && taskId >= 0,
+                "Skip: no task created");
+        ImportData data = importer.getTaskData(importId, taskId);
+        assertNotNull(data, "getTaskData() must not return null once a file has been uploaded");
+        assertEquals("file", data.getType(), "AL_D002_36_20260104.zip is auto-detected as a single file, not a directory");
+        assertEquals("Shapefile", data.getFormat());
+        assertNotNull(data.getFile(), "primary file name must be present");
+    }
+
+    // ── [32] getImportData (GeoServer 2.28.2 NPE bug for task-based imports) ──────
+
+    @Test
+    @Order(13)
+    @DisplayName("[32] getImportData() - import has no import-level data -> GeoServerResponseException(500) [GeoServer bug]")
+    void getImportData_taskBasedImport_throws500() {
+        Assumptions.assumeTrue(importId >= 0, "Skip: no import context");
+        // Task-based imports (the common case, used by this test class) don't set import-level
+        // data -> GeoServer throws a NullPointerException internally -> 500.
+        GeoServerResponseException ex = assertThrows(GeoServerResponseException.class,
+                () -> importer.getImportData(importId));
+        assertEquals(500, ex.getStatusCode(),
+                "Expected 500 (GeoServer 2.28.2 NPE bug for task-based imports with no import-level data)");
+    }
+
+    // ── [34]/[35] listImportDataFiles / listTaskDataFiles (400 for file-type data) ─
+
+    @Test
+    @Order(14)
+    @DisplayName("[34] listImportDataFiles() - import-level data is file-type -> GeoServerResponseException(400)")
+    void listImportDataFiles_fileTypeData_throws400() {
+        Assumptions.assumeTrue(importId >= 0, "Skip: no import context");
+        GeoServerResponseException ex = assertThrows(GeoServerResponseException.class,
+                () -> importer.listImportDataFiles(importId));
+        assertEquals(400, ex.getStatusCode(),
+                "listImportDataFiles() must 400 when the underlying data is a single file, not a directory");
+    }
+
+    @Test
+    @Order(15)
+    @DisplayName("[35] listTaskDataFiles() - task data is file-type (Shapefile ZIP) -> GeoServerResponseException(400)")
+    void listTaskDataFiles_fileTypeData_throws400() {
+        Assumptions.assumeTrue(importId >= 0 && taskId >= 0,
+                "Skip: no task created");
+        // AL_D002_36_20260104.zip is auto-detected by GeoServer as a single Shapefile (type="file"),
+        // not a directory, so the /data/files sub-resource must reject it with 400.
+        GeoServerResponseException ex = assertThrows(GeoServerResponseException.class,
+                () -> importer.listTaskDataFiles(importId, taskId));
+        assertEquals(400, ex.getStatusCode(),
+                "listTaskDataFiles() must 400 when the task data is a single file, not a directory");
+    }
+
+    // NOTE: getImportDataFile()/deleteImportDataFile() operate on a *directory-type* import's
+    // data (confirmed supported via OPTIONS: Allow: GET,HEAD,DELETE,OPTIONS), but no
+    // directory-type import could be produced with the available fixtures in one reasonable
+    // attempt — AL_D002_36_20260104.zip is auto-detected as a single Shapefile (type="file").
+    // Their success/404 paths are covered instead by mocked tests in ImporterManagerTest.
+
+    // ── [5] runImport ─────────────────────────────────────────────────────
+
+    @Test
+    @Order(16)
     @DisplayName("[5] runImport() - executes import")
     void runImport_shouldNotThrow() {
         Assumptions.assumeTrue(importId >= 0, "Skip: no import context");
@@ -240,7 +305,7 @@ class ImporterManagerIntegrationTest extends BaseIntegrationTest {
     // ── [3] createImportAtId ──────────────────────────────────────────────
 
     @Test
-    @Order(13)
+    @Order(17)
     @DisplayName("[3] createImportAtId() - creates context at specific id")
     void createImportAtId_shouldCreateWithSpecificId() {
         long hintId = 99991L;
@@ -258,7 +323,7 @@ class ImporterManagerIntegrationTest extends BaseIntegrationTest {
     // ── [13] deleteTask ───────────────────────────────────────────────────
 
     @Test
-    @Order(14)
+    @Order(18)
     @DisplayName("[13] deleteTask() - removes task")
     void deleteTask_shouldRemoveTask() {
         Assumptions.assumeTrue(importId >= 0 && taskId >= 0,
@@ -274,7 +339,7 @@ class ImporterManagerIntegrationTest extends BaseIntegrationTest {
     // ── [6] deleteImport ─────────────────────────────────────────────────
 
     @Test
-    @Order(15)
+    @Order(19)
     @DisplayName("[6] deleteImport() - removes context")
     void deleteImport_shouldRemoveContext() {
         Assumptions.assumeTrue(importId >= 0, "Skip: no import context");

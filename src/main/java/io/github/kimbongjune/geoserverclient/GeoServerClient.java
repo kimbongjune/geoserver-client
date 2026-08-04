@@ -28,6 +28,7 @@ import io.github.kimbongjune.geoserverclient.api.gwc.GwcGridSetManager;
 import io.github.kimbongjune.geoserverclient.api.gwc.GwcDiskQuotaManager;
 import io.github.kimbongjune.geoserverclient.api.gwc.GwcSeedManager;
 import io.github.kimbongjune.geoserverclient.api.gwc.GwcMassTruncateManager;
+import io.github.kimbongjune.geoserverclient.api.gwc.GwcIndexManager;
 import io.github.kimbongjune.geoserverclient.api.gwc.GwcReloadManager;
 import io.github.kimbongjune.geoserverclient.api.gwc.GwcFilterUpdateManager;
 import io.github.kimbongjune.geoserverclient.api.gwc.GwcBoundsManager;
@@ -196,6 +197,7 @@ public class GeoServerClient implements Closeable {
         register(m, new GwcSeedManager(httpClient, serializerFactory, defaultFormat));
         register(m, new GwcMassTruncateManager(httpClient, serializerFactory, defaultFormat));
         register(m, new GwcReloadManager(httpClient, serializerFactory, defaultFormat));
+        register(m, new GwcIndexManager(httpClient, serializerFactory, defaultFormat));
         register(m, new GwcFilterUpdateManager(httpClient, serializerFactory, defaultFormat));
         register(m, new GwcBoundsManager(httpClient, serializerFactory, defaultFormat));
         register(m, new UrlCheckManager(httpClient, serializerFactory, defaultFormat));
@@ -709,6 +711,18 @@ public class GeoServerClient implements Closeable {
      */
     public GwcReloadManager gwcReload() {
         return manager(GwcReloadManager.class);
+    }
+
+    /**
+     * Returns the GWC REST index API manager.
+     *
+     * <p>Covers the {@code /gwc/rest} endpoint: lists the top-level GWC REST resource links
+     * (e.g. {@code layers/}, {@code seed}).
+     *
+     * @return the {@link GwcIndexManager} instance shared for the lifetime of this client
+     */
+    public GwcIndexManager gwcIndex() {
+        return manager(GwcIndexManager.class);
     }
 
     /**

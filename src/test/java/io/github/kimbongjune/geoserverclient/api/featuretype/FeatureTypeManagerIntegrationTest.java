@@ -35,6 +35,14 @@ class FeatureTypeManagerIntegrationTest extends BaseIntegrationTest {
     private static final String FT_DEL   = "it_ft_del_"  + TS;
     private static final String FT_NREC  = "it_ft_nrc_"  + TS; // recurse=false test
 
+    // workspace-level (no-store) variants — single datastore in WS, so createByWorkspace can
+    // resolve the target store unambiguously
+    private static final String FT_WS_UPD  = "it_ft_wsupd_"  + TS;
+    private static final String FT_WS_RST  = "it_ft_wsrst_"  + TS;
+    private static final String FT_WS_DEL  = "it_ft_wsdel_"  + TS;
+    private static final String FT_WS_NREC = "it_ft_wsnrc_"  + TS;
+    private static final String FT_WS_MAIN = "it_ft_wsmain_" + TS;
+
     private FeatureTypeManager featureTypes;
 
     @BeforeAll
@@ -49,6 +57,13 @@ class FeatureTypeManagerIntegrationTest extends BaseIntegrationTest {
         featureTypes.create(WS, DS, ftRequest(FT_RST));
         featureTypes.create(WS, DS, ftRequest(FT_DEL));
         featureTypes.create(WS, DS, ftRequest(FT_NREC));
+
+        // pre-create FTs for the workspace-level (no-store) variants — WS has exactly one
+        // datastore (DS), so createByWorkspace can auto-resolve the target store.
+        featureTypes.createByWorkspace(WS, ftRequest(FT_WS_UPD));
+        featureTypes.createByWorkspace(WS, ftRequest(FT_WS_RST));
+        featureTypes.createByWorkspace(WS, ftRequest(FT_WS_DEL));
+        featureTypes.createByWorkspace(WS, ftRequest(FT_WS_NREC));
     }
 
     @AfterAll
@@ -212,6 +227,114 @@ class FeatureTypeManagerIntegrationTest extends BaseIntegrationTest {
     void delete_notFound_shouldThrow() {
         assertThrows(FeatureTypeNotFoundException.class,
                 () -> featureTypes.delete(WS, DS, "nonexistent_ft_xyz"));
+    }
+
+    // ── 10. workspace-level (no-store) variants ───────────────────────────
+
+    @Test
+    @Order(16)
+    @DisplayName("createByWorkspace() - creates FeatureType via auto-resolved store")
+    void createByWorkspace_shouldCreateFeatureType() {
+        FeatureType ft = featureTypes.createByWorkspace(WS, ftRequest(FT_WS_MAIN));
+        assertNotNull(ft);
+        assertEquals(FT_WS_MAIN, ft.getName());
+        assertNotNull(ft.getSrs());
+        assertNotNull(ft.getStore());
+        // GeoServer auto-picked WS's single datastore (DS)
+        assertTrue(ft.getStore().getName().contains(DS));
+    }
+
+    @Test
+    @Order(17)
+    @DisplayName("createByWorkspace() - duplicate name -> ResourceAlreadyExistsException")
+    void createByWorkspace_duplicate_shouldThrow() {
+        assertThrows(ResourceAlreadyExistsException.class,
+                () -> featureTypes.createByWorkspace(WS, ftRequest(FT_WS_MAIN)));
+    }
+
+    @Test
+    @Order(18)
+    @DisplayName("getByWorkspace() - returns FeatureType detail without a store")
+    void getByWorkspace_shouldReturnFeatureType() {
+        FeatureType ft = featureTypes.getByWorkspace(WS, FT_WS_MAIN);
+        assertNotNull(ft);
+        assertEquals(FT_WS_MAIN, ft.getName());
+        assertNotNull(ft.getSrs());
+        assertNotNull(ft.getStore());
+    }
+
+    @Test
+    @Order(19)
+    @DisplayName("getByWorkspace() - nonexistent FT -> FeatureTypeNotFoundException")
+    void getByWorkspace_notFound_shouldThrow() {
+        assertThrows(FeatureTypeNotFoundException.class,
+                () -> featureTypes.getByWorkspace(WS, "nonexistent_ft_xyz"));
+    }
+
+    @Test
+    @Order(20)
+    @DisplayName("listByWorkspace() - returns featureTypes across the whole workspace")
+    void listByWorkspace_shouldReturnAll() {
+        List<FeatureTypeSummary> list = featureTypes.listByWorkspace(WS);
+        assertNotNull(list);
+        assertTrue(list.stream().anyMatch(s -> FT_WS_MAIN.equals(s.getName())),
+                "listByWorkspace() must contain FT_WS_MAIN");
+        // also contains store-scoped FTs created earlier, since they live in the same workspace
+        assertTrue(list.stream().anyMatch(s -> FT_MAIN.equals(s.getName())),
+                "listByWorkspace() must also contain store-scoped FTs in the same workspace");
+    }
+
+    @Test
+    @Order(21)
+    @DisplayName("updateByWorkspace() - changes title without specifying a store")
+    void updateByWorkspace_shouldChangeTitle() {
+        String newTitle = "Updated WS Title " + TS;
+        FeatureType updated = featureTypes.updateByWorkspace(WS, FT_WS_UPD,
+                UpdateFeatureTypeRequest.builder().title(newTitle).build());
+        assertNotNull(updated);
+        assertEquals(newTitle, updated.getTitle());
+    }
+
+    @Test
+    @Order(22)
+    @DisplayName("updateByWorkspace() - nonexistent FT -> FeatureTypeNotFoundException")
+    void updateByWorkspace_notFound_shouldThrow() {
+        assertThrows(FeatureTypeNotFoundException.class,
+                () -> featureTypes.updateByWorkspace(WS, "nonexistent_ft_xyz",
+                        UpdateFeatureTypeRequest.builder().title("x").build()));
+    }
+
+    @Test
+    @Order(23)
+    @DisplayName("resetByWorkspace() - cache reset succeeds (200)")
+    void resetByWorkspace_shouldSucceed() {
+        assertDoesNotThrow(() -> featureTypes.resetByWorkspace(WS, FT_WS_RST));
+    }
+
+    @Test
+    @Order(24)
+    @DisplayName("deleteByWorkspace(recurse=false) - has layer -> 403")
+    void deleteByWorkspace_recursefalse_withLayer_shouldThrow403() {
+        // createByWorkspace() auto-creates a Layer, so recurse=false should return 403
+        GeoServerResponseException ex = assertThrows(GeoServerResponseException.class,
+                () -> featureTypes.deleteByWorkspace(WS, FT_WS_NREC, false));
+        assertEquals(403, ex.getStatusCode());
+    }
+
+    @Test
+    @Order(25)
+    @DisplayName("deleteByWorkspace() - recurse=true (default) -> succeeds, layer also deleted")
+    void deleteByWorkspace_shouldDeleteWithRecurse() {
+        assertDoesNotThrow(() -> featureTypes.deleteByWorkspace(WS, FT_WS_DEL));
+        assertFalse(featureTypes.exists(WS, DS, FT_WS_DEL));
+    }
+
+    @Test
+    @Order(26)
+    @DisplayName("deleteByWorkspace() - nonexistent FT -> FeatureTypeNotFoundException")
+    void deleteByWorkspace_notFound_shouldThrow() {
+        assertThrows(FeatureTypeNotFoundException.class,
+                () -> featureTypes.deleteByWorkspace(WS, "nonexistent_ft_xyz"));
     }
 
     // ── Helpers ────────────────────────────────────────────────────────────

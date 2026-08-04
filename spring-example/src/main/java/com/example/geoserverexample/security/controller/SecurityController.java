@@ -30,6 +30,9 @@ public class SecurityController {
         model.addAttribute("authFilters", service.listAuthFilters());
         model.addAttribute("authProviders", service.listAuthProviders());
         model.addAttribute("userGroupServices", service.listUserGroupServices());
+        model.addAttribute("layerAcl", service.getLayerAcl());
+        model.addAttribute("serviceAcl", service.getServiceAcl());
+        model.addAttribute("restAcl", service.getRestAcl());
         return "security/index";
     }
 
@@ -200,6 +203,71 @@ public class SecurityController {
     public String setCatalogMode(@RequestParam String mode, RedirectAttributes redirect) {
         service.setCatalogMode(mode);
         redirect.addFlashAttribute("ok", "Catalog mode set to " + mode);
+        return "redirect:/security";
+    }
+
+    // ACL rules
+
+    @PostMapping("/acl/layers/add")
+    public String addLayerAcl(@RequestParam String rule, @RequestParam String roles, RedirectAttributes redirect) {
+        service.addLayerAcl(rule, roles);
+        redirect.addFlashAttribute("ok", "Layer ACL rule '" + rule + "' added.");
+        return "redirect:/security";
+    }
+
+    @PostMapping("/acl/layers/delete")
+    public String deleteLayerAcl(@RequestParam String rule, RedirectAttributes redirect) {
+        service.deleteLayerAcl(rule);
+        redirect.addFlashAttribute("ok", "Layer ACL rule '" + rule + "' deleted.");
+        return "redirect:/security";
+    }
+
+    @PostMapping("/acl/layers/delete-all")
+    public String deleteAllLayerAcl(RedirectAttributes redirect) {
+        service.deleteAllLayerAcl();
+        redirect.addFlashAttribute("ok", "All layer ACL rules deleted.");
+        return "redirect:/security";
+    }
+
+    @PostMapping("/acl/services/add")
+    public String addServiceAcl(@RequestParam String rule, @RequestParam String roles, RedirectAttributes redirect) {
+        service.addServiceAcl(rule, roles);
+        redirect.addFlashAttribute("ok", "Service ACL rule '" + rule + "' added.");
+        return "redirect:/security";
+    }
+
+    @PostMapping("/acl/services/delete")
+    public String deleteServiceAcl(@RequestParam String rule, RedirectAttributes redirect) {
+        service.deleteServiceAcl(rule);
+        redirect.addFlashAttribute("ok", "Service ACL rule '" + rule + "' deleted.");
+        return "redirect:/security";
+    }
+
+    @PostMapping("/acl/services/delete-all")
+    public String deleteAllServiceAcl(RedirectAttributes redirect) {
+        service.deleteAllServiceAcl();
+        redirect.addFlashAttribute("ok", "All service ACL rules deleted.");
+        return "redirect:/security";
+    }
+
+    @PostMapping("/acl/rest/add")
+    public String addRestAcl(@RequestParam String rule, @RequestParam String roles, RedirectAttributes redirect) {
+        service.addRestAcl(rule, roles);
+        redirect.addFlashAttribute("ok", "REST ACL rule '" + rule + "' added.");
+        return "redirect:/security";
+    }
+
+    @PostMapping("/acl/rest/delete")
+    public String deleteRestAcl(@RequestParam String rule, RedirectAttributes redirect) {
+        service.deleteRestAcl(rule);
+        redirect.addFlashAttribute("ok", "REST ACL rule '" + rule + "' deleted.");
+        return "redirect:/security";
+    }
+
+    @PostMapping("/acl/rest/delete-all")
+    public String deleteAllRestAcl(RedirectAttributes redirect) {
+        service.deleteAllRestAcl();
+        redirect.addFlashAttribute("ok", "All REST ACL rules deleted.");
         return "redirect:/security";
     }
 }

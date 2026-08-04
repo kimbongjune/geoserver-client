@@ -7,6 +7,70 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.1.0] - 2026-08-04
+
+### Added
+
+- **Workspace-level FeatureType endpoints**: `FeatureTypeManager.listByWorkspace/getByWorkspace/
+  createByWorkspace/updateByWorkspace/deleteByWorkspace/resetByWorkspace` — store-less variants
+  of the existing store-scoped methods. GeoServer resolves the target store automatically on
+  create when the workspace has a single/default datastore.
+- **`CoverageManager.createByWorkspace`**: `POST /workspaces/{ws}/coverages`. Unlike FeatureTypes,
+  GeoServer requires the target store to be named explicitly in the request body.
+- **`ResourceManager.headMetadata`**: `HEAD /rest/resource/{path}` — lightweight file/directory
+  metadata via response headers, working for both files and directories (unlike `getMetadata()`,
+  which only works reliably for directories on GeoServer 2.28.2 due to a server-side format quirk).
+  Requires a new `GeoServerHttpClient.head()` method, implemented in `ApacheHttpClient` via
+  Apache HttpClient 5's `HttpHead`.
+- **`WmsLayerManager.publishByWorkspace` / `WmtsLayerManager.publishByWorkspace`**:
+  `POST /workspaces/{ws}/{wmslayers|wmtslayers}` — store-less layer registration; the target
+  store is named in the request body.
+- **`TransformManager` CRUD**: `list/get/create/update/delete` for WFS output XSLT transforms.
+  Implemented per GeoServer's documented endpoint shapes but unverified end-to-end — the XSLT
+  plugin is not available on GeoServer 2.28.x (stable or community), matching the pre-existing
+  `isAvailable()` method's own documented finding.
+- **`GwcIndexManager`** (new, `client.gwcIndex()`): `GET /gwc/rest` — GeoWebCache's REST resource
+  index page, parsed into resource links plus the raw HTML body.
+- **`ImporterManager` data endpoints**: `getImportData/getTaskData/listImportDataFiles/
+  listTaskDataFiles/getImportDataFile/deleteImportDataFile` for browsing and deleting files
+  backing an import or import task.
+- **`SecurityManager.deleteAllLayerAcl/deleteAllServiceAcl/deleteAllRestAcl`**: bulk ACL rule
+  deletion. Documented `@Deprecated` — see Fixed/Known issues below.
+
+### Fixed
+
+- Corrected a REST API coverage audit that had misclassified several endpoints as
+  "valid but unimplemented" when they don't actually exist on GeoServer 2.28.2: `GET/POST/PUT
+  /rest/security/acl/rest/{rule}` (confirmed via `OPTIONS` → `Allow: DELETE,OPTIONS` only — only
+  delete-by-rule is real) and `GET/DELETE /rest/imports/{id}/tasks/{taskId}/data/files/{filename}`
+  (route does not exist at all on 2.28.2 — `OPTIONS` itself 404s).
+
+### Known issues (GeoServer server-side, not library defects)
+
+- `SecurityManager.deleteAllLayerAcl/deleteAllServiceAcl/deleteAllRestAcl` always throw
+  `GeoServerResponseException(500)` on GeoServer 2.28.2 — a confirmed server-side
+  `StringIndexOutOfBoundsException` when building the empty-rule-set response. No rules are
+  actually deleted (verified rules are unchanged after the call). Same category as the
+  pre-existing `WmsLayerManager.update()` 500 bug.
+- `ImporterManager.getImportData(importId)` throws `GeoServerResponseException(500)` (a
+  `NullPointerException` server-side) when the import has no import-level data assigned — the
+  common case for task-based imports, where data lives on each `ImportTask` instead
+  (`getTaskData(importId, taskId)` is unaffected and works reliably).
+
+### Spring Boot example (`spring-example/`)
+
+- Security page: added ACL rule viewing/add/delete for all three categories, plus the new
+  bulk-delete-all actions (surfacing the real 500 bug transparently via the existing global
+  exception handler instead of hiding it).
+- GWC page: added a GWC REST index viewer.
+- Importer page: added task-level data display, plus a button demonstrating the import-level
+  data 500 bug.
+- Fixed a pre-existing latent bug in the Data Directory Browser (`AboutService.isFile`): it used
+  `getMetadata()`, which GeoServer answers with an unrequested XML body for file paths regardless
+  of the requested JSON format, breaking JSON parsing whenever a file (not a directory) was
+  browsed. Replaced with `headMetadata()`, which reads the `Resource-Type` header instead and
+  works uniformly for both files and directories.
+
 ## [1.0.1] - 2026-07-31
 
 ### Added

@@ -6,6 +6,7 @@ import io.github.kimbongjune.geoserverclient.GeoServerClient;
 import io.github.kimbongjune.geoserverclient.dto.datastore.DataStoreSummary;
 import io.github.kimbongjune.geoserverclient.dto.importer.ImportContext;
 import io.github.kimbongjune.geoserverclient.dto.importer.ImportContextSummary;
+import io.github.kimbongjune.geoserverclient.dto.importer.ImportData;
 import io.github.kimbongjune.geoserverclient.dto.importer.ImportTarget;
 import io.github.kimbongjune.geoserverclient.dto.importer.ImportTask;
 import io.github.kimbongjune.geoserverclient.dto.workspace.WorkspaceSummary;
@@ -53,6 +54,20 @@ public class ImporterServiceImpl implements ImporterService {
         } catch (GeoServerException ignored) {
             return null;
         }
+    }
+
+    @Override
+    public ImportData getTaskDataBestEffort(long importId, long taskId) {
+        try {
+            return client.importer().getTaskData(importId, taskId);
+        } catch (GeoServerException ignored) {
+            return null;
+        }
+    }
+
+    @Override
+    public ImportData getImportData(long importId) {
+        return client.importer().getImportData(importId);
     }
 
     @Override
