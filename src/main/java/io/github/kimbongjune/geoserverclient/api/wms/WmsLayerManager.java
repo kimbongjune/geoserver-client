@@ -397,7 +397,7 @@ public class WmsLayerManager extends AbstractManager {
 
     // Payload builders
 
-    private String buildPublishPayload(PublishWmsLayerRequest req) {
+    private Map<String, Object> buildPublishFields(PublishWmsLayerRequest req) {
         Map<String, Object> layer = new LinkedHashMap<>();
         layer.put("name", req.getName());
         layer.put("nativeName", req.getNativeName());
@@ -414,26 +414,15 @@ public class WmsLayerManager extends AbstractManager {
         if (req.getVendorParameters() != null)        layer.put("vendorParameters",     req.getVendorParameters());
         if (req.getSrs() != null)                     layer.put("srs",                  req.getSrs());
         if (req.getProjectionPolicy() != null)        layer.put("projectionPolicy",     req.getProjectionPolicy());
-        return serializeToJson(Collections.singletonMap("wmsLayer", layer));
+        return layer;
+    }
+
+    private String buildPublishPayload(PublishWmsLayerRequest req) {
+        return serializeToJson(Collections.singletonMap("wmsLayer", buildPublishFields(req)));
     }
 
     private String buildPublishByWorkspacePayload(String workspaceName, String storeName, PublishWmsLayerRequest req) {
-        Map<String, Object> layer = new LinkedHashMap<>();
-        layer.put("name", req.getName());
-        layer.put("nativeName", req.getNativeName());
-        if (req.getTitle() != null)                   layer.put("title",                req.getTitle());
-        if (req.getDescription() != null)             layer.put("description",          req.getDescription());
-        if (req.getAbstractText() != null)            layer.put("abstract",             req.getAbstractText());
-        if (req.getEnabled() != null)                 layer.put("enabled",              req.getEnabled());
-        if (req.getForcedRemoteStyle() != null)       layer.put("forcedRemoteStyle",    req.getForcedRemoteStyle());
-        if (req.getPreferredFormat() != null)         layer.put("preferredFormat",      req.getPreferredFormat());
-        if (req.getMinScale() != null)                layer.put("minScale",             req.getMinScale());
-        if (req.getMaxScale() != null)                layer.put("maxScale",             req.getMaxScale());
-        if (req.getMetadataBBoxRespected() != null)   layer.put("metadataBBoxRespected", req.getMetadataBBoxRespected());
-        if (req.getSelectedRemoteStyles() != null)    layer.put("selectedRemoteStyles", req.getSelectedRemoteStyles());
-        if (req.getVendorParameters() != null)        layer.put("vendorParameters",     req.getVendorParameters());
-        if (req.getSrs() != null)                     layer.put("srs",                  req.getSrs());
-        if (req.getProjectionPolicy() != null)        layer.put("projectionPolicy",     req.getProjectionPolicy());
+        Map<String, Object> layer = buildPublishFields(req);
 
         Map<String, Object> store = new LinkedHashMap<>();
         store.put("@class", "wmsStore");

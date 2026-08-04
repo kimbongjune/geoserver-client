@@ -401,7 +401,7 @@ public class CoverageManager extends AbstractManager {
 
     // Payload builders
 
-    private String buildCreatePayload(CreateCoverageRequest request) {
+    private Map<String, Object> buildCreateFields(CreateCoverageRequest request) {
         Map<String, Object> cov = new LinkedHashMap<>();
         cov.put("name", request.getName());
         // If nativeCoverageName is not set, default to name — omitting it may cause GeoServer 500
@@ -415,22 +415,15 @@ public class CoverageManager extends AbstractManager {
         if (request.getProjectionPolicy() != null)   cov.put("projectionPolicy",   request.getProjectionPolicy());
         if (request.getEnabled() != null)            cov.put("enabled",            request.getEnabled());
         if (request.getNativeFormat() != null)       cov.put("nativeFormat",       request.getNativeFormat());
-        return serializeToJson(Collections.singletonMap("coverage", cov));
+        return cov;
+    }
+
+    private String buildCreatePayload(CreateCoverageRequest request) {
+        return serializeToJson(Collections.singletonMap("coverage", buildCreateFields(request)));
     }
 
     private String buildCreateByWorkspacePayload(String workspaceName, String storeName, CreateCoverageRequest request) {
-        Map<String, Object> cov = new LinkedHashMap<>();
-        cov.put("name", request.getName());
-        String nativeCovName = request.getNativeCoverageName() != null
-                ? request.getNativeCoverageName() : request.getName();
-        cov.put("nativeCoverageName", nativeCovName);
-        if (request.getNativeName() != null)         cov.put("nativeName",         request.getNativeName());
-        if (request.getTitle() != null)              cov.put("title",              request.getTitle());
-        if (request.getDescription() != null)        cov.put("description",        request.getDescription());
-        if (request.getSrs() != null)                cov.put("srs",                request.getSrs());
-        if (request.getProjectionPolicy() != null)   cov.put("projectionPolicy",   request.getProjectionPolicy());
-        if (request.getEnabled() != null)            cov.put("enabled",            request.getEnabled());
-        if (request.getNativeFormat() != null)        cov.put("nativeFormat",       request.getNativeFormat());
+        Map<String, Object> cov = buildCreateFields(request);
 
         Map<String, Object> store = new LinkedHashMap<>();
         store.put("@class", "coverageStore");
