@@ -43,6 +43,7 @@ class CoverageManagerIntegrationTest extends BaseIntegrationTest {
     private static final String CS_MAIN     = "cov_cs_main_" + TS;   // configure=first → coverage auto-created
     private static final String CS_NONE     = "cov_cs_none_" + TS;   // configure=none → no coverage
     private static final String CS_DEL_T    = "cov_cs_dt_"   + TS;   // configure=first → for delete test
+    private static final String CS_WS_NEW   = "cov_cs_wsnew_" + TS;  // configure=none → for createByWorkspace() test
     private static final String COV_MAIN    = CS_MAIN;                // coverage name = store name (configure=first, coverageName=null)
     private static final String COV_DEL     = CS_DEL_T;              // coverage name = store name
     // isNew mode: GeoServer saves the file as {storeName}.geotiff → native coverage name = storeName
@@ -68,6 +69,8 @@ class CoverageManagerIntegrationTest extends BaseIntegrationTest {
         client.coverageStores().uploadFile(WS, CS_NONE, "file", "geotiff", BYTE_TIF, "none", null, null);
         // CS_DEL_T: configure=first → COV_DEL auto-created (for delete recurse=true test)
         client.coverageStores().uploadFile(WS, CS_DEL_T, "file", "geotiff", BYTE_TIF, "first", null, null);
+        // CS_WS_NEW: configure=none → for createByWorkspace() test
+        client.coverageStores().uploadFile(WS, CS_WS_NEW, "file", "geotiff", BYTE_TIF, "none", null, null);
 
         coverages = client.coverages();
     }
@@ -306,5 +309,38 @@ class CoverageManagerIntegrationTest extends BaseIntegrationTest {
         assertEquals(1, list.size(), "CS_MAIN must still have 1 coverage");
         assertEquals(COV_RENAMED, list.get(0).getName(),
                 "coverage name must reflect rename to COV_RENAMED");
+    }
+
+    // 19. createByWorkspace
+
+    @Test
+    @Order(19)
+    @DisplayName("[19] createByWorkspace() — registers coverage with store named in body (no store in URL)")
+    void createByWorkspace_registersCoverage() {
+        // The store must already exist and the native coverage name must match a name from
+        // listNative(): for a single-file GeoTIFF store, that's the store name itself.
+        List<String> natives = coverages.listNative(WS, CS_WS_NEW);
+        assertFalse(natives.isEmpty(), "CS_WS_NEW must expose at least one native coverage name");
+        String nativeName = natives.get(0);
+
+        Coverage cov = coverages.createByWorkspace(WS, CS_WS_NEW,
+                CreateCoverageRequest.of(CS_WS_NEW).nativeCoverageName(nativeName));
+
+        assertNotNull(cov, "created coverage must not be null");
+        assertEquals(CS_WS_NEW, cov.getName(), "name");
+        assertNotNull(cov.getStore(), "store must be present");
+        assertTrue(cov.getStore().getName().contains(CS_WS_NEW), "store.name must reference CS_WS_NEW");
+        assertTrue(coverages.exists(WS, CS_WS_NEW, CS_WS_NEW), "coverage must exist after createByWorkspace()");
+    }
+
+    @Test
+    @Order(20)
+    @DisplayName("[20] createByWorkspace() duplicate name → ResourceAlreadyExistsException")
+    void createByWorkspace_duplicate_throwsException() {
+        List<String> natives = coverages.listNative(WS, CS_WS_NEW);
+        String nativeName = natives.get(0);
+        assertThrows(ResourceAlreadyExistsException.class,
+                () -> coverages.createByWorkspace(WS, CS_WS_NEW,
+                        CreateCoverageRequest.of(CS_WS_NEW).nativeCoverageName(nativeName)));
     }
 }

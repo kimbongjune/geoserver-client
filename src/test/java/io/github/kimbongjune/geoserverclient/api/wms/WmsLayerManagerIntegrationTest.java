@@ -34,12 +34,14 @@ class WmsLayerManagerIntegrationTest extends BaseIntegrationTest {
     // WMS store names
     private static final String STORE       = "wml_store_" + TS;
     private static final String STORE_AVAIL = "wml_st_av_" + TS; // for listAvailable (no layers)
+    private static final String STORE_WS    = "wml_st_ws_" + TS; // for publishByWorkspace() test
 
     // WMS layer names  (all reference same nativeName = WS:FEED_CS)
     private static final String LAYER_DEL_NR = "wml_del_nr_" + TS;  // pre-published, delete no-recurse
     private static final String LAYER_DEL_T  = "wml_del_t_"  + TS;  // pre-published, delete recurse=true
     private static final String LAYER_MAIN   = "wml_main_"   + TS;  // published in test [4]
     private static final String LAYER_VP     = "wml_vp_"     + TS;  // published in test [16] with vendorParameters
+    private static final String LAYER_WS     = "wml_ws_pub_" + TS;  // published in test [17] via publishByWorkspace()
 
     /** native WMS layer name: WS + ":" + FEED_CS */
     private static String NATIVE_LAYER;
@@ -63,6 +65,7 @@ class WmsLayerManagerIntegrationTest extends BaseIntegrationTest {
         // 3. create WMS stores
         client.wmsStores().create(WS, CreateWmsStoreRequest.of(STORE,       CAPS_URL));
         client.wmsStores().create(WS, CreateWmsStoreRequest.of(STORE_AVAIL, CAPS_URL));
+        client.wmsStores().create(WS, CreateWmsStoreRequest.of(STORE_WS,    CAPS_URL));
 
         // 4. pre-publish layers into STORE
         wmsLayers = client.wmsLayers();
@@ -280,6 +283,35 @@ class WmsLayerManagerIntegrationTest extends BaseIntegrationTest {
                 "vendorParameters should be present in GET response after publish");
         assertNotNull(fetched.getVendorParameters().getEntry(),
                 "vendorParameters.entry should be non-null");
+    }
+
+    // ── 17. publishByWorkspace ────────────────────────────────────────────
+
+    @Test
+    @Order(17)
+    @DisplayName("[17] publishByWorkspace() — POST /workspaces/{ws}/wmslayers with store named in body")
+    void publishByWorkspace_publishesLayer() {
+        WmsLayer layer = wmsLayers.publishByWorkspace(WS, STORE_WS,
+                PublishWmsLayerRequest.of(LAYER_WS, NATIVE_LAYER)
+                        .title("Integration Test WMS Layer (byWorkspace)")
+                        .enabled(true));
+
+        assertNotNull(layer);
+        assertEquals(LAYER_WS, layer.getName());
+        assertEquals(NATIVE_LAYER, layer.getNativeName());
+        assertTrue(layer.isEnabled());
+        assertNotNull(layer.getStore());
+        assertTrue(layer.getStore().getName().contains(STORE_WS));
+        assertTrue(wmsLayers.exists(WS, STORE_WS, LAYER_WS));
+    }
+
+    @Test
+    @Order(18)
+    @DisplayName("[18] publishByWorkspace() duplicate name -> ResourceAlreadyExistsException")
+    void publishByWorkspace_duplicate_throwsException() {
+        assertThrows(ResourceAlreadyExistsException.class,
+                () -> wmsLayers.publishByWorkspace(WS, STORE_WS,
+                        PublishWmsLayerRequest.of(LAYER_WS, NATIVE_LAYER)));
     }
 
     @Test

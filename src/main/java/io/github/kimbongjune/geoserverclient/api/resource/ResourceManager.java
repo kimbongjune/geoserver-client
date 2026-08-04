@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.kimbongjune.geoserverclient.api.AbstractManager;
 import io.github.kimbongjune.geoserverclient.dto.resource.ResourceChild;
+import io.github.kimbongjune.geoserverclient.dto.resource.ResourceHeadInfo;
 import io.github.kimbongjune.geoserverclient.dto.resource.ResourceMetadata;
 import io.github.kimbongjune.geoserverclient.exception.ResourceNotFoundException;
 import io.github.kimbongjune.geoserverclient.exception.SerializationException;
@@ -30,6 +31,7 @@ import java.util.List;
  * <h2>Endpoints</h2>
  * <pre>
  * PUT   /rest/resource/{directory}
+ * HEAD  /rest/resource/{path}
  * </pre>
  */
 public class ResourceManager extends AbstractManager {
@@ -120,6 +122,46 @@ public class ResourceManager extends AbstractManager {
         }
         handleErrorResponse(response, "GET", path);
         return false;
+    }
+
+    // [2b] HEAD
+
+    /**
+     * Returns lightweight metadata for a file or directory resource via a HEAD request
+     * (no body transferred), or {@code null} if the resource does not exist.
+     *
+     * <p>Works for both files and directories, unlike {@link #getMetadata(String)} which only
+     * works reliably for directories (GeoServer 2.28.2 quirk). Verified against GeoServer 2.28.2.
+     *
+     * @param resourcePath the resource path (required)
+     * @return head metadata, or {@code null} if not found (404)
+     */
+    public ResourceHeadInfo headMetadata(String resourcePath) {
+        requireNonEmpty(resourcePath, "resourcePath");
+        String path = "/rest/resource/" + resourcePath;
+        GeoServerResponse response = httpClient.head(path);
+        if (response.isNotFound()) {
+            return null;
+        }
+        handleErrorResponse(response, "HEAD", path);
+        return new ResourceHeadInfo(
+                response.getHeader("Resource-Type"),
+                response.getHeader("Last-Modified"),
+                response.getHeader("Content-Type"),
+                parseFileName(response.getHeader("Content-Disposition")));
+    }
+
+    private static String parseFileName(String contentDisposition) {
+        if (contentDisposition == null) {
+            return null;
+        }
+        int idx = contentDisposition.indexOf("filename=\"");
+        if (idx < 0) {
+            return null;
+        }
+        int start = idx + "filename=\"".length();
+        int end = contentDisposition.indexOf('"', start);
+        return end > start ? contentDisposition.substring(start, end) : null;
     }
 
     // [3] PUT

@@ -5,6 +5,7 @@ import io.github.kimbongjune.geoserverclient.dto.security.FilterChainEntry;
 import io.github.kimbongjune.geoserverclient.dto.security.SecurityUserInfo;
 
 import java.util.List;
+import java.util.Map;
 
 public interface SecurityService {
 
@@ -81,4 +82,33 @@ public interface SecurityService {
     // Catalog mode
 
     void setCatalogMode(String mode);
+
+    // ACL rules
+
+    Map<String, String> getLayerAcl();
+
+    Map<String, String> getServiceAcl();
+
+    Map<String, String> getRestAcl();
+
+    void addLayerAcl(String rule, String roles);
+
+    void addServiceAcl(String rule, String roles);
+
+    void addRestAcl(String rule, String roles);
+
+    void deleteLayerAcl(String rule);
+
+    void deleteServiceAcl(String rule);
+
+    void deleteRestAcl(String rule);
+
+    /** Always throws — confirmed GeoServer 2.28.2 server bug (always 500). Kept to demonstrate real behavior. */
+    void deleteAllLayerAcl();
+
+    /** Always throws — confirmed GeoServer 2.28.2 server bug (always 500). Kept to demonstrate real behavior. */
+    void deleteAllServiceAcl();
+
+    /** Always throws — confirmed GeoServer 2.28.2 server bug (always 500). Kept to demonstrate real behavior. */
+    void deleteAllRestAcl();
 }

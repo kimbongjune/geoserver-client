@@ -41,6 +41,7 @@ public class GwcController {
         if (diskQuota != null) {
             model.addAttribute("diskQuota", diskQuota);
         }
+        model.addAttribute("gwcIndex", service.getIndex());
         return "gwc/index";
     }
 

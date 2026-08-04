@@ -223,6 +223,92 @@
         </tr>
         </tbody>
     </table>
+
+    <h2>Access Control Lists (ACL)</h2>
+    <p class="sub">Layer / Service / REST rule sets. "Delete ALL" always fails with 500 on GeoServer 2.28.2 —
+        a confirmed server-side bug (StringIndexOutOfBoundsException), kept here to demonstrate real behavior
+        rather than a client-side limitation.</p>
+
+    <h3>Layer ACL</h3>
+    <div class="form-panel">
+        <form action="/security/acl/layers/add" method="post" style="display:inline-flex;gap:6px">
+            <input type="text" name="rule" required placeholder="*.*.r" style="width:140px"/>
+            <input type="text" name="roles" required placeholder="ROLE_ADMIN or *" style="width:180px"/>
+            <button class="btn small" type="submit">Add rule</button>
+        </form>
+        <form action="/security/acl/layers/delete-all" method="post" style="display:inline-flex;margin-left:8px">
+            <button class="btn small danger" type="submit">Delete ALL (always 500)</button>
+        </form>
+    </div>
+    <table class="datatable">
+        <thead><tr><th>Rule</th><th>Roles</th><th></th></tr></thead>
+        <tbody>
+        <tr th:each="e : ${layerAcl}">
+            <td th:text="${e.key}"></td>
+            <td th:text="${e.value}"></td>
+            <td class="actions">
+                <form action="/security/acl/layers/delete" method="post">
+                    <input type="hidden" name="rule" th:value="${e.key}"/>
+                    <button class="btn small danger" type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h3>Service ACL</h3>
+    <div class="form-panel">
+        <form action="/security/acl/services/add" method="post" style="display:inline-flex;gap:6px">
+            <input type="text" name="rule" required placeholder="wms.GetMap" style="width:140px"/>
+            <input type="text" name="roles" required placeholder="ROLE_ADMIN or *" style="width:180px"/>
+            <button class="btn small" type="submit">Add rule</button>
+        </form>
+        <form action="/security/acl/services/delete-all" method="post" style="display:inline-flex;margin-left:8px">
+            <button class="btn small danger" type="submit">Delete ALL (always 500)</button>
+        </form>
+    </div>
+    <table class="datatable">
+        <thead><tr><th>Rule</th><th>Roles</th><th></th></tr></thead>
+        <tbody>
+        <tr th:each="e : ${serviceAcl}">
+            <td th:text="${e.key}"></td>
+            <td th:text="${e.value}"></td>
+            <td class="actions">
+                <form action="/security/acl/services/delete" method="post">
+                    <input type="hidden" name="rule" th:value="${e.key}"/>
+                    <button class="btn small danger" type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h3>REST ACL</h3>
+    <div class="form-panel">
+        <form action="/security/acl/rest/add" method="post" style="display:inline-flex;gap:6px">
+            <input type="text" name="rule" required placeholder="workspaces/**:GET" style="width:180px"/>
+            <input type="text" name="roles" required placeholder="ROLE_ADMINISTRATOR" style="width:180px"/>
+            <button class="btn small" type="submit">Add rule</button>
+        </form>
+        <form action="/security/acl/rest/delete-all" method="post" style="display:inline-flex;margin-left:8px">
+            <button class="btn small danger" type="submit">Delete ALL (always 500)</button>
+        </form>
+    </div>
+    <table class="datatable">
+        <thead><tr><th>Rule</th><th>Roles</th><th></th></tr></thead>
+        <tbody>
+        <tr th:each="e : ${restAcl}">
+            <td th:text="${e.key}"></td>
+            <td th:text="${e.value}"></td>
+            <td class="actions">
+                <form action="/security/acl/rest/delete" method="post">
+                    <input type="hidden" name="rule" th:value="${e.key}"/>
+                    <button class="btn small danger" type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
 </main>
 </body>
 </html>

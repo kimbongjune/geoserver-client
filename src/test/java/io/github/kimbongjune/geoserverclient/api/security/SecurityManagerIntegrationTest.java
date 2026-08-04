@@ -224,4 +224,65 @@ class SecurityManagerIntegrationTest extends BaseIntegrationTest {
         assertDoesNotThrow(() -> security.setSelfPassword("geoserver"),
                 "setSelfPassword() must not throw (no-op if password same in plain service)");
     }
+
+    // ── [22-24] Bulk ACL delete (GeoServer 2.28.2 server-side bug: always 500) ────────────
+
+    @Test @Order(22)
+    @DisplayName("[22] deleteAllLayerAcl() always throws 500 (GeoServer 2.28.2 bug); existing rules unchanged")
+    void deleteAllLayerAcl_always500_rulesUnchanged() {
+        // re-add the layer rule so there is something to verify "unchanged" against
+        security.addLayerAcl(AclRules.of(LAYER_RULE_KEY, "ROLE_AUTHENTICATED"));
+        AclRules before = security.getLayerAcl();
+
+        GeoServerResponseException ex = assertThrows(GeoServerResponseException.class,
+                () -> security.deleteAllLayerAcl());
+        assertEquals(500, ex.getStatusCode());
+
+        AclRules after = security.getLayerAcl();
+        assertEquals(before.getEntries(), after.getEntries(),
+                "layer ACL rules must be unchanged after the failed bulk delete");
+
+        // cleanup for this sub-test
+        try { security.deleteLayerAcl(LAYER_RULE_KEY); } catch (Exception ignored) {}
+    }
+
+    @Test @Order(23)
+    @DisplayName("[23] deleteAllServiceAcl() always throws 500 (GeoServer 2.28.2 bug); existing rules unchanged")
+    void deleteAllServiceAcl_always500_rulesUnchanged() {
+        security.addServiceAcl(AclRules.of(SERVICE_RULE_KEY, "ROLE_AUTHENTICATED"));
+        AclRules before = security.getServiceAcl();
+
+        GeoServerResponseException ex = assertThrows(GeoServerResponseException.class,
+                () -> security.deleteAllServiceAcl());
+        assertEquals(500, ex.getStatusCode());
+
+        AclRules after = security.getServiceAcl();
+        assertEquals(before.getEntries(), after.getEntries(),
+                "service ACL rules must be unchanged after the failed bulk delete");
+
+        try { security.deleteServiceAcl(SERVICE_RULE_KEY); } catch (Exception ignored) {}
+    }
+
+    @Test @Order(24)
+    @DisplayName("[24] deleteAllRestAcl() always throws 500 (GeoServer 2.28.2 bug); existing rules unchanged")
+    void deleteAllRestAcl_always500_rulesUnchanged() {
+        // Test [17] already left REST_RULE_KEY in place (GeoServer silently ignores DELETE with
+        // ':' in the path variable), so use update-or-add to avoid a 409 on a duplicate add.
+        if (security.getRestAcl().containsRule(REST_RULE_KEY)) {
+            security.updateRestAcl(AclRules.of(REST_RULE_KEY, "ROLE_AUTHENTICATED"));
+        } else {
+            security.addRestAcl(AclRules.of(REST_RULE_KEY, "ROLE_AUTHENTICATED"));
+        }
+        AclRules before = security.getRestAcl();
+
+        GeoServerResponseException ex = assertThrows(GeoServerResponseException.class,
+                () -> security.deleteAllRestAcl());
+        assertEquals(500, ex.getStatusCode());
+
+        AclRules after = security.getRestAcl();
+        assertEquals(before.getEntries(), after.getEntries(),
+                "REST ACL rules must be unchanged after the failed bulk delete");
+
+        try { security.deleteRestAcl(REST_RULE_KEY); } catch (Exception ignored) {}
+    }
 }

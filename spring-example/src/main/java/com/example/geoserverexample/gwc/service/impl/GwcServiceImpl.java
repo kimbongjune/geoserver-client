@@ -7,6 +7,7 @@ import io.github.kimbongjune.geoserverclient.dto.gwc.GwcFileBlobStore;
 import io.github.kimbongjune.geoserverclient.dto.gwc.GwcFilterContent;
 import io.github.kimbongjune.geoserverclient.dto.gwc.GwcGlobalSettings;
 import io.github.kimbongjune.geoserverclient.dto.gwc.GwcGridSet;
+import io.github.kimbongjune.geoserverclient.dto.gwc.GwcIndexResult;
 import io.github.kimbongjune.geoserverclient.dto.gwc.GwcKillType;
 import io.github.kimbongjune.geoserverclient.dto.gwc.GwcLayer;
 import io.github.kimbongjune.geoserverclient.dto.gwc.GwcReloadResult;
@@ -162,5 +163,10 @@ public class GwcServiceImpl implements GwcService {
     @Override
     public String filterUpdate(String filterName) {
         return client.gwcFilterUpdates().updateFilterXml(filterName, GwcFilterContent.empty());
+    }
+
+    @Override
+    public GwcIndexResult getIndex() {
+        return client.gwcIndex().getIndex();
     }
 }

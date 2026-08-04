@@ -37,17 +37,25 @@ import java.io.IOException;
  * POST /rest/security/acl/layers
  * PUT  /rest/security/acl/layers
  * DELETE /rest/security/acl/layers/{rule}
+ * DELETE /rest/security/acl/layers            (bulk — GeoServer 2.28.2 always 500s, see deleteAllLayerAcl())
  * GET  /rest/security/acl/services
  * POST /rest/security/acl/services
  * PUT  /rest/security/acl/services
  * DELETE /rest/security/acl/services/{rule}
+ * DELETE /rest/security/acl/services          (bulk — GeoServer 2.28.2 always 500s, see deleteAllServiceAcl())
  * GET  /rest/security/acl/rest
  * POST /rest/security/acl/rest
  * PUT  /rest/security/acl/rest
  * DELETE /rest/security/acl/rest/{rule}
+ * DELETE /rest/security/acl/rest              (bulk — GeoServer 2.28.2 always 500s, see deleteAllRestAcl())
  * PUT  /rest/security/acl/catalog/reload
  * POST /rest/security/acl/catalog/reload
  * }</pre>
+ *
+ * <p><b>Note:</b> {@code GET/POST/PUT /rest/security/acl/rest/{rule}} (single-rule variants for
+ * the REST ACL category) do not exist on GeoServer — confirmed via {@code OPTIONS} returning
+ * {@code Allow: DELETE,OPTIONS} only. Only the bulk-collection and delete-by-rule forms above
+ * are real.
  *
  * <h2>Usage example</h2>
  * <pre>{@code
@@ -215,6 +223,27 @@ public class SecurityManager extends AbstractManager {
         doDelete("/rest/security/acl/layers/" + rule);
     }
 
+    // [9b] DELETE /rest/security/acl/layers
+
+    /**
+     * Deletes ALL layer ACL rules at once.
+     *
+     * <p><b>GeoServer 2.28.2 BUG: always returns 500.</b> The server throws a
+     * {@code StringIndexOutOfBoundsException} while building the empty rule-key response
+     * (observed body: {@code "begin N, end N-1, length N-1"}); no rules are actually deleted
+     * (verified: rules remain unchanged after the call). Calling this method will throw
+     * {@link io.github.kimbongjune.geoserverclient.exception.GeoServerResponseException}(500).
+     *
+     * @throws io.github.kimbongjune.geoserverclient.exception.GeoServerResponseException
+     *         always thrown with 500 on GeoServer 2.28.2
+     * @deprecated always throws on GeoServer 2.28.2 (server-side bug, not a client defect).
+     *             Kept for API completeness; do not call this in new code expecting it to succeed.
+     */
+    @Deprecated
+    public void deleteAllLayerAcl() {
+        doDelete("/rest/security/acl/layers");
+    }
+
     // [10] GET /rest/security/acl/services
 
     /**
@@ -264,6 +293,23 @@ public class SecurityManager extends AbstractManager {
         doDelete("/rest/security/acl/services/" + rule);
     }
 
+    // [13b] DELETE /rest/security/acl/services
+
+    /**
+     * Deletes ALL service ACL rules at once.
+     *
+     * <p><b>GeoServer 2.28.2 BUG: always returns 500.</b> Same server-side bug as
+     * {@link #deleteAllLayerAcl()} — see that method's Javadoc for details.
+     *
+     * @throws io.github.kimbongjune.geoserverclient.exception.GeoServerResponseException
+     *         always thrown with 500 on GeoServer 2.28.2
+     * @deprecated always throws on GeoServer 2.28.2 (server-side bug, not a client defect).
+     */
+    @Deprecated
+    public void deleteAllServiceAcl() {
+        doDelete("/rest/security/acl/services");
+    }
+
     // [14] GET /rest/security/acl/rest
 
     /**
@@ -311,6 +357,23 @@ public class SecurityManager extends AbstractManager {
     public void deleteRestAcl(String rule) {
         requireNonEmpty(rule, "rule");
         doDelete("/rest/security/acl/rest/" + rule);
+    }
+
+    // [17b] DELETE /rest/security/acl/rest
+
+    /**
+     * Deletes ALL REST API ACL rules at once.
+     *
+     * <p><b>GeoServer 2.28.2 BUG: always returns 500.</b> Same server-side bug as
+     * {@link #deleteAllLayerAcl()} — see that method's Javadoc for details.
+     *
+     * @throws io.github.kimbongjune.geoserverclient.exception.GeoServerResponseException
+     *         always thrown with 500 on GeoServer 2.28.2
+     * @deprecated always throws on GeoServer 2.28.2 (server-side bug, not a client defect).
+     */
+    @Deprecated
+    public void deleteAllRestAcl() {
+        doDelete("/rest/security/acl/rest");
     }
 
     // [18] PUT /rest/security/acl/catalog/reload

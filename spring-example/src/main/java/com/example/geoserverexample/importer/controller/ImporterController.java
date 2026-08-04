@@ -41,6 +41,10 @@ public class ImporterController {
                 if (target != null) {
                     model.addAttribute("target", target);
                 }
+                var taskData = service.getTaskDataBestEffort(importId, taskId);
+                if (taskData != null) {
+                    model.addAttribute("taskData", taskData);
+                }
             }
             if (ws != null) {
                 model.addAttribute("datastores", service.listDatastores(ws));
@@ -95,5 +99,16 @@ public class ImporterController {
         service.deleteImport(importId);
         redirect.addFlashAttribute("ok", "Import #" + importId + " deleted.");
         return "redirect:/importer";
+    }
+
+    // Import-level data — no try/catch: this always 500s on GeoServer 2.28.2 for task-based
+    // imports (confirmed server-side bug), and is left to the GlobalExceptionHandler on purpose
+    // to demonstrate the real behavior rather than hiding it.
+    @PostMapping("/{importId}/data")
+    public String showImportData(@PathVariable long importId, @RequestParam(required = false) String ws,
+                                  RedirectAttributes redirect) {
+        var data = service.getImportData(importId);
+        redirect.addFlashAttribute("ok", "Import-level data: " + data);
+        return "redirect:/importer?importId=" + importId + (ws != null ? "&ws=" + ws : "");
     }
 }

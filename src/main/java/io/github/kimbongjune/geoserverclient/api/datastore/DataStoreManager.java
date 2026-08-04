@@ -240,6 +240,7 @@ public class DataStoreManager extends AbstractManager {
 
     /**
      * Reset the DataStore cache. Forces GeoServer to reconnect to the source on the next request.
+     * PUT and POST behave identically; implemented as PUT. Verified against GeoServer 2.28.2.
      *
      * @param workspaceName workspace name (required)
      * @param storeName     DataStore name to reset (required)
