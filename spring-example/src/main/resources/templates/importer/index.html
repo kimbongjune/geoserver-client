@@ -54,6 +54,13 @@
         <div th:if="${firstTaskId != null}">
             <h3>Task #<span th:text="${firstTaskId}"></span></h3>
             <p class="sub" th:if="${target != null}">Current target: <code th:text="${target}"></code></p>
+            <div class="sub" th:if="${taskData != null}">
+                Task data: type=<code th:text="${taskData.type}"></code>,
+                format=<code th:text="${taskData.format}"></code>,
+                file=<code th:text="${taskData.file}"></code>,
+                prj=<code th:text="${taskData.prj}"></code>,
+                other=<code th:text="${taskData.other}"></code>
+            </div>
 
             <div class="form-panel" th:if="${selectedWs != null}">
                 <h3>Set task target (required before running a GeoJSON import)</h3>
@@ -71,6 +78,11 @@
                 <button class="btn" type="submit">Run import</button>
             </form>
         </div>
+
+        <form th:action="@{'/importer/' + ${selectedImport.id} + '/data'}" method="post" style="margin-top:10px">
+            <input type="hidden" name="ws" th:value="${selectedWs}"/>
+            <button class="btn small danger" type="submit">Show import-level data (always 500 — known GeoServer bug)</button>
+        </form>
     </div>
 </main>
 </body>

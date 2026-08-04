@@ -33,9 +33,14 @@ public class AboutServiceImpl implements AboutService {
     @Override
     public boolean isFile(String dir) {
         // A resource path can be either a directory or a file — list() 500s on a file path,
-        // so check the type via getMetadata() first rather than assuming it's a directory.
-        String type = client.resources().getMetadata(dir).getType();
-        return "resource".equalsIgnoreCase(type);
+        // so check the type first rather than assuming it's a directory.
+        //
+        // getMetadata() can't be used here: GeoServer ignores format=json for file paths and
+        // returns XML regardless (confirmed on 2.28.2), which breaks getMetadata()'s JSON parser.
+        // headMetadata() sidesteps this entirely by reading the Resource-Type response header
+        // instead of a parsed body, so it works uniformly for both files and directories.
+        var head = client.resources().headMetadata(dir);
+        return head != null && "resource".equalsIgnoreCase(head.getResourceType());
     }
 
     @Override

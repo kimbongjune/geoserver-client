@@ -3,6 +3,7 @@ package com.example.geoserverexample.importer.service;
 import io.github.kimbongjune.geoserverclient.dto.datastore.DataStoreSummary;
 import io.github.kimbongjune.geoserverclient.dto.importer.ImportContext;
 import io.github.kimbongjune.geoserverclient.dto.importer.ImportContextSummary;
+import io.github.kimbongjune.geoserverclient.dto.importer.ImportData;
 import io.github.kimbongjune.geoserverclient.dto.importer.ImportTarget;
 import io.github.kimbongjune.geoserverclient.dto.importer.ImportTask;
 import io.github.kimbongjune.geoserverclient.dto.workspace.WorkspaceSummary;
@@ -21,6 +22,14 @@ public interface ImporterService {
     List<ImportTask> listTasks(long importId);
 
     ImportTarget getTaskTargetBestEffort(long importId, long taskId);
+
+    ImportData getTaskDataBestEffort(long importId, long taskId);
+
+    // Import-level data (no task) — always throws GeoServerResponseException(500) on
+    // GeoServer 2.28.2 for task-based imports (confirmed server-side NullPointerException bug).
+    // Intentionally NOT best-effort: left to propagate to the global exception handler so the
+    // real error surfaces in the UI, same as the Security page's ACL "delete all" buttons.
+    ImportData getImportData(long importId);
 
     List<DataStoreSummary> listDatastores(String ws);
 

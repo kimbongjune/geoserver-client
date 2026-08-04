@@ -3,6 +3,7 @@ package io.github.kimbongjune.geoserverclient.http;
 import io.github.kimbongjune.geoserverclient.exception.ConnectionException;
 import org.apache.hc.client5.http.classic.methods.HttpDelete;
 import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.classic.methods.HttpHead;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
 import org.apache.hc.client5.http.classic.methods.HttpPut;
 import org.apache.hc.client5.http.classic.methods.HttpUriRequestBase;
@@ -137,6 +138,14 @@ public class ApacheHttpClient implements GeoServerHttpClient {
         String url = buildUrl(path);
         log.debug("DELETE {}", url);
         HttpDelete request = applyHeaders(new HttpDelete(url), null, null);
+        return execute(request);
+    }
+
+    @Override
+    public GeoServerResponse head(String path) {
+        String url = buildUrl(path);
+        log.debug("HEAD {}", url);
+        HttpHead request = applyHeaders(new HttpHead(url), null, null);
         return execute(request);
     }
 

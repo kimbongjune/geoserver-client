@@ -59,6 +59,15 @@ public interface GeoServerHttpClient extends Closeable {
     GeoServerResponse delete(String path);
 
     /**
+     * Performs a HEAD request. The response body is always empty (per HTTP semantics); callers
+     * should inspect {@link GeoServerResponse#getHeaders()} instead.
+     *
+     * @param path relative path
+     * @return raw HTTP response (empty body, headers populated)
+     */
+    GeoServerResponse head(String path);
+
+    /**
      * Performs a POST with a file body (for file uploads like SHP ZIP, GeoTIFF, SLD).
      *
      * @param path        relative path

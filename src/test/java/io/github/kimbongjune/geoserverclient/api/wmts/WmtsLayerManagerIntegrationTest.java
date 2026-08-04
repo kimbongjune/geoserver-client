@@ -34,11 +34,13 @@ class WmtsLayerManagerIntegrationTest extends BaseIntegrationTest {
     // WMTS store names
     private static final String STORE       = "wtml_store_"  + TS;
     private static final String STORE_AVAIL = "wtml_st_av_"  + TS;  // for listAvailable (empty)
+    private static final String STORE_WS    = "wtml_st_ws_"  + TS;  // for publishByWorkspace() test
 
     // WMTS layer names (all reference GWC-published coverage layers)
     private static final String LAYER_DEL_NR = "wtml_del_nr_" + TS;  // pre-published, delete no-recurse
     private static final String LAYER_DEL_T  = "wtml_del_t_"  + TS;  // pre-published, delete recurse=true
     private static final String LAYER_MAIN   = "wtml_main_"   + TS;  // published in test [4]
+    private static final String LAYER_WS     = "wtml_ws_pub_" + TS;  // published in test [16] via publishByWorkspace()
 
     /** native WMTS layer name: WS:FEED_CS (GWC uses this format) */
     private static String NATIVE_LAYER;
@@ -65,6 +67,7 @@ class WmtsLayerManagerIntegrationTest extends BaseIntegrationTest {
         // 3. create WMTS stores
         client.wmtsStores().create(WS, CreateWmtsStoreRequest.of(STORE,       CAPS_URL));
         client.wmtsStores().create(WS, CreateWmtsStoreRequest.of(STORE_AVAIL, CAPS_URL));
+        client.wmtsStores().create(WS, CreateWmtsStoreRequest.of(STORE_WS,    CAPS_URL));
 
         // 4. pre-publish two layers in STORE for delete tests
         wmtsLayers = client.wmtsLayers();
@@ -274,5 +277,34 @@ class WmtsLayerManagerIntegrationTest extends BaseIntegrationTest {
         assertTrue(list.stream().anyMatch(s -> s.getName().equals(LAYER_DEL_NR)));
         // LAYER_DEL_T was recursively deleted
         assertTrue(list.stream().noneMatch(s -> s.getName().equals(LAYER_DEL_T)));
+    }
+
+    // ── 16-17. publishByWorkspace ─────────────────────────────────────────
+
+    @Test
+    @Order(16)
+    @DisplayName("[16] publishByWorkspace() — POST /workspaces/{ws}/wmtslayers with store named in body")
+    void publishByWorkspace_publishesLayer() {
+        WmtsLayer layer = wmtsLayers.publishByWorkspace(WS, STORE_WS,
+                PublishWmtsLayerRequest.of(LAYER_WS, NATIVE_LAYER)
+                        .title("Integration Test WMTS Layer (byWorkspace)")
+                        .enabled(true));
+
+        assertNotNull(layer);
+        assertEquals(LAYER_WS, layer.getName());
+        assertEquals(NATIVE_LAYER, layer.getNativeName());
+        assertTrue(layer.isEnabled());
+        assertNotNull(layer.getStore());
+        assertTrue(layer.getStore().getName().contains(STORE_WS));
+        assertTrue(wmtsLayers.exists(WS, STORE_WS, LAYER_WS));
+    }
+
+    @Test
+    @Order(17)
+    @DisplayName("[17] publishByWorkspace() duplicate name -> ResourceAlreadyExistsException")
+    void publishByWorkspace_duplicate_throwsException() {
+        assertThrows(ResourceAlreadyExistsException.class,
+                () -> wmtsLayers.publishByWorkspace(WS, STORE_WS,
+                        PublishWmtsLayerRequest.of(LAYER_WS, NATIVE_LAYER)));
     }
 }
