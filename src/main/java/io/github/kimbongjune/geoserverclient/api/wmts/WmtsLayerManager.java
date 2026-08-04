@@ -383,7 +383,7 @@ public class WmtsLayerManager extends AbstractManager {
 
     // Payload builders
 
-    private String buildPublishPayload(PublishWmtsLayerRequest req) {
+    private Map<String, Object> buildPublishFields(PublishWmtsLayerRequest req) {
         Map<String, Object> layer = new LinkedHashMap<>();
         layer.put("name", req.getName());
         layer.put("nativeName", req.getNativeName());
@@ -394,20 +394,15 @@ public class WmtsLayerManager extends AbstractManager {
         if (req.getAdvertised() != null)       layer.put("advertised",       req.getAdvertised());
         if (req.getSrs() != null)              layer.put("srs",              req.getSrs());
         if (req.getProjectionPolicy() != null) layer.put("projectionPolicy", req.getProjectionPolicy());
-        return serializeToJson(Collections.singletonMap("wmtsLayer", layer));
+        return layer;
+    }
+
+    private String buildPublishPayload(PublishWmtsLayerRequest req) {
+        return serializeToJson(Collections.singletonMap("wmtsLayer", buildPublishFields(req)));
     }
 
     private String buildPublishByWorkspacePayload(String workspaceName, String storeName, PublishWmtsLayerRequest req) {
-        Map<String, Object> layer = new LinkedHashMap<>();
-        layer.put("name", req.getName());
-        layer.put("nativeName", req.getNativeName());
-        if (req.getTitle() != null)            layer.put("title",            req.getTitle());
-        if (req.getDescription() != null)      layer.put("description",      req.getDescription());
-        if (req.getAbstractText() != null)     layer.put("abstract",         req.getAbstractText());
-        if (req.getEnabled() != null)          layer.put("enabled",          req.getEnabled());
-        if (req.getAdvertised() != null)       layer.put("advertised",       req.getAdvertised());
-        if (req.getSrs() != null)              layer.put("srs",              req.getSrs());
-        if (req.getProjectionPolicy() != null) layer.put("projectionPolicy", req.getProjectionPolicy());
+        Map<String, Object> layer = buildPublishFields(req);
 
         Map<String, Object> store = new LinkedHashMap<>();
         store.put("@class", "wmtsStore");
