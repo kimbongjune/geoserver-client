@@ -24,7 +24,7 @@ public class GwcDiskQuotaConfig {
     private Integer cacheCleanUpFrequency;
     private String cacheCleanUpUnits;
     private Integer maxConcurrentCleanUps;
-    private String globalExpirationPolicyName;
+    private GwcExpirationPolicy globalExpirationPolicyName;
     private GwcQuota globalQuota;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
@@ -79,14 +79,14 @@ public class GwcDiskQuotaConfig {
     }
 
     /**
-     * Returns the global expiration policy name ({@code LFU} or {@code LRU}).
-     * @return the policy name
+     * Returns the global expiration policy.
+     * @return the policy
      */
-    public String getGlobalExpirationPolicyName() {
+    public GwcExpirationPolicy getGlobalExpirationPolicyName() {
         return globalExpirationPolicyName;
     }
-    /** @param globalExpirationPolicyName the policy name (LFU or LRU) */
-    public void setGlobalExpirationPolicyName(String globalExpirationPolicyName) {
+    /** @param globalExpirationPolicyName the policy to set */
+    public void setGlobalExpirationPolicyName(GwcExpirationPolicy globalExpirationPolicyName) {
         this.globalExpirationPolicyName = globalExpirationPolicyName;
     }
 

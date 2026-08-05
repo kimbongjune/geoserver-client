@@ -8,17 +8,17 @@ import java.util.Objects;
  *
  * <pre>{@code
  * // Minimal (type and name only)
- * CreateCoverageStoreRequest.of("mystore")
+ * CreateCoverageStoreRequest.builder("mystore")
  *     .type("GeoTIFF")
  *
  * // With URL
- * CreateCoverageStoreRequest.of("mystore")
+ * CreateCoverageStoreRequest.builder("mystore")
  *     .type("GeoTIFF")
  *     .url("file:data/myws/mystore/mystore.tif")
  *     .enabled(true)
  *
  * // Created in disabled state
- * CreateCoverageStoreRequest.of("mystore")
+ * CreateCoverageStoreRequest.builder("mystore")
  *     .type("GeoTIFF")
  *     .enabled(false)
  * }</pre>
@@ -48,19 +48,8 @@ public class CreateCoverageStoreRequest {
      * @param name the coverage store name (must not be null or empty)
      * @return a new request instance
      */
-    public static CreateCoverageStoreRequest of(String name) {
-        return new CreateCoverageStoreRequest(name);
-    }
-
-    /**
-     * Alias for {@link #of(String)}, for callers who prefer the {@code builder(...)...build()}
-     * spelling used by every {@code UpdateXxxRequest} in this library. {@link #build()} is a
-     * no-op terminal call.
-     * @param name the coverage store name
-     * @return a new request instance
-     */
     public static CreateCoverageStoreRequest builder(String name) {
-        return of(name);
+        return new CreateCoverageStoreRequest(name);
     }
 
     /**

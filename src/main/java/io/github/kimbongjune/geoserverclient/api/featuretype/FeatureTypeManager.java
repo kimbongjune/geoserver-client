@@ -382,7 +382,7 @@ public class FeatureTypeManager extends AbstractManager {
             if (request.getTitle() != null)            ft.put("title", request.getTitle());
             if (request.getAbstractText() != null)     ft.put("abstract", request.getAbstractText());
             if (request.getSrs() != null)              ft.put("srs", request.getSrs());
-            if (request.getProjectionPolicy() != null) ft.put("projectionPolicy", request.getProjectionPolicy());
+            if (request.getProjectionPolicy() != null) ft.put("projectionPolicy", request.getProjectionPolicy().name());
             if (request.getEnabled() != null)          ft.put("enabled", request.getEnabled());
 
             if (request.getAttributes() != null && !request.getAttributes().isEmpty()) {
@@ -416,7 +416,7 @@ public class FeatureTypeManager extends AbstractManager {
             if (request.getTitle() != null)           ft.put("title", request.getTitle());
             if (request.getAbstractText() != null)    ft.put("abstract", request.getAbstractText());
             if (request.getSrs() != null)             ft.put("srs", request.getSrs());
-            if (request.getProjectionPolicy() != null) ft.put("projectionPolicy", request.getProjectionPolicy());
+            if (request.getProjectionPolicy() != null) ft.put("projectionPolicy", request.getProjectionPolicy().name());
             if (request.getEnabled() != null)         ft.put("enabled", request.getEnabled());
             if (request.getMaxFeatures() != null)     ft.put("maxFeatures", request.getMaxFeatures());
 

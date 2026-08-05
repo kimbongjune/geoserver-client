@@ -11,7 +11,7 @@
     -->
     <groupId>io.github.kimbongjune</groupId>
     <artifactId>geoserver-client-examples</artifactId>
-    <version>1.1.0</version>
+    <version>1.1.1</version>
     <packaging>jar</packaging>
 
     <name>GeoServer Client Examples</name>
@@ -27,7 +27,7 @@
         <dependency>
             <groupId>io.github.kimbongjune</groupId>
             <artifactId>geoserver-client</artifactId>
-            <version>1.1.0</version>
+            <version>1.1.1</version>
         </dependency>
         <!-- geoserver-client declares slf4j-api only; examples need a concrete binding to see logs -->
         <dependency>

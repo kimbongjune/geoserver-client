@@ -4,6 +4,7 @@ import io.github.kimbongjune.geoserverclient.BaseIntegrationTest;
 import io.github.kimbongjune.geoserverclient.dto.common.StringMap;
 import io.github.kimbongjune.geoserverclient.dto.layergroup.CreateLayerGroupRequest;
 import io.github.kimbongjune.geoserverclient.dto.layergroup.LayerGroup;
+import io.github.kimbongjune.geoserverclient.dto.layergroup.LayerGroupMode;
 import io.github.kimbongjune.geoserverclient.dto.layergroup.LayerGroupSummary;
 import io.github.kimbongjune.geoserverclient.dto.layergroup.UpdateLayerGroupRequest;
 import io.github.kimbongjune.geoserverclient.dto.workspace.CreateWorkspaceRequest;
@@ -45,7 +46,7 @@ class LayerGroupManagerIntegrationTest extends BaseIntegrationTest {
         BYTE_TIF = new File(res.toURI());
 
         // Create workspace
-        client.workspaces().create(CreateWorkspaceRequest.of(WS));
+        client.workspaces().create(CreateWorkspaceRequest.builder(WS));
 
         // Upload byte.tif ×2 → 2 CoverageStores + 2 Coverages + 2 Layers
         client.coverageStores().uploadFile(WS, CS1, "file", "geotiff", BYTE_TIF, "first", null, null);
@@ -146,7 +147,7 @@ class LayerGroupManagerIntegrationTest extends BaseIntegrationTest {
         assertNotNull(lg);
         assertEquals(GLOBAL_GRP, lg.getName());
         assertNotNull(lg.getMode(), "mode always present");
-        assertEquals("SINGLE", lg.getMode());
+        assertEquals(LayerGroupMode.SINGLE, lg.getMode());
         assertEquals("Global Test Group", lg.getTitle());
         // enabled/advertised NOT present after initial POST (only after PUT) — GeoServer 2.28.2 confirmed
         assertNull(lg.getEnabled(), "enabled absent until after first PUT (similar to queryable in Layer)");
@@ -247,14 +248,21 @@ class LayerGroupManagerIntegrationTest extends BaseIntegrationTest {
         LayerGroup updated = layerGroups.update(GLOBAL_GRP,
                 UpdateLayerGroupRequest.builder()
                         .title("Updated Global Title")
-                        .mode("OPAQUE_CONTAINER")
+                        .mode(LayerGroupMode.OPAQUE_CONTAINER)
                         .abstractText("Updated abstract text")
                         .build());
         assertNotNull(updated);
         assertEquals("Updated Global Title", updated.getTitle());
-        assertEquals("OPAQUE_CONTAINER", updated.getMode());
+        assertEquals(LayerGroupMode.OPAQUE_CONTAINER, updated.getMode());
         assertEquals("Updated abstract text", updated.getAbstractText());
         assertNotNull(updated.getDateModified(), "dateModified set after PUT");
+
+        assertDoesNotThrow(() -> {
+            String raw = rawGet("/rest/layergroups/" + GLOBAL_GRP + ".json");
+            com.fasterxml.jackson.databind.JsonNode node = new com.fasterxml.jackson.databind.ObjectMapper().readTree(raw);
+            assertEquals("OPAQUE_CONTAINER", node.path("layerGroup").path("mode").asText(),
+                    "raw REST API mode value must match exactly what the library parsed");
+        });
     }
 
     // ── 11. updateByWorkspace() ───────────────────────────────────────

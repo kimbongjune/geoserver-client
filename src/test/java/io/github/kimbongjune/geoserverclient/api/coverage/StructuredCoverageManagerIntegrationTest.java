@@ -65,7 +65,7 @@ class StructuredCoverageManagerIntegrationTest extends BaseIntegrationTest {
         File mosaicZip = createMosaicZip(byteTif);
 
         client.workspaces().create(
-                io.github.kimbongjune.geoserverclient.dto.workspace.CreateWorkspaceRequest.of(WS));
+                io.github.kimbongjune.geoserverclient.dto.workspace.CreateWorkspaceRequest.builder(WS));
 
         // upload imagemosaic zip: configure=first → coverage auto-created
         client.coverageStores().uploadFile(

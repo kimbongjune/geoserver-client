@@ -109,6 +109,6 @@ class NamespaceManagerTest {
         when(httpClient.post(anyString(), anyString(), anyString(), anyString()))
                 .thenReturn(response(500, "Error occurred creating namespace 'existing': already exists"));
         assertThrows(ResourceAlreadyExistsException.class,
-                () -> manager.create(CreateNamespaceRequest.of("existing", "http://existing.example.com")));
+                () -> manager.create(CreateNamespaceRequest.builder("existing", "http://existing.example.com")));
     }
 }

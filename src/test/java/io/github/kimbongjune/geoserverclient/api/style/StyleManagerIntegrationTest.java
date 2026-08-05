@@ -39,7 +39,7 @@ class StyleManagerIntegrationTest extends BaseIntegrationTest {
         assertNotNull(res, "byte.tif missing from src/test/resources");
         BYTE_TIF = new File(res.toURI());
 
-        client.workspaces().create(CreateWorkspaceRequest.of(WS));
+        client.workspaces().create(CreateWorkspaceRequest.builder(WS));
         // Upload GeoTIFF so we have a layer for addStyleToLayer tests
         client.coverageStores().uploadFile(WS, CS, "file", "geotiff", BYTE_TIF, "first", null, null);
 

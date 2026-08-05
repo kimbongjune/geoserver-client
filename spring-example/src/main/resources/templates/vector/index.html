@@ -172,7 +172,12 @@
                         <input type="text" name="newName" placeholder="rename to..." style="width:120px"/>
                         <input type="text" name="title" placeholder="title" style="width:120px"/>
                         <input type="text" name="srs" placeholder="SRS (e.g. EPSG:4326)" style="width:130px"/>
-                        <input type="text" name="projectionPolicy" placeholder="projectionPolicy" style="width:110px"/>
+                        <select name="projectionPolicy" style="width:150px">
+                            <option value="">projectionPolicy (unchanged)</option>
+                            <option value="FORCE_DECLARED">FORCE_DECLARED</option>
+                            <option value="REPROJECT_TO_DECLARED">REPROJECT_TO_DECLARED</option>
+                            <option value="NONE">NONE</option>
+                        </select>
                         <input type="number" name="maxFeatures" placeholder="maxFeatures" style="width:90px"/>
                         <button class="btn small secondary" type="submit">Save</button>
                     </form>

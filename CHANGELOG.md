@@ -7,6 +7,53 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.1.1] - 2026-08-05
+
+### Changed (breaking)
+
+- **Unified `of(...)`/`builder(...)` factory naming**: the 10 `CreateXxxRequest`/`PublishXxxRequest`
+  DTOs that previously exposed both `of(...)` and a `builder(...)` alias (and `CreateCoverageRequest`,
+  which additionally had `isNew(...)`) now expose **only `builder(...)`** — matching the convention
+  already used exclusively by every `UpdateXxxRequest` in the library. `CreateTransformRequest.of(...)`
+  was renamed to `builder(...)` for the same reason. **Migration:** replace `.of(` and `.isNew(` with
+  `.builder(` on `CreateFeatureTypeRequest`, `CreateCoverageRequest`, `CreateWorkspaceRequest`,
+  `CreateCoverageStoreRequest`, `CreateDataStoreRequest`, `PublishWmsLayerRequest`,
+  `PublishWmtsLayerRequest`, `CreateWmtsStoreRequest`, `CreateWmsStoreRequest`,
+  `CreateNamespaceRequest`, `CreateTransformRequest` — the call shape and behavior are unchanged.
+- **Closed-set String fields converted to enums**, with request parameters and response getters
+  changed accordingly:
+  - `ProjectionPolicy` (`FORCE_DECLARED` / `REPROJECT_TO_DECLARED` / `NONE`) — replaces `String
+    projectionPolicy` on `FeatureType`, `CreateFeatureTypeRequest`, `UpdateFeatureTypeRequest`,
+    `Coverage`, `CreateCoverageRequest`, `UpdateCoverageRequest`, `WmsLayer`, `PublishWmsLayerRequest`,
+    `WmtsLayer`, `PublishWmtsLayerRequest`, `UpdateWmtsLayerRequest`. Confirmed against a live
+    GeoServer 2.28.2 instance: this is exactly GeoServer's own `org.geoserver.catalog.ProjectionPolicy`
+    enum — any other value (including the plausible-sounding `KEEP_NATIVE`) is rejected server-side
+    with HTTP 500.
+  - `LayerGroupMode` (`SINGLE` / `OPAQUE_CONTAINER` / `NAMED` / `CONTAINER` / `EO`) — replaces
+    `String mode` on `LayerGroup`, `CreateLayerGroupRequest`, `UpdateLayerGroupRequest`. Confirmed
+    live against GeoServer's `org.geoserver.catalog.LayerGroupInfo.Mode` enum the same way.
+  - `ImportState` (`PENDING` / `READY` / `RUNNING` / `COMPLETE` / `ERROR` / `CANCELED` / `NO_CRS` /
+    `NO_BOUNDS` / `NO_FORMAT` / `BAD_FORMAT`) — replaces `String state` on `ImportTask`,
+    `ImportContext`, `ImportContextSummary`. `PENDING` confirmed live via `POST /rest/imports`; the
+    rest are taken from GeoServer Importer's published source.
+  - `ImportUpdateMode` (`CREATE` / `ADD` / `APPEND` / `REPLACE`) — replaces `String updateMode` on
+    `ImportTask`, `ImportTaskUpdate`. Not independently re-verified live in this pass.
+  - `GwcExpirationPolicy` (`LFU` / `LRU`) — replaces `String globalExpirationPolicyName` on
+    `GwcDiskQuotaConfig`. **Unverified against a live server**: the `/gwc/rest/diskquota` endpoint
+    returns HTTP 404 on this GeoServer 2.28.2 build (plugin unavailable), so this value set is taken
+    from this library's own pre-existing Javadoc, not a live round-trip.
+
+### Fixed
+
+- The GitHub Releases page had no entry for `v1.1.0` — the release workflow only ever published to
+  Maven Central and never created a GitHub Release. Added retroactively; the workflow itself is
+  unchanged (Maven Central publishing was and remains unaffected).
+
+### Spring Boot example (`spring-example/`)
+
+- Vector/Raster pages: the free-text `projectionPolicy` input is now a `<select>` dropdown limited to
+  the three valid values, converted to `ProjectionPolicy` at the service layer.
+
 ## [1.1.0] - 2026-08-04
 
 ### Added

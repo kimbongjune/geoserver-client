@@ -8,10 +8,10 @@ import java.util.Objects;
  *
  * <pre>{@code
  * // Basic creation
- * CreateNamespaceRequest.of("acme", "http://acme.example.com")
+ * CreateNamespaceRequest.builder("acme", "http://acme.example.com")
  *
  * // With isolated option
- * CreateNamespaceRequest.of("acme", "http://acme.example.com").isolated(true)
+ * CreateNamespaceRequest.builder("acme", "http://acme.example.com").isolated(true)
  * }</pre>
  *
  * <p>On POST, a workspace with the same prefix is automatically created alongside the namespace.
@@ -40,21 +40,8 @@ public class CreateNamespaceRequest {
      * @param uri    namespace URI (required)
      * @return a new request instance
      */
-    public static CreateNamespaceRequest of(String prefix, String uri) {
-        return new CreateNamespaceRequest(prefix, uri);
-    }
-
-    /**
-     * Alias for {@link #of(String, String)}, for callers who prefer the
-     * {@code builder(...)...build()} spelling used by every {@code UpdateXxxRequest} in this
-     * library. {@link #build()} is a no-op terminal call.
-     *
-     * @param prefix namespace prefix
-     * @param uri    namespace URI
-     * @return a new request instance
-     */
     public static CreateNamespaceRequest builder(String prefix, String uri) {
-        return of(prefix, uri);
+        return new CreateNamespaceRequest(prefix, uri);
     }
 
     /**

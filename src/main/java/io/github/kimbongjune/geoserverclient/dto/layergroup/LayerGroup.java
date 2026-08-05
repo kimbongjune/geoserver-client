@@ -40,7 +40,7 @@ public class LayerGroup {
     private String name;
 
     @JsonProperty("mode")
-    private String mode;
+    private LayerGroupMode mode;
 
     @JsonProperty("title")
     private String title;
@@ -95,7 +95,7 @@ public class LayerGroup {
     public String getName() {
         return name;
     }
-    public String getMode() {
+    public LayerGroupMode getMode() {
         return mode;
     }
     public String getTitle() {

@@ -20,7 +20,7 @@ public class CreateLayerGroupRequest {
     private final String name;
     private final List<PublishableEntry> publishables;
     private final List<String> styles;
-    private final String mode;
+    private final LayerGroupMode mode;
     private final String title;
     private final String abstractText;
     private final StringMap internationalTitle;
@@ -60,7 +60,7 @@ public class CreateLayerGroupRequest {
         return styles == null ? null : Collections.unmodifiableList(styles);
     }
     /** @return the layer group mode */
-    public String getMode() {
+    public LayerGroupMode getMode() {
         return mode;
     }
     /** @return the title */
@@ -114,7 +114,7 @@ public class CreateLayerGroupRequest {
         private final String name;
         private List<PublishableEntry> publishables = new ArrayList<PublishableEntry>();
         private List<String> styles;
-        private String mode;
+        private LayerGroupMode mode;
         private String title;
         private String abstractText;
         private StringMap internationalTitle;
@@ -165,7 +165,7 @@ public class CreateLayerGroupRequest {
          * @param mode the layer group mode
          * @return this builder
          */
-        public Builder mode(String mode) {
+        public Builder mode(LayerGroupMode mode) {
             this.mode = mode; return this;
         }
 

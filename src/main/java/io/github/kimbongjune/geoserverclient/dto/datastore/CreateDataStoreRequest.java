@@ -12,12 +12,12 @@ import java.util.Collections;
  *
  * <pre>{@code
  * // Shapefile example
- * CreateDataStoreRequest.of("mystore")
+ * CreateDataStoreRequest.builder("mystore")
  *     .connectionParam("url", "file:data/sf/archsites.shp")
  *     .connectionParam("namespace", "http://sf.example.com")
  *
  * // PostGIS example
- * CreateDataStoreRequest.of("myPostGIS")
+ * CreateDataStoreRequest.builder("myPostGIS")
  *     .connectionParam("host", "localhost")
  *     .connectionParam("port", "5432")
  *     .connectionParam("database", "mydb")
@@ -52,20 +52,8 @@ public class CreateDataStoreRequest {
      * @param name data store name (required)
      * @return a new request instance
      */
-    public static CreateDataStoreRequest of(String name) {
-        return new CreateDataStoreRequest(name);
-    }
-
-    /**
-     * Alias for {@link #of(String)}, for callers who prefer the {@code builder(...)...build()}
-     * spelling used by every {@code UpdateXxxRequest} in this library. {@link #build()} is a
-     * no-op terminal call.
-     *
-     * @param name data store name
-     * @return a new request instance
-     */
     public static CreateDataStoreRequest builder(String name) {
-        return of(name);
+        return new CreateDataStoreRequest(name);
     }
 
     /**

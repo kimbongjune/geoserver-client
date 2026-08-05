@@ -123,6 +123,6 @@ class CoverageStoreManagerTest {
         when(httpClient.post(anyString(), anyString(), anyString(), anyString()))
                 .thenReturn(response(500, "Error occurred building a new data store 'existing': already exists"));
         assertThrows(ResourceAlreadyExistsException.class,
-                () -> manager.create("myws", CreateCoverageStoreRequest.of("existing")));
+                () -> manager.create("myws", CreateCoverageStoreRequest.builder("existing")));
     }
 }

@@ -46,17 +46,17 @@ class WmsStoreManagerIntegrationTest extends BaseIntegrationTest {
         assertNotNull(res, "byte.tif missing (src/test/resources/byte.tif)");
         BYTE_TIF = new File(res.toURI());
 
-        client.workspaces().create(CreateWorkspaceRequest.of(WS));
+        client.workspaces().create(CreateWorkspaceRequest.builder(WS));
         wmsStores = client.wmsStores();
 
         // Upload byte.tif twice to create two coverage layers for WmsLayer publishing
         client.coverageStores().uploadFile(WS, FEED_CS,  "file", "geotiff", BYTE_TIF, "first", null, null);
         client.coverageStores().uploadFile(WS, FEED_CS2, "file", "geotiff", BYTE_TIF, "first", null, null);
 
-        wmsStores.create(WS, CreateWmsStoreRequest.of(STORE_UPD,   CAPS_URL));
-        wmsStores.create(WS, CreateWmsStoreRequest.of(STORE_DEL,   CAPS_URL));
-        wmsStores.create(WS, CreateWmsStoreRequest.of(STORE_DEL_L, CAPS_URL));
-        wmsStores.create(WS, CreateWmsStoreRequest.of(STORE_DEL_T, CAPS_URL));
+        wmsStores.create(WS, CreateWmsStoreRequest.builder(STORE_UPD,   CAPS_URL));
+        wmsStores.create(WS, CreateWmsStoreRequest.builder(STORE_DEL,   CAPS_URL));
+        wmsStores.create(WS, CreateWmsStoreRequest.builder(STORE_DEL_L, CAPS_URL));
+        wmsStores.create(WS, CreateWmsStoreRequest.builder(STORE_DEL_T, CAPS_URL));
 
         publishWmsLayer(WS, STORE_DEL_L, WS + ":" + FEED_CS);
         publishWmsLayer(WS, STORE_DEL_T, WS + ":" + FEED_CS2);
@@ -68,7 +68,7 @@ class WmsStoreManagerIntegrationTest extends BaseIntegrationTest {
     }
 
     private void publishWmsLayer(String ws, String store, String layerName) {
-        client.wmsLayers().publish(ws, store, PublishWmsLayerRequest.of(layerName, layerName));
+        client.wmsLayers().publish(ws, store, PublishWmsLayerRequest.builder(layerName, layerName));
     }
 
     // ── 1. list ──────────────────────────────────────────────────────────
@@ -93,7 +93,7 @@ class WmsStoreManagerIntegrationTest extends BaseIntegrationTest {
     @DisplayName("[2] create() full fields")
     void create_fullFields() {
         WmsStore ws = wmsStores.create(WS,
-                CreateWmsStoreRequest.of(STORE_MAIN, CAPS_URL)
+                CreateWmsStoreRequest.builder(STORE_MAIN, CAPS_URL)
                         .description("integration test WMS store")
                         .enabled(true)
                         .maxConnections(8)
@@ -117,7 +117,7 @@ class WmsStoreManagerIntegrationTest extends BaseIntegrationTest {
     @DisplayName("[3] create() duplicate -> ResourceAlreadyExistsException")
     void create_duplicate_throwsException() {
         assertThrows(ResourceAlreadyExistsException.class,
-                () -> wmsStores.create(WS, CreateWmsStoreRequest.of(STORE_MAIN, CAPS_URL)));
+                () -> wmsStores.create(WS, CreateWmsStoreRequest.builder(STORE_MAIN, CAPS_URL)));
     }
 
     // ── 4-5. get ─────────────────────────────────────────────────────────

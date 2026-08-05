@@ -2,6 +2,7 @@ package io.github.kimbongjune.geoserverclient.dto.featuretype;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.github.kimbongjune.geoserverclient.dto.common.ProjectionPolicy;
 
 import java.util.List;
 import java.util.Objects;
@@ -43,7 +44,7 @@ public class FeatureType {
     private BoundingBox latLonBoundingBox;
 
     @JsonProperty("projectionPolicy")
-    private String projectionPolicy;
+    private ProjectionPolicy projectionPolicy;
 
     @JsonProperty("enabled")
     private Boolean enabled;
@@ -118,7 +119,7 @@ public class FeatureType {
         return latLonBoundingBox;
     }
     /** @return the projection policy */
-    public String getProjectionPolicy() {
+    public ProjectionPolicy getProjectionPolicy() {
         return projectionPolicy;
     }
     /** @return {@code true} if the feature type is enabled */

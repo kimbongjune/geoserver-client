@@ -47,17 +47,17 @@ class WmtsStoreManagerIntegrationTest extends BaseIntegrationTest {
         assertNotNull(res, "byte.tif missing (src/test/resources/byte.tif)");
         BYTE_TIF = new File(res.toURI());
 
-        client.workspaces().create(CreateWorkspaceRequest.of(WS));
+        client.workspaces().create(CreateWorkspaceRequest.builder(WS));
         wmtsStores = client.wmtsStores();
 
         // Upload byte.tif to create two coverage layers published to GWC (for WMTS layer cascading)
         client.coverageStores().uploadFile(WS, FEED_CS,  "file", "geotiff", BYTE_TIF, "first", null, null);
         client.coverageStores().uploadFile(WS, FEED_CS2, "file", "geotiff", BYTE_TIF, "first", null, null);
 
-        wmtsStores.create(WS, CreateWmtsStoreRequest.of(STORE_UPD,   CAPS_URL));
-        wmtsStores.create(WS, CreateWmtsStoreRequest.of(STORE_DEL,   CAPS_URL));
-        wmtsStores.create(WS, CreateWmtsStoreRequest.of(STORE_DEL_L, CAPS_URL));
-        wmtsStores.create(WS, CreateWmtsStoreRequest.of(STORE_DEL_T, CAPS_URL));
+        wmtsStores.create(WS, CreateWmtsStoreRequest.builder(STORE_UPD,   CAPS_URL));
+        wmtsStores.create(WS, CreateWmtsStoreRequest.builder(STORE_DEL,   CAPS_URL));
+        wmtsStores.create(WS, CreateWmtsStoreRequest.builder(STORE_DEL_L, CAPS_URL));
+        wmtsStores.create(WS, CreateWmtsStoreRequest.builder(STORE_DEL_T, CAPS_URL));
 
         publishWmtsLayer(WS, STORE_DEL_L, WS + ":" + FEED_CS);
         publishWmtsLayer(WS, STORE_DEL_T, WS + ":" + FEED_CS2);
@@ -100,7 +100,7 @@ class WmtsStoreManagerIntegrationTest extends BaseIntegrationTest {
     @DisplayName("[2] create() full fields")
     void create_fullFields() {
         WmtsStore ws = wmtsStores.create(WS,
-                CreateWmtsStoreRequest.of(STORE_MAIN, CAPS_URL)
+                CreateWmtsStoreRequest.builder(STORE_MAIN, CAPS_URL)
                         .description("integration test WMTS store")
                         .enabled(true)
                         .maxConnections(8)
@@ -124,7 +124,7 @@ class WmtsStoreManagerIntegrationTest extends BaseIntegrationTest {
     @DisplayName("[3] create() duplicate -> ResourceAlreadyExistsException")
     void create_duplicate_throwsException() {
         assertThrows(ResourceAlreadyExistsException.class,
-                () -> wmtsStores.create(WS, CreateWmtsStoreRequest.of(STORE_MAIN, CAPS_URL)));
+                () -> wmtsStores.create(WS, CreateWmtsStoreRequest.builder(STORE_MAIN, CAPS_URL)));
     }
 
     // ── 4-5. get ─────────────────────────────────────────────────────────

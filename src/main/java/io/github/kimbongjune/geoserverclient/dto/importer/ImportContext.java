@@ -18,7 +18,7 @@ public class ImportContext {
 
     private long id;
     private String href;
-    private String state;
+    private ImportState state;
     private boolean archive;
     private List<ImportTask> tasks;
 
@@ -33,8 +33,8 @@ public class ImportContext {
     public String getHref() {
         return href;
     }
-    /** @return the import state (e.g. {@code "READY"}, {@code "COMPLETE"}) */
-    public String getState() {
+    /** @return the import state */
+    public ImportState getState() {
         return state;
     }
     /** @return {@code true} if the import is archived */

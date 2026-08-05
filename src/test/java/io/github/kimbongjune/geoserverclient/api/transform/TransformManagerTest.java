@@ -146,7 +146,7 @@ class TransformManagerTest {
         String getBody = "{\"transform\":{\"name\":\"t1\"}}";
         when(httpClient.get(anyString(), anyString())).thenReturn(response(200, getBody));
 
-        Transform t = manager.create(CreateTransformRequest.of("t1")
+        Transform t = manager.create(CreateTransformRequest.builder("t1")
                 .featureType("topp:states")
                 .outputFormat("gml3")
                 .outputMimeType("application/xml")
@@ -173,7 +173,7 @@ class TransformManagerTest {
         when(httpClient.post(anyString(), anyString(), anyString(), anyString()))
                 .thenReturn(response(500, "Error occurred: transform 't1' already exists"));
         assertThrows(ResourceAlreadyExistsException.class,
-                () -> manager.create(CreateTransformRequest.of("t1")));
+                () -> manager.create(CreateTransformRequest.builder("t1")));
     }
 
     // ── update() ─────────────────────────────────────────────────────────

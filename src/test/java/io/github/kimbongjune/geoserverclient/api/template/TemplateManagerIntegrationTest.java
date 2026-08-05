@@ -39,7 +39,7 @@ class TemplateManagerIntegrationTest extends BaseIntegrationTest {
         templates = client.templates();
         // Create a temporary workspace for workspace/ds/ft/cs/cov level tests
         try {
-            client.workspaces().create(CreateWorkspaceRequest.of(TMP_WS));
+            client.workspaces().create(CreateWorkspaceRequest.builder(TMP_WS));
         } catch (Exception ignored) {}
 
         // Pre-cleanup in case leftover templates from a failed previous run

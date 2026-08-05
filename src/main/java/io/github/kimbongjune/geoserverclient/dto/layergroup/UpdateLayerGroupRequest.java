@@ -21,7 +21,7 @@ public class UpdateLayerGroupRequest {
 
     private final List<CreateLayerGroupRequest.PublishableEntry> publishables;
     private final List<String> styles;
-    private final String mode;
+    private final LayerGroupMode mode;
     private final String title;
     private final String abstractText;
     private final StringMap internationalTitle;
@@ -53,7 +53,7 @@ public class UpdateLayerGroupRequest {
     public List<String> getStyles() {
         return styles == null ? null : Collections.unmodifiableList(styles);
     }
-    public String getMode() {
+    public LayerGroupMode getMode() {
         return mode;
     }
     public String getTitle() {
@@ -91,7 +91,7 @@ public class UpdateLayerGroupRequest {
     public static class Builder {
         private List<CreateLayerGroupRequest.PublishableEntry> publishables;
         private List<String> styles;
-        private String mode;
+        private LayerGroupMode mode;
         private String title;
         private String abstractText;
         private StringMap internationalTitle;
@@ -123,7 +123,7 @@ public class UpdateLayerGroupRequest {
             return this;
         }
 
-        public Builder mode(String mode) {
+        public Builder mode(LayerGroupMode mode) {
             this.mode = mode; return this;
         }
         public Builder title(String title) {

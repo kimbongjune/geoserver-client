@@ -2,6 +2,7 @@ package com.example.geoserverexample.vector.service.impl;
 
 import com.example.geoserverexample.vector.service.VectorDataService;
 import io.github.kimbongjune.geoserverclient.GeoServerClient;
+import io.github.kimbongjune.geoserverclient.dto.common.ProjectionPolicy;
 import io.github.kimbongjune.geoserverclient.dto.datastore.CreateDataStoreRequest;
 import io.github.kimbongjune.geoserverclient.dto.datastore.DataStore;
 import io.github.kimbongjune.geoserverclient.dto.datastore.DataStoreSummary;
@@ -166,12 +167,16 @@ public class VectorDataServiceImpl implements VectorDataService {
     public void updateFeatureType(String ws, String store, String ft, String newName, String title, String srs,
                                    String projectionPolicy, Integer maxFeatures) {
         UpdateFeatureTypeRequest.Builder builder = UpdateFeatureTypeRequest.builder()
-                .title(title).srs(srs).projectionPolicy(projectionPolicy)
+                .title(title).srs(srs).projectionPolicy(parseProjectionPolicy(projectionPolicy))
                 .maxFeatures(maxFeatures).recalculate("nativebbox,latlonbbox");
         if (isRenaming(newName)) {
             builder.name(newName);
         }
         client.featureTypes().update(ws, store, ft, builder.build());
+    }
+
+    private static ProjectionPolicy parseProjectionPolicy(String value) {
+        return (value == null || value.trim().isEmpty()) ? null : ProjectionPolicy.valueOf(value.trim());
     }
 
     @Override

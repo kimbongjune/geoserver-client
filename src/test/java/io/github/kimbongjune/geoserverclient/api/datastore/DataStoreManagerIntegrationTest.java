@@ -67,7 +67,7 @@ class DataStoreManagerIntegrationTest extends BaseIntegrationTest {
     @BeforeAll
     void setUpDataStores() {
         // create dedicated workspace
-        client.workspaces().create(CreateWorkspaceRequest.of(WS));
+        client.workspaces().create(CreateWorkspaceRequest.builder(WS));
         datastores = client.datastores();
         // pre-create stores for update/delete/reset tests
         datastores.create(WS, h2Request(DS_UPD));
@@ -341,7 +341,7 @@ class DataStoreManagerIntegrationTest extends BaseIntegrationTest {
     @Order(25)
     @DisplayName("SHP(url) create() - creates store")
     void create_shapefile_url_shouldCreateDataStore() {
-        DataStore ds = datastores.create(WS, CreateDataStoreRequest.of(DS_SHP_URL)
+        DataStore ds = datastores.create(WS, CreateDataStoreRequest.builder(DS_SHP_URL)
                 .connectionParam("url", SHP_FILE_PATH)
                 .connectionParam("namespace", "http://" + WS + ".com"));
         assertNotNull(ds);
@@ -383,7 +383,7 @@ class DataStoreManagerIntegrationTest extends BaseIntegrationTest {
     @Order(29)
     @DisplayName("Directory create() - creates store")
     void create_directory_shouldCreateDataStore() {
-        DataStore ds = datastores.create(WS, CreateDataStoreRequest.of(DS_DIR)
+        DataStore ds = datastores.create(WS, CreateDataStoreRequest.builder(DS_DIR)
                 .connectionParam("url", DIR_PATH)
                 .connectionParam("namespace", "http://" + WS + ".com"));
         assertNotNull(ds);
@@ -425,7 +425,7 @@ class DataStoreManagerIntegrationTest extends BaseIntegrationTest {
     @Order(33)
     @DisplayName("CSV create() - creates store")
     void create_csv_shouldCreateDataStore() {
-        DataStore ds = datastores.create(WS, CreateDataStoreRequest.of(DS_CSV)
+        DataStore ds = datastores.create(WS, CreateDataStoreRequest.builder(DS_CSV)
                 .connectionParam("file", CSV_FILE_PATH)
                 .connectionParam("strategy", "specify")
                 .connectionParam("latField", "latitude")
@@ -470,7 +470,7 @@ class DataStoreManagerIntegrationTest extends BaseIntegrationTest {
     @Order(37)
     @DisplayName("Properties create() - creates store")
     void create_properties_shouldCreateDataStore() {
-        DataStore ds = datastores.create(WS, CreateDataStoreRequest.of(DS_PROPS)
+        DataStore ds = datastores.create(WS, CreateDataStoreRequest.builder(DS_PROPS)
                 .connectionParam("directory", PROPS_DIR_PATH)
                 .connectionParam("namespace", "http://" + WS + ".com"));
         assertNotNull(ds);
@@ -512,7 +512,7 @@ class DataStoreManagerIntegrationTest extends BaseIntegrationTest {
     @Order(41)
     @DisplayName("GeoPackage create() - creates store")
     void create_geopackage_shouldCreateDataStore() {
-        DataStore ds = datastores.create(WS, CreateDataStoreRequest.of(DS_GPKG)
+        DataStore ds = datastores.create(WS, CreateDataStoreRequest.builder(DS_GPKG)
                 .connectionParam("database", GPKG_FILE_PATH)
                 .connectionParam("dbtype", "geopkg")
                 .connectionParam("namespace", "http://" + WS + ".com"));
@@ -555,7 +555,7 @@ class DataStoreManagerIntegrationTest extends BaseIntegrationTest {
     @Order(45)
     @DisplayName("WFS-NG create() - creates store (using GeoServer's own WFS)")
     void create_wfsng_shouldCreateDataStore() {
-        DataStore ds = datastores.create(WS, CreateDataStoreRequest.of(DS_WFSNG)
+        DataStore ds = datastores.create(WS, CreateDataStoreRequest.builder(DS_WFSNG)
                 .connectionParam("WFSDataStoreFactory:GET_CAPABILITIES_URL", WFS_CAP_URL)
                 .connectionParam("WFSDataStoreFactory:PROTOCOL", "false")
                 .connectionParam("WFSDataStoreFactory:USERNAME", "admin")
@@ -597,13 +597,13 @@ class DataStoreManagerIntegrationTest extends BaseIntegrationTest {
     // ── Helpers ───────────────────────────────────────────────────────────────
 
     private static CreateDataStoreRequest h2Request(String name) {
-        return CreateDataStoreRequest.of(name)
+        return CreateDataStoreRequest.builder(name)
                 .connectionParam("database", "it_test_" + name)
                 .connectionParam("dbtype",   "h2");
     }
 
     private static CreateDataStoreRequest pgRequest(String name) {
-        return CreateDataStoreRequest.of(name)
+        return CreateDataStoreRequest.builder(name)
                 .connectionParam("host",     PG_HOST)
                 .connectionParam("port",     PG_PORT)
                 .connectionParam("database", PG_DB)
