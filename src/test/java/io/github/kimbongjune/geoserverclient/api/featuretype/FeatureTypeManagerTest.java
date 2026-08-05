@@ -133,7 +133,7 @@ class FeatureTypeManagerTest {
         when(httpClient.post(anyString(), anyString(), anyString(), anyString()))
                 .thenReturn(response(500, "Error occurred building a new feature type 'myft': already exists"));
         assertThrows(ResourceAlreadyExistsException.class,
-                () -> manager.create("ws", "store", CreateFeatureTypeRequest.of("myft")));
+                () -> manager.create("ws", "store", CreateFeatureTypeRequest.builder("myft")));
     }
 
     // ── listByWorkspace() ────────────────────────────────────────────────
@@ -218,7 +218,7 @@ class FeatureTypeManagerTest {
         when(httpClient.post(anyString(), anyString(), anyString(), anyString()))
                 .thenReturn(response(500, "Error occurred building a new feature type 'myft': already exists"));
         assertThrows(ResourceAlreadyExistsException.class,
-                () -> manager.createByWorkspace("ws", CreateFeatureTypeRequest.of("myft")));
+                () -> manager.createByWorkspace("ws", CreateFeatureTypeRequest.builder("myft")));
     }
 
     @Test
@@ -230,7 +230,7 @@ class FeatureTypeManagerTest {
                 + "\"namespace\":{\"name\":\"ws\",\"href\":\"http://a\"}}}";
         when(httpClient.get(anyString(), anyString()))
                 .thenReturn(response(200, body));
-        FeatureType ft = manager.createByWorkspace("ws", CreateFeatureTypeRequest.of("myft"));
+        FeatureType ft = manager.createByWorkspace("ws", CreateFeatureTypeRequest.builder("myft"));
         assertNotNull(ft);
         assertEquals("myft", ft.getName());
     }

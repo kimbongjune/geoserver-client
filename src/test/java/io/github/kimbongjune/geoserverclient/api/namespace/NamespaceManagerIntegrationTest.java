@@ -39,8 +39,8 @@ class NamespaceManagerIntegrationTest extends BaseIntegrationTest {
     void setUpNamespaces() {
         namespaces      = client.namespaces();
         originalDefault = namespaces.getDefault().getPrefix();
-        namespaces.create(CreateNamespaceRequest.of(NS_UPDATE, "http://" + NS_UPDATE));
-        namespaces.create(CreateNamespaceRequest.of(NS_DELETE, "http://" + NS_DELETE));
+        namespaces.create(CreateNamespaceRequest.builder(NS_UPDATE, "http://" + NS_UPDATE));
+        namespaces.create(CreateNamespaceRequest.builder(NS_DELETE, "http://" + NS_DELETE));
     }
 
     @AfterAll
@@ -74,7 +74,7 @@ class NamespaceManagerIntegrationTest extends BaseIntegrationTest {
     @DisplayName("create() - returns namespace detail after creation")
     void create_shouldCreateNamespace() {
         Namespace ns = namespaces.create(
-                CreateNamespaceRequest.of(NS_MAIN, "http://" + NS_MAIN));
+                CreateNamespaceRequest.builder(NS_MAIN, "http://" + NS_MAIN));
         assertNotNull(ns);
         assertEquals(NS_MAIN, ns.getPrefix());
         assertEquals("http://" + NS_MAIN, ns.getUri());
@@ -87,7 +87,7 @@ class NamespaceManagerIntegrationTest extends BaseIntegrationTest {
     void create_duplicate_shouldThrowException() {
         assertThrows(ResourceAlreadyExistsException.class,
                 () -> namespaces.create(
-                        CreateNamespaceRequest.of(NS_MAIN, "http://duplicate")));
+                        CreateNamespaceRequest.builder(NS_MAIN, "http://duplicate")));
     }
 
     // ── 4-5. get ─────────────────────────────────────────────────────────────
@@ -181,7 +181,7 @@ class NamespaceManagerIntegrationTest extends BaseIntegrationTest {
     @DisplayName("create() - isolated=true creates isolated namespace")
     void create_isolated_shouldCreateIsolatedNamespace() {
         Namespace ns = namespaces.create(
-                CreateNamespaceRequest.of(NS_ISO, "http://" + NS_ISO).isolated(true));
+                CreateNamespaceRequest.builder(NS_ISO, "http://" + NS_ISO).isolated(true));
         assertTrue(ns.isIsolated());
     }
 

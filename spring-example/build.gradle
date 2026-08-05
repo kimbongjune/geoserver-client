@@ -27,7 +27,7 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-    implementation 'io.github.kimbongjune:geoserver-client:1.1.0'
+    implementation 'io.github.kimbongjune:geoserver-client:1.1.1'
     // Used only by the Vector Data page's PostGIS flow to create/inspect real tables via JDBC,
     // the same pattern as examples/Ex02_DataStoreAndFeatureType.
     runtimeOnly 'org.postgresql:postgresql:42.7.4'

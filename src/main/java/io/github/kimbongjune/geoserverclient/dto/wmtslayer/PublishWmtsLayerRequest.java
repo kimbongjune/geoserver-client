@@ -1,5 +1,6 @@
 package io.github.kimbongjune.geoserverclient.dto.wmtslayer;
 import java.util.Objects;
+import io.github.kimbongjune.geoserverclient.dto.common.ProjectionPolicy;
 
 /**
  * Request DTO for publishing a WMTS (cascading) layer.
@@ -23,7 +24,7 @@ public class PublishWmtsLayerRequest {
     private Boolean enabled;
     private Boolean advertised;
     private String srs;
-    private String projectionPolicy;
+    private ProjectionPolicy projectionPolicy;
 
     private PublishWmtsLayerRequest(String name, String nativeName) {
         this.name = name;
@@ -37,21 +38,8 @@ public class PublishWmtsLayerRequest {
      * @param nativeName  layer name as it appears in the remote WMTS GetCapabilities (e.g. "ws:layerName")
      * @return a new {@code PublishWmtsLayerRequest}
      */
-    public static PublishWmtsLayerRequest of(String name, String nativeName) {
-        return new PublishWmtsLayerRequest(name, nativeName);
-    }
-
-    /**
-     * Alias for {@link #of(String, String)}, for callers who prefer the
-     * {@code builder(...)...build()} spelling used by every {@code UpdateXxxRequest} in this
-     * library. {@link #build()} is a no-op terminal call.
-     *
-     * @param name       local layer name (required)
-     * @param nativeName layer name in the remote WMTS GetCapabilities
-     * @return a new {@code PublishWmtsLayerRequest}
-     */
     public static PublishWmtsLayerRequest builder(String name, String nativeName) {
-        return of(name, nativeName);
+        return new PublishWmtsLayerRequest(name, nativeName);
     }
 
     /**
@@ -113,7 +101,7 @@ public class PublishWmtsLayerRequest {
      * @param policy the projection policy (e.g. {@code "REPROJECT_TO_DECLARED"})
      * @return this instance for chaining
      */
-    public PublishWmtsLayerRequest projectionPolicy(String policy) {
+    public PublishWmtsLayerRequest projectionPolicy(ProjectionPolicy policy) {
         this.projectionPolicy = policy; return this;
     }
 
@@ -158,7 +146,7 @@ public class PublishWmtsLayerRequest {
         return srs;
     }
     /** @return the projection policy */
-    public String getProjectionPolicy() {
+    public ProjectionPolicy getProjectionPolicy() {
         return projectionPolicy;
     }
 

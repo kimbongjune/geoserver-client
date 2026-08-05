@@ -37,8 +37,8 @@ class WorkspaceManagerIntegrationTest extends BaseIntegrationTest {
     void setUpWorkspaces() {
         workspaces      = client.workspaces();
         originalDefault = workspaces.getDefault().getName();
-        workspaces.create(CreateWorkspaceRequest.of(WS_RENAME));
-        workspaces.create(CreateWorkspaceRequest.of(WS_DELETE));
+        workspaces.create(CreateWorkspaceRequest.builder(WS_RENAME));
+        workspaces.create(CreateWorkspaceRequest.builder(WS_DELETE));
     }
 
     @AfterAll
@@ -71,7 +71,7 @@ class WorkspaceManagerIntegrationTest extends BaseIntegrationTest {
     @Order(2)
     @DisplayName("create() - returns workspace detail after creation")
     void create_shouldCreateWorkspace() {
-        Workspace ws = workspaces.create(CreateWorkspaceRequest.of(WS_MAIN));
+        Workspace ws = workspaces.create(CreateWorkspaceRequest.builder(WS_MAIN));
         assertNotNull(ws);
         assertEquals(WS_MAIN, ws.getName());
         assertFalse(ws.isIsolated());
@@ -83,7 +83,7 @@ class WorkspaceManagerIntegrationTest extends BaseIntegrationTest {
     @DisplayName("create() - duplicate name → ResourceAlreadyExistsException")
     void create_duplicate_shouldThrowException() {
         assertThrows(ResourceAlreadyExistsException.class,
-                () -> workspaces.create(CreateWorkspaceRequest.of(WS_MAIN)));
+                () -> workspaces.create(CreateWorkspaceRequest.builder(WS_MAIN)));
     }
 
     // ── 4-5. get ─────────────────────────────────────────────────────────────
@@ -183,7 +183,7 @@ class WorkspaceManagerIntegrationTest extends BaseIntegrationTest {
     @DisplayName("create() - isolated=true creates isolated workspace")
     void create_isolated_shouldCreateIsolatedWorkspace() {
         Workspace ws = workspaces.create(
-                CreateWorkspaceRequest.of(WS_ISO).isolated(true));
+                CreateWorkspaceRequest.builder(WS_ISO).isolated(true));
         assertTrue(ws.isIsolated());
     }
 

@@ -2,6 +2,7 @@ package com.example.geoserverexample.raster.service.impl;
 
 import com.example.geoserverexample.raster.service.RasterDataService;
 import io.github.kimbongjune.geoserverclient.GeoServerClient;
+import io.github.kimbongjune.geoserverclient.dto.common.ProjectionPolicy;
 import io.github.kimbongjune.geoserverclient.dto.coverage.Coverage;
 import io.github.kimbongjune.geoserverclient.dto.coverage.CoverageSummary;
 import io.github.kimbongjune.geoserverclient.dto.coverage.UpdateCoverageRequest;
@@ -94,12 +95,16 @@ public class RasterDataServiceImpl implements RasterDataService {
     public void updateCoverage(String ws, String store, String cov, String newName, String title, String srs,
                                 String projectionPolicy, boolean advertised, String defaultInterpolationMethod) {
         UpdateCoverageRequest.Builder builder = UpdateCoverageRequest.builder()
-                .title(title).srs(srs).projectionPolicy(projectionPolicy)
+                .title(title).srs(srs).projectionPolicy(parseProjectionPolicy(projectionPolicy))
                 .advertised(advertised).defaultInterpolationMethod(defaultInterpolationMethod);
         if (isRenaming(newName)) {
             builder.name(newName);
         }
         client.coverages().update(ws, store, cov, builder.build());
+    }
+
+    private static ProjectionPolicy parseProjectionPolicy(String value) {
+        return (value == null || value.trim().isEmpty()) ? null : ProjectionPolicy.valueOf(value.trim());
     }
 
     @Override

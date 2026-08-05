@@ -26,7 +26,7 @@ public class CreateTransformRequest {
      * @param name the transform name (must not be null or empty)
      * @return a new request
      */
-    public static CreateTransformRequest of(String name) {
+    public static CreateTransformRequest builder(String name) {
         return new CreateTransformRequest(name);
     }
 

@@ -1,6 +1,9 @@
 package io.github.kimbongjune.geoserverclient.api.featuretype;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.kimbongjune.geoserverclient.BaseIntegrationTest;
+import io.github.kimbongjune.geoserverclient.dto.common.ProjectionPolicy;
 import io.github.kimbongjune.geoserverclient.dto.datastore.CreateDataStoreRequest;
 import io.github.kimbongjune.geoserverclient.dto.featuretype.CreateFeatureTypeRequest;
 import io.github.kimbongjune.geoserverclient.dto.featuretype.FeatureType;
@@ -48,7 +51,7 @@ class FeatureTypeManagerIntegrationTest extends BaseIntegrationTest {
     @BeforeAll
     void setUpResources() {
         // workspace + H2 datastore
-        client.workspaces().create(CreateWorkspaceRequest.of(WS));
+        client.workspaces().create(CreateWorkspaceRequest.builder(WS));
         client.datastores().create(WS, h2Request(DS));
         featureTypes = client.featureTypes();
 
@@ -190,6 +193,20 @@ class FeatureTypeManagerIntegrationTest extends BaseIntegrationTest {
         assertThrows(FeatureTypeNotFoundException.class,
                 () -> featureTypes.update(WS, DS, "nonexistent_ft_xyz",
                         UpdateFeatureTypeRequest.builder().title("x").build()));
+    }
+
+    @Test
+    @Order(27)
+    @DisplayName("update() projectionPolicy - enum round-trips exactly against raw REST API")
+    void update_projectionPolicy_matchesRawRestApi() throws Exception {
+        FeatureType updated = featureTypes.update(WS, DS, FT_UPD,
+                UpdateFeatureTypeRequest.builder().projectionPolicy(ProjectionPolicy.REPROJECT_TO_DECLARED).build());
+        assertEquals(ProjectionPolicy.REPROJECT_TO_DECLARED, updated.getProjectionPolicy());
+
+        String raw = rawGet("/rest/workspaces/" + WS + "/datastores/" + DS + "/featuretypes/" + FT_UPD + ".json");
+        JsonNode node = new ObjectMapper().readTree(raw);
+        assertEquals("REPROJECT_TO_DECLARED", node.path("featureType").path("projectionPolicy").asText(),
+                "raw REST API projectionPolicy value must match exactly what the library parsed");
     }
 
     // ── 8. reset ───────────────────────────────────────────────────────────
@@ -340,7 +357,7 @@ class FeatureTypeManagerIntegrationTest extends BaseIntegrationTest {
     // ── Helpers ────────────────────────────────────────────────────────────
 
     private static CreateFeatureTypeRequest ftRequest(String name) {
-        return CreateFeatureTypeRequest.of(name)
+        return CreateFeatureTypeRequest.builder(name)
                 .srs("EPSG:4326")
                 .title(name)
                 .attribute("the_geom", "org.locationtech.jts.geom.Point", 0, 1, true)
@@ -348,7 +365,7 @@ class FeatureTypeManagerIntegrationTest extends BaseIntegrationTest {
     }
 
     private static CreateDataStoreRequest h2Request(String storeName) {
-        return CreateDataStoreRequest.of(storeName)
+        return CreateDataStoreRequest.builder(storeName)
                 .connectionParam("database", "it_test_" + storeName)
                 .connectionParam("dbtype",   "h2");
     }

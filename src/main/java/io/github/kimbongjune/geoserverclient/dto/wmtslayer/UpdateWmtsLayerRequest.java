@@ -1,6 +1,7 @@
 package io.github.kimbongjune.geoserverclient.dto.wmtslayer;
 
 import io.github.kimbongjune.geoserverclient.exception.InvalidParameterException;
+import io.github.kimbongjune.geoserverclient.dto.common.ProjectionPolicy;
 import java.util.Objects;
 
 /**
@@ -27,7 +28,7 @@ public class UpdateWmtsLayerRequest {
     private final Boolean enabled;
     private final Boolean advertised;
     private final String srs;
-    private final String projectionPolicy;
+    private final ProjectionPolicy projectionPolicy;
     private final String calculate;
 
     private UpdateWmtsLayerRequest(Builder builder) {
@@ -69,7 +70,7 @@ public class UpdateWmtsLayerRequest {
     public String getSrs() {
         return srs;
     }
-    public String getProjectionPolicy() {
+    public ProjectionPolicy getProjectionPolicy() {
         return projectionPolicy;
     }
     /** The calculate query parameter. Accepted values: "nativebbox", "latlonbbox", or a comma-separated combination. */
@@ -84,7 +85,7 @@ public class UpdateWmtsLayerRequest {
         private Boolean enabled;
         private Boolean advertised;
         private String srs;
-        private String projectionPolicy;
+        private ProjectionPolicy projectionPolicy;
         private String calculate;
 
         public Builder title(String title) {
@@ -105,7 +106,7 @@ public class UpdateWmtsLayerRequest {
         public Builder srs(String srs) {
             this.srs = srs; return this;
         }
-        public Builder projectionPolicy(String policy) {
+        public Builder projectionPolicy(ProjectionPolicy policy) {
             this.projectionPolicy = policy; return this;
         }
         public Builder calculate(String calculate) {

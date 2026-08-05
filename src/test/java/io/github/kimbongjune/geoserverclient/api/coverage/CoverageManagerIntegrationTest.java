@@ -61,7 +61,7 @@ class CoverageManagerIntegrationTest extends BaseIntegrationTest {
         assertNotNull(res, "byte.tif not found in src/test/resources/");
         BYTE_TIF = new File(res.toURI());
 
-        client.workspaces().create(CreateWorkspaceRequest.of(WS));
+        client.workspaces().create(CreateWorkspaceRequest.builder(WS));
 
         // CS_MAIN: configure=first → COV_MAIN auto-created
         client.coverageStores().uploadFile(WS, CS_MAIN, "file", "geotiff", BYTE_TIF, "first", null, null);
@@ -100,7 +100,7 @@ class CoverageManagerIntegrationTest extends BaseIntegrationTest {
     @DisplayName("[2] create() — register via isNew mode into CS_NONE")
     void create_isNewMode() {
         Coverage cov = coverages.create(WS, CS_NONE,
-                CreateCoverageRequest.isNew(COV_CREATED));
+                CreateCoverageRequest.builder(COV_CREATED));
 
         assertNotNull(cov, "created coverage must not be null");
         assertEquals(COV_CREATED, cov.getName(), "name");
@@ -117,7 +117,7 @@ class CoverageManagerIntegrationTest extends BaseIntegrationTest {
     void create_duplicate_throwsException() {
         assertThrows(ResourceAlreadyExistsException.class,
                 () -> coverages.create(WS, CS_NONE,
-                        CreateCoverageRequest.isNew(COV_CREATED)));
+                        CreateCoverageRequest.builder(COV_CREATED)));
     }
 
     // 4. get
@@ -227,6 +227,23 @@ class CoverageManagerIntegrationTest extends BaseIntegrationTest {
         assertEquals("Updated description by test",  updated.getDescription(), "description updated");
     }
 
+    @Test
+    @Order(27)
+    @DisplayName("[27] update() projectionPolicy - enum round-trips exactly against raw REST API")
+    void update_projectionPolicy_matchesRawRestApi() throws Exception {
+        // Order(12) already renamed COV_MAIN -> COV_RENAMED, so this must target the current name.
+        Coverage updated = coverages.update(WS, CS_MAIN, COV_RENAMED,
+                UpdateCoverageRequest.builder()
+                        .projectionPolicy(io.github.kimbongjune.geoserverclient.dto.common.ProjectionPolicy.NONE)
+                        .build());
+        assertEquals(io.github.kimbongjune.geoserverclient.dto.common.ProjectionPolicy.NONE, updated.getProjectionPolicy());
+
+        String raw = rawGet("/rest/workspaces/" + WS + "/coveragestores/" + CS_MAIN + "/coverages/" + COV_RENAMED + ".json");
+        com.fasterxml.jackson.databind.JsonNode node = new com.fasterxml.jackson.databind.ObjectMapper().readTree(raw);
+        assertEquals("NONE", node.path("coverage").path("projectionPolicy").asText(),
+                "raw REST API projectionPolicy value must match exactly what the library parsed");
+    }
+
     // 12. update rename
 
     @Test
@@ -324,7 +341,7 @@ class CoverageManagerIntegrationTest extends BaseIntegrationTest {
         String nativeName = natives.get(0);
 
         Coverage cov = coverages.createByWorkspace(WS, CS_WS_NEW,
-                CreateCoverageRequest.of(CS_WS_NEW).nativeCoverageName(nativeName));
+                CreateCoverageRequest.builder(CS_WS_NEW).nativeCoverageName(nativeName));
 
         assertNotNull(cov, "created coverage must not be null");
         assertEquals(CS_WS_NEW, cov.getName(), "name");
@@ -341,6 +358,6 @@ class CoverageManagerIntegrationTest extends BaseIntegrationTest {
         String nativeName = natives.get(0);
         assertThrows(ResourceAlreadyExistsException.class,
                 () -> coverages.createByWorkspace(WS, CS_WS_NEW,
-                        CreateCoverageRequest.of(CS_WS_NEW).nativeCoverageName(nativeName)));
+                        CreateCoverageRequest.builder(CS_WS_NEW).nativeCoverageName(nativeName)));
     }
 }

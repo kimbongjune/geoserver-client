@@ -12,21 +12,21 @@ import java.util.Objects;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ImportTaskUpdate {
 
-    private String updateMode;
+    private ImportUpdateMode updateMode;
 
     /** Constructs an empty {@code ImportTaskUpdate} for deserialization. */
     public ImportTaskUpdate() {}
 
     /**
      * Constructs an {@code ImportTaskUpdate} with the given update mode.
-     * @param updateMode the update mode (e.g. {@code "CREATE"}, {@code "REPLACE"})
+     * @param updateMode the update mode
      */
-    public ImportTaskUpdate(String updateMode) {
+    public ImportTaskUpdate(ImportUpdateMode updateMode) {
         this.updateMode = updateMode;
     }
 
     /** @return the update mode */
-    public String getUpdateMode() {
+    public ImportUpdateMode getUpdateMode() {
         return updateMode;
     }
 
@@ -34,7 +34,7 @@ public class ImportTaskUpdate {
      * Sets the update mode.
      * @param updateMode the update mode to set
      */
-    public void setUpdateMode(String updateMode) {
+    public void setUpdateMode(ImportUpdateMode updateMode) {
         this.updateMode = updateMode;
     }
 

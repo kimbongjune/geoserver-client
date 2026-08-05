@@ -1,5 +1,6 @@
 package io.github.kimbongjune.geoserverclient.dto.coverage;
 
+import io.github.kimbongjune.geoserverclient.dto.common.ProjectionPolicy;
 import io.github.kimbongjune.geoserverclient.exception.InvalidParameterException;
 import java.util.Objects;
 
@@ -28,7 +29,7 @@ public class UpdateCoverageRequest {
     private final String  title;
     private final String  description;
     private final String  srs;
-    private final String  projectionPolicy;
+    private final ProjectionPolicy projectionPolicy;
     private final Boolean enabled;
     private final Boolean advertised;
     private final String  defaultInterpolationMethod;
@@ -67,7 +68,7 @@ public class UpdateCoverageRequest {
     public String  getSrs() {
         return srs;
     }
-    public String  getProjectionPolicy() {
+    public ProjectionPolicy getProjectionPolicy() {
         return projectionPolicy;
     }
     public Boolean getEnabled() {
@@ -85,7 +86,7 @@ public class UpdateCoverageRequest {
         private String  title;
         private String  description;
         private String  srs;
-        private String  projectionPolicy;
+        private ProjectionPolicy projectionPolicy;
         private Boolean enabled;
         private Boolean advertised;
         private String  defaultInterpolationMethod;
@@ -102,7 +103,7 @@ public class UpdateCoverageRequest {
         public Builder srs(String srs) {
             this.srs = srs;                             return this;
         }
-        public Builder projectionPolicy(String projectionPolicy) {
+        public Builder projectionPolicy(ProjectionPolicy projectionPolicy) {
             this.projectionPolicy = projectionPolicy;   return this;
         }
         public Builder enabled(Boolean enabled) {

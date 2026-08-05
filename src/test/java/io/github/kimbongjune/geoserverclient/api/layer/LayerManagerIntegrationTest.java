@@ -41,7 +41,7 @@ class LayerManagerIntegrationTest extends BaseIntegrationTest {
         BYTE_TIF = new File(res.toURI());
 
         // Create workspace
-        client.workspaces().create(CreateWorkspaceRequest.of(WS));
+        client.workspaces().create(CreateWorkspaceRequest.builder(WS));
 
         // Upload byte.tif × 3 → 3 CoverageStores + 3 Coverages + 3 Layers (auto-created)
         client.coverageStores().uploadFile(WS, CS_MAIN,   "file", "geotiff", BYTE_TIF, "first", null, null);

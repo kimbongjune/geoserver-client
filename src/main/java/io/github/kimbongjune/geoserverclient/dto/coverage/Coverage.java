@@ -2,6 +2,7 @@ package io.github.kimbongjune.geoserverclient.dto.coverage;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.github.kimbongjune.geoserverclient.dto.common.ProjectionPolicy;
 
 import java.util.List;
 import java.util.Objects;
@@ -43,7 +44,7 @@ public class Coverage {
     private String srs;
 
     @JsonProperty("projectionPolicy")
-    private String projectionPolicy;
+    private ProjectionPolicy projectionPolicy;
 
     @JsonProperty("enabled")
     private Boolean enabled;
@@ -104,7 +105,7 @@ public class Coverage {
     public String getSrs() {
         return srs;
     }
-    public String getProjectionPolicy() {
+    public ProjectionPolicy getProjectionPolicy() {
         return projectionPolicy;
     }
     public Boolean getEnabled() {

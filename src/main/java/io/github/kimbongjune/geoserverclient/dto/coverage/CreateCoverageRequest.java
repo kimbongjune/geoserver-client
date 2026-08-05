@@ -1,5 +1,6 @@
 package io.github.kimbongjune.geoserverclient.dto.coverage;
 
+import io.github.kimbongjune.geoserverclient.dto.common.ProjectionPolicy;
 import io.github.kimbongjune.geoserverclient.exception.InvalidParameterException;
 import java.util.Objects;
 
@@ -8,24 +9,25 @@ import java.util.Objects;
  *
  * <p>Builds the request body for {@code POST /rest/workspaces/{ws}/coveragestores/{cs}/coverages}.
  *
- * <p><b>Two modes:</b>
+ * <p><b>Two usage modes</b> (both use the same {@link #builder(String)} entry point — GeoServer
+ * distinguishes them only by which fields are present in the request body):
  * <ul>
  *   <li><b>isNew mode (recommended):</b> specify only the name; GeoServer reads metadata
- *       automatically from the raster reader. Use {@code CreateCoverageRequest.isNew("mycov")}.</li>
+ *       automatically from the raster reader. Use {@code CreateCoverageRequest.builder("mycov")}.</li>
  *   <li><b>Partial-definition mode:</b> specify name plus additional fields explicitly.
- *       Use {@code CreateCoverageRequest.of("mycov").srs("EPSG:4326").enabled(true)}.</li>
+ *       Use {@code CreateCoverageRequest.builder("mycov").srs("EPSG:4326").enabled(true)}.</li>
  * </ul>
  *
  * <pre>{@code
  * // isNew mode — GeoServer reads metadata automatically from the store reader
- * CreateCoverageRequest.isNew("mycov")
+ * CreateCoverageRequest.builder("mycov")
  *
  * // Partial-definition mode — explicit field values
- * CreateCoverageRequest.of("mycov")
+ * CreateCoverageRequest.builder("mycov")
  *     .title("My Coverage")
  *     .description("Raster layer from GeoTIFF")
  *     .srs("EPSG:4326")
- *     .projectionPolicy("REPROJECT_TO_DECLARED")
+ *     .projectionPolicy(ProjectionPolicy.REPROJECT_TO_DECLARED)
  *     .enabled(true)
  * }</pre>
  */
@@ -37,7 +39,7 @@ public class CreateCoverageRequest {
     private       String  title;
     private       String  description;
     private       String  srs;
-    private       String  projectionPolicy;
+    private       ProjectionPolicy projectionPolicy;
     private       Boolean enabled;
     private       String  nativeFormat;
 
@@ -49,36 +51,16 @@ public class CreateCoverageRequest {
     }
 
     /**
-     * isNew mode: only the name is required. GeoServer reads all metadata from the store reader automatically.
-     * Use this when the store was uploaded with {@code configure=none}.
+     * Creates a coverage request with the given name — leave every other field unset for isNew
+     * mode (GeoServer reads all metadata from the store reader automatically; use this when the
+     * store was uploaded with {@code configure=none}), or chain additional setters for
+     * partial-definition mode.
      *
      * @param name the coverage name (must not be null or empty)
-     * @return a new request in isNew mode
-     */
-    public static CreateCoverageRequest isNew(String name) {
-        return new CreateCoverageRequest(name);
-    }
-
-    /**
-     * Partial-definition mode: specify the name and any additional fields to set explicitly.
-     *
-     * @param name the coverage name (must not be null or empty)
-     * @return a new request in partial-definition mode
-     */
-    public static CreateCoverageRequest of(String name) {
-        return new CreateCoverageRequest(name);
-    }
-
-    /**
-     * Alias for {@link #of(String)} (partial-definition mode), for callers who prefer the
-     * {@code builder(...)...build()} spelling used by every {@code UpdateXxxRequest} in this
-     * library. {@link #build()} is a no-op terminal call.
-     *
-     * @param name the coverage name
      * @return a new request instance
      */
     public static CreateCoverageRequest builder(String name) {
-        return of(name);
+        return new CreateCoverageRequest(name);
     }
 
     /**
@@ -136,7 +118,7 @@ public class CreateCoverageRequest {
      * @param projectionPolicy the projection policy (e.g. {@code "REPROJECT_TO_DECLARED"})
      * @return this request
      */
-    public CreateCoverageRequest projectionPolicy(String projectionPolicy) {
+    public CreateCoverageRequest projectionPolicy(ProjectionPolicy projectionPolicy) {
         this.projectionPolicy = projectionPolicy;
         return this;
     }
@@ -194,7 +176,7 @@ public class CreateCoverageRequest {
         return srs;
     }
     /** @return the projection policy */
-    public String  getProjectionPolicy() {
+    public ProjectionPolicy getProjectionPolicy() {
         return projectionPolicy;
     }
     /** @return {@code true} if enabled */
