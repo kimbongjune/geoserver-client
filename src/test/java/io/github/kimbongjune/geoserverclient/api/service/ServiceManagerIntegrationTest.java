@@ -21,7 +21,7 @@ class ServiceManagerIntegrationTest extends BaseIntegrationTest {
     @BeforeAll
     void setUp() {
         services = client.services();
-        client.workspaces().create(CreateWorkspaceRequest.of(WS));
+        client.workspaces().create(CreateWorkspaceRequest.builder(WS));
     }
 
     @AfterAll

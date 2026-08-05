@@ -36,7 +36,7 @@ class GwcBoundsManagerIntegrationTest extends BaseIntegrationTest {
         assertNotNull(res, "byte.tif not found in src/test/resources/");
         File byteTif = new File(res.toURI());
 
-        client.workspaces().create(CreateWorkspaceRequest.of(WS));
+        client.workspaces().create(CreateWorkspaceRequest.builder(WS));
         client.coverageStores().uploadFile(WS, STORE, "file", "geotiff", byteTif, "first", null, null);
 
         GwcLayer layer = new GwcLayer(LAYER_NAME);

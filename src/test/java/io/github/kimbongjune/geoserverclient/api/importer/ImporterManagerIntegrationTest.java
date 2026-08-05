@@ -4,6 +4,7 @@ import io.github.kimbongjune.geoserverclient.BaseIntegrationTest;
 import io.github.kimbongjune.geoserverclient.dto.importer.ImportContext;
 import io.github.kimbongjune.geoserverclient.dto.importer.ImportContextSummary;
 import io.github.kimbongjune.geoserverclient.dto.importer.ImportData;
+import io.github.kimbongjune.geoserverclient.dto.importer.ImportState;
 import io.github.kimbongjune.geoserverclient.dto.importer.ImportTask;
 import io.github.kimbongjune.geoserverclient.dto.importer.ImportTransform;
 import io.github.kimbongjune.geoserverclient.dto.importer.ImportTransformChain;
@@ -59,7 +60,7 @@ class ImporterManagerIntegrationTest extends BaseIntegrationTest {
         importer = client.importer();
 
         // Target workspace for createImport() — don't assume GeoServer sample data is present.
-        try { client.workspaces().create(CreateWorkspaceRequest.of(TEST_WORKSPACE)); } catch (Exception ignored) {}
+        try { client.workspaces().create(CreateWorkspaceRequest.builder(TEST_WORKSPACE)); } catch (Exception ignored) {}
 
         URL zipUrl = getClass().getClassLoader().getResource("AL_D002_36_20260104.zip");
         if (zipUrl != null) {
@@ -111,7 +112,7 @@ class ImporterManagerIntegrationTest extends BaseIntegrationTest {
         ImportContext ctx = importer.createImport(TEST_WORKSPACE);
         assertNotNull(ctx, "createImport() must return ImportContext");
         assertTrue(ctx.getId() >= 0, "id must be non-negative");
-        assertEquals("PENDING", ctx.getState(), "Initial state must be PENDING");
+        assertEquals(ImportState.PENDING, ctx.getState(), "Initial state must be PENDING");
         importId = ctx.getId();
     }
 
@@ -219,8 +220,8 @@ class ImporterManagerIntegrationTest extends BaseIntegrationTest {
                 "Skip: no task created");
 
         // Only add transform if task is in a vector state (not NO_FORMAT / raster)
-        String taskState = importer.getTask(importId, taskId).getState();
-        Assumptions.assumeFalse("NO_FORMAT".equals(taskState),
+        ImportState taskState = importer.getTask(importId, taskId).getState();
+        Assumptions.assumeFalse(ImportState.NO_FORMAT == taskState,
                 "Skip: task is in NO_FORMAT state, cannot add vector transform");
 
         ImportTransform transform = ImportTransform.reproject("EPSG:4326", "EPSG:4326");
@@ -314,7 +315,7 @@ class ImporterManagerIntegrationTest extends BaseIntegrationTest {
             assertNotNull(ctx);
             // GeoServer uses its own sequential counter; hintId is a lower-bound hint
             assertTrue(ctx.getId() >= hintId, "returned id should be >= requested hint id");
-            assertEquals("PENDING", ctx.getState());
+            assertEquals(ImportState.PENDING, ctx.getState());
         } finally {
             try { importer.deleteImport(ctx.getId()); } catch (Exception ignored) {}
         }

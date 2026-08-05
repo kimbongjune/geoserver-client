@@ -129,7 +129,12 @@
                         <input type="text" name="newName" placeholder="rename to..." style="width:120px"/>
                         <input type="text" name="title" th:value="${c.title}" placeholder="title" style="width:120px"/>
                         <input type="text" name="srs" th:value="${c.srs}" placeholder="SRS" style="width:110px"/>
-                        <input type="text" name="projectionPolicy" placeholder="projectionPolicy" style="width:110px"/>
+                        <select name="projectionPolicy" style="width:150px">
+                            <option value="">projectionPolicy (unchanged)</option>
+                            <option value="FORCE_DECLARED">FORCE_DECLARED</option>
+                            <option value="REPROJECT_TO_DECLARED">REPROJECT_TO_DECLARED</option>
+                            <option value="NONE">NONE</option>
+                        </select>
                         <input type="text" name="defaultInterpolationMethod" placeholder="interpolation" style="width:100px"/>
                         <div class="checkline">
                             <input type="checkbox" name="advertised" value="true" th:id="'adv_' + ${c.name}" checked/>

@@ -35,7 +35,7 @@ class SldBuilderLiveTest extends BaseIntegrationTest {
 
     @BeforeAll
     void setUp() {
-        client.workspaces().create(CreateWorkspaceRequest.of(WS));
+        client.workspaces().create(CreateWorkspaceRequest.builder(WS));
         styles     = client.styles();
         authHeader = "Basic " + Base64.getEncoder().encodeToString(
                 "admin:geoserver".getBytes(StandardCharsets.UTF_8));

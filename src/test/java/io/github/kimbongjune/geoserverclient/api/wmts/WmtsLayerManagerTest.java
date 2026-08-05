@@ -47,14 +47,14 @@ class WmtsLayerManagerTest {
     @DisplayName("publishByWorkspace(null, store, req) throws InvalidParameterException")
     void publishByWorkspace_nullWorkspace_throwsInvalidParameter() {
         assertThrows(InvalidParameterException.class,
-                () -> manager.publishByWorkspace(null, "store", PublishWmtsLayerRequest.of("l", "ws:l")));
+                () -> manager.publishByWorkspace(null, "store", PublishWmtsLayerRequest.builder("l", "ws:l")));
     }
 
     @Test
     @DisplayName("publishByWorkspace(ws, null, req) throws InvalidParameterException")
     void publishByWorkspace_nullStore_throwsInvalidParameter() {
         assertThrows(InvalidParameterException.class,
-                () -> manager.publishByWorkspace("ws", null, PublishWmtsLayerRequest.of("l", "ws:l")));
+                () -> manager.publishByWorkspace("ws", null, PublishWmtsLayerRequest.builder("l", "ws:l")));
     }
 
     @Test
@@ -71,7 +71,7 @@ class WmtsLayerManagerTest {
     void publishByWorkspace_alreadyExists_throwsResourceAlreadyExistsException() {
         when(httpClient.get(anyString(), anyString())).thenReturn(response(200, "{}"));
         assertThrows(ResourceAlreadyExistsException.class,
-                () -> manager.publishByWorkspace("ws", "store", PublishWmtsLayerRequest.of("l", "ws:l")));
+                () -> manager.publishByWorkspace("ws", "store", PublishWmtsLayerRequest.builder("l", "ws:l")));
     }
 
     // ── publishByWorkspace() happy path: posts to workspace path with store embedded ────
@@ -87,7 +87,7 @@ class WmtsLayerManagerTest {
         when(httpClient.post(anyString(), anyString(), anyString(), anyString()))
                 .thenReturn(response(201, null));
 
-        WmtsLayer layer = manager.publishByWorkspace("ws", "store", PublishWmtsLayerRequest.of("l", "ws:l"));
+        WmtsLayer layer = manager.publishByWorkspace("ws", "store", PublishWmtsLayerRequest.builder("l", "ws:l"));
 
         assertNotNull(layer);
         assertEquals("l", layer.getName());

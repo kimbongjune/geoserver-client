@@ -48,12 +48,12 @@ class CoverageStoreManagerIntegrationTest extends BaseIntegrationTest {
         assertNotNull(res, "byte.tif test resource not found (src/test/resources/byte.tif)");
         BYTE_TIF = new File(res.toURI());
 
-        client.workspaces().create(CreateWorkspaceRequest.of(WS));
+        client.workspaces().create(CreateWorkspaceRequest.builder(WS));
         coverageStores = client.coverageStores();
         // pre-create stores for update/delete/reset tests
-        coverageStores.create(WS, CreateCoverageStoreRequest.of(CS_UPD).type("GeoTIFF").enabled(false));
-        coverageStores.create(WS, CreateCoverageStoreRequest.of(CS_DEL).type("GeoTIFF").enabled(false));
-        coverageStores.create(WS, CreateCoverageStoreRequest.of(CS_RESET).type("GeoTIFF").enabled(false));
+        coverageStores.create(WS, CreateCoverageStoreRequest.builder(CS_UPD).type("GeoTIFF").enabled(false));
+        coverageStores.create(WS, CreateCoverageStoreRequest.builder(CS_DEL).type("GeoTIFF").enabled(false));
+        coverageStores.create(WS, CreateCoverageStoreRequest.builder(CS_RESET).type("GeoTIFF").enabled(false));
     }
 
     @AfterAll
@@ -83,7 +83,7 @@ class CoverageStoreManagerIntegrationTest extends BaseIntegrationTest {
     @DisplayName("create() - creates GeoTIFF store and returns detail")
     void create_shouldCreateCoverageStore() {
         CoverageStore cs = coverageStores.create(WS,
-                CreateCoverageStoreRequest.of(CS_MAIN)
+                CreateCoverageStoreRequest.builder(CS_MAIN)
                         .type("GeoTIFF")
                         .enabled(false)
                         .description("Integration test GeoTIFF store"));
@@ -102,7 +102,7 @@ class CoverageStoreManagerIntegrationTest extends BaseIntegrationTest {
     void create_duplicate_shouldThrowException() {
         assertThrows(ResourceAlreadyExistsException.class,
                 () -> coverageStores.create(WS,
-                        CreateCoverageStoreRequest.of(CS_MAIN).type("GeoTIFF")));
+                        CreateCoverageStoreRequest.builder(CS_MAIN).type("GeoTIFF")));
     }
 
     // 4-5. get

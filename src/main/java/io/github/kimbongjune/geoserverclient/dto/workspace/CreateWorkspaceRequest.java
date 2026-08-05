@@ -8,10 +8,10 @@ import java.util.Objects;
  *
  * <pre>{@code
  * // Simple creation
- * CreateWorkspaceRequest.of("myws")
+ * CreateWorkspaceRequest.builder("myws")
  *
  * // With options
- * CreateWorkspaceRequest.of("myws")
+ * CreateWorkspaceRequest.builder("myws")
  *     .isolated(true)
  *     .setAsDefault(true)
  * }</pre>
@@ -35,20 +35,8 @@ public class CreateWorkspaceRequest {
      * @param name workspace name (required)
      * @return a new request instance
      */
-    public static CreateWorkspaceRequest of(String name) {
-        return new CreateWorkspaceRequest(name);
-    }
-
-    /**
-     * Alias for {@link #of(String)}, for callers who prefer the {@code builder(...)...build()}
-     * spelling used by every {@code UpdateXxxRequest} in this library. Returns the same fluent,
-     * chainable object as {@link #of(String)} — {@link #build()} is a no-op terminal call.
-     *
-     * @param name workspace name
-     * @return a new request instance
-     */
     public static CreateWorkspaceRequest builder(String name) {
-        return of(name);
+        return new CreateWorkspaceRequest(name);
     }
 
     /**

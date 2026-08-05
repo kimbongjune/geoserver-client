@@ -2,6 +2,7 @@ package io.github.kimbongjune.geoserverclient.dto.wmslayer;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.github.kimbongjune.geoserverclient.dto.common.ProjectionPolicy;
 
 import java.util.List;
 import java.util.Objects;
@@ -58,7 +59,7 @@ public class WmsLayer {
     private BoundingBox latLonBoundingBox;
 
     @JsonProperty("projectionPolicy")
-    private String projectionPolicy;
+    private ProjectionPolicy projectionPolicy;
 
     @JsonProperty("enabled")
     private Boolean enabled;
@@ -125,7 +126,7 @@ public class WmsLayer {
     public BoundingBox getLatLonBoundingBox() {
         return latLonBoundingBox;
     }
-    public String getProjectionPolicy() {
+    public ProjectionPolicy getProjectionPolicy() {
         return projectionPolicy;
     }
     public Boolean getEnabled() {

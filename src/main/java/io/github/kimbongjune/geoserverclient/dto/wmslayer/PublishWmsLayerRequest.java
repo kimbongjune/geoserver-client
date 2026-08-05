@@ -1,6 +1,7 @@
 package io.github.kimbongjune.geoserverclient.dto.wmslayer;
 
 import io.github.kimbongjune.geoserverclient.dto.common.StringMap;
+import io.github.kimbongjune.geoserverclient.dto.common.ProjectionPolicy;
 
 import java.util.List;
 import java.util.Objects;
@@ -39,7 +40,7 @@ public class PublishWmsLayerRequest {
     private List<String> selectedRemoteStyles;
     private StringMap vendorParameters;
     private String srs;
-    private String projectionPolicy;
+    private ProjectionPolicy projectionPolicy;
 
     private PublishWmsLayerRequest(String name, String nativeName) {
         this.name = name;
@@ -53,21 +54,8 @@ public class PublishWmsLayerRequest {
      * @param nativeName layer name in the remote WMS GetCapabilities (e.g. "ws:layerName")
      * @return a new {@code PublishWmsLayerRequest}
      */
-    public static PublishWmsLayerRequest of(String name, String nativeName) {
-        return new PublishWmsLayerRequest(name, nativeName);
-    }
-
-    /**
-     * Alias for {@link #of(String, String)}, for callers who prefer the
-     * {@code builder(...)...build()} spelling used by every {@code UpdateXxxRequest} in this
-     * library. {@link #build()} is a no-op terminal call.
-     *
-     * @param name       local layer name (required)
-     * @param nativeName layer name in the remote WMS GetCapabilities
-     * @return a new {@code PublishWmsLayerRequest}
-     */
     public static PublishWmsLayerRequest builder(String name, String nativeName) {
-        return of(name, nativeName);
+        return new PublishWmsLayerRequest(name, nativeName);
     }
 
     /**
@@ -183,7 +171,7 @@ public class PublishWmsLayerRequest {
      * @param policy the projection policy (e.g. {@code "REPROJECT_TO_DECLARED"})
      * @return this instance for chaining
      */
-    public PublishWmsLayerRequest projectionPolicy(String policy) {
+    public PublishWmsLayerRequest projectionPolicy(ProjectionPolicy policy) {
         this.projectionPolicy = policy; return this;
     }
 
@@ -252,7 +240,7 @@ public class PublishWmsLayerRequest {
         return srs;
     }
     /** @return the projection policy */
-    public String getProjectionPolicy() {
+    public ProjectionPolicy getProjectionPolicy() {
         return projectionPolicy;
     }
 

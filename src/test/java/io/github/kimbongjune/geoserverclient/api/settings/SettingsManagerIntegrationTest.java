@@ -22,7 +22,7 @@ class SettingsManagerIntegrationTest extends BaseIntegrationTest {
     @BeforeAll
     void setUp() {
         settings = client.settings();
-        client.workspaces().create(CreateWorkspaceRequest.of(WS));
+        client.workspaces().create(CreateWorkspaceRequest.builder(WS));
     }
 
     @AfterAll

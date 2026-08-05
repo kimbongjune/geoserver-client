@@ -121,7 +121,7 @@ class WorkspaceManagerTest {
         when(httpClient.post(anyString(), anyString(), anyString(), anyString()))
                 .thenReturn(response(409, "Workspace 'existing' already exists"));
         assertThrows(ResourceAlreadyExistsException.class,
-                () -> manager.create(CreateWorkspaceRequest.of("existing")));
+                () -> manager.create(CreateWorkspaceRequest.builder("existing")));
     }
 
     // ── delete() parameter validation ────────────────────────────────────

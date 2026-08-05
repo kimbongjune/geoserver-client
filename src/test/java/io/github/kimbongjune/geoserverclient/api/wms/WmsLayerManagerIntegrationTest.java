@@ -57,20 +57,20 @@ class WmsLayerManagerIntegrationTest extends BaseIntegrationTest {
         NATIVE_LAYER = WS + ":" + FEED_CS;
 
         // 1. workspace
-        client.workspaces().create(CreateWorkspaceRequest.of(WS));
+        client.workspaces().create(CreateWorkspaceRequest.builder(WS));
 
         // 2. upload byte.tif -> creates WS:FEED_CS coverage + WMS layer
         client.coverageStores().uploadFile(WS, FEED_CS, "file", "geotiff", BYTE_TIF, "first", null, null);
 
         // 3. create WMS stores
-        client.wmsStores().create(WS, CreateWmsStoreRequest.of(STORE,       CAPS_URL));
-        client.wmsStores().create(WS, CreateWmsStoreRequest.of(STORE_AVAIL, CAPS_URL));
-        client.wmsStores().create(WS, CreateWmsStoreRequest.of(STORE_WS,    CAPS_URL));
+        client.wmsStores().create(WS, CreateWmsStoreRequest.builder(STORE,       CAPS_URL));
+        client.wmsStores().create(WS, CreateWmsStoreRequest.builder(STORE_AVAIL, CAPS_URL));
+        client.wmsStores().create(WS, CreateWmsStoreRequest.builder(STORE_WS,    CAPS_URL));
 
         // 4. pre-publish layers into STORE
         wmsLayers = client.wmsLayers();
-        wmsLayers.publish(WS, STORE, PublishWmsLayerRequest.of(LAYER_DEL_NR, NATIVE_LAYER));
-        wmsLayers.publish(WS, STORE, PublishWmsLayerRequest.of(LAYER_DEL_T,  NATIVE_LAYER));
+        wmsLayers.publish(WS, STORE, PublishWmsLayerRequest.builder(LAYER_DEL_NR, NATIVE_LAYER));
+        wmsLayers.publish(WS, STORE, PublishWmsLayerRequest.builder(LAYER_DEL_T,  NATIVE_LAYER));
     }
 
     @AfterAll
@@ -128,13 +128,14 @@ class WmsLayerManagerIntegrationTest extends BaseIntegrationTest {
     @DisplayName("[4] publish() full fields -> 201, returns WmsLayer")
     void publish_fullFields() {
         WmsLayer layer = wmsLayers.publish(WS, STORE,
-                PublishWmsLayerRequest.of(LAYER_MAIN, NATIVE_LAYER)
+                PublishWmsLayerRequest.builder(LAYER_MAIN, NATIVE_LAYER)
                         .title("Integration Test WMS Layer")
                         .description("wms layer test")
                         .enabled(true)
                         .preferredFormat("image/png")
                         .forcedRemoteStyle("")
-                        .metadataBBoxRespected(false));
+                        .metadataBBoxRespected(false)
+                        .projectionPolicy(io.github.kimbongjune.geoserverclient.dto.common.ProjectionPolicy.REPROJECT_TO_DECLARED));
 
         assertNotNull(layer);
         assertEquals(LAYER_MAIN, layer.getName());
@@ -146,6 +147,17 @@ class WmsLayerManagerIntegrationTest extends BaseIntegrationTest {
         assertNotNull(layer.getStore());
         assertNotNull(layer.getNamespace());
         assertEquals(WS, layer.getNamespace().getName());
+        assertEquals(io.github.kimbongjune.geoserverclient.dto.common.ProjectionPolicy.REPROJECT_TO_DECLARED, layer.getProjectionPolicy());
+    }
+
+    @Test
+    @Order(19)
+    @DisplayName("[19] publish() projectionPolicy - enum round-trips exactly against raw REST API")
+    void publish_projectionPolicy_matchesRawRestApi() throws Exception {
+        String raw = rawGet("/rest/workspaces/" + WS + "/wmsstores/" + STORE + "/wmslayers/" + LAYER_MAIN + ".json");
+        com.fasterxml.jackson.databind.JsonNode node = new com.fasterxml.jackson.databind.ObjectMapper().readTree(raw);
+        assertEquals("REPROJECT_TO_DECLARED", node.path("wmsLayer").path("projectionPolicy").asText(),
+                "raw REST API projectionPolicy value must match exactly what the library parsed");
     }
 
     @Test
@@ -154,7 +166,7 @@ class WmsLayerManagerIntegrationTest extends BaseIntegrationTest {
     void publish_duplicate_throwsException() {
         assertThrows(ResourceAlreadyExistsException.class,
                 () -> wmsLayers.publish(WS, STORE,
-                        PublishWmsLayerRequest.of(LAYER_MAIN, NATIVE_LAYER)));
+                        PublishWmsLayerRequest.builder(LAYER_MAIN, NATIVE_LAYER)));
     }
 
     // ── 6-8. get ────────────────────────────────────────────────────────
@@ -271,7 +283,7 @@ class WmsLayerManagerIntegrationTest extends BaseIntegrationTest {
     @DisplayName("[16] publish() with vendorParameters(StringMap) -> GET returns vendorParameters")
     void publish_withVendorParameters() {
         WmsLayer layer = wmsLayers.publish(WS, STORE,
-                PublishWmsLayerRequest.of(LAYER_VP, NATIVE_LAYER)
+                PublishWmsLayerRequest.builder(LAYER_VP, NATIVE_LAYER)
                         .vendorParameters(StringMap.of("FORMAT", "image/png")
                                 .put("TRANSPARENT", "TRUE")));
 
@@ -292,7 +304,7 @@ class WmsLayerManagerIntegrationTest extends BaseIntegrationTest {
     @DisplayName("[17] publishByWorkspace() — POST /workspaces/{ws}/wmslayers with store named in body")
     void publishByWorkspace_publishesLayer() {
         WmsLayer layer = wmsLayers.publishByWorkspace(WS, STORE_WS,
-                PublishWmsLayerRequest.of(LAYER_WS, NATIVE_LAYER)
+                PublishWmsLayerRequest.builder(LAYER_WS, NATIVE_LAYER)
                         .title("Integration Test WMS Layer (byWorkspace)")
                         .enabled(true));
 
@@ -311,7 +323,7 @@ class WmsLayerManagerIntegrationTest extends BaseIntegrationTest {
     void publishByWorkspace_duplicate_throwsException() {
         assertThrows(ResourceAlreadyExistsException.class,
                 () -> wmsLayers.publishByWorkspace(WS, STORE_WS,
-                        PublishWmsLayerRequest.of(LAYER_WS, NATIVE_LAYER)));
+                        PublishWmsLayerRequest.builder(LAYER_WS, NATIVE_LAYER)));
     }
 
     @Test

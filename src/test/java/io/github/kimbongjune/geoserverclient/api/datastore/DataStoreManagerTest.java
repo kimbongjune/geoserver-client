@@ -123,7 +123,7 @@ class DataStoreManagerTest {
         when(httpClient.post(anyString(), anyString(), anyString(), anyString()))
                 .thenReturn(response(500, "DataStore 'myds' already exists"));
         assertThrows(ResourceAlreadyExistsException.class,
-                () -> manager.create("myws", CreateDataStoreRequest.of("myds")));
+                () -> manager.create("myws", CreateDataStoreRequest.builder("myds")));
     }
 
     @Test
@@ -132,6 +132,6 @@ class DataStoreManagerTest {
         when(httpClient.post(anyString(), anyString(), anyString(), anyString()))
                 .thenReturn(response(500, "Connection refused to PostGIS"));
         assertThrows(io.github.kimbongjune.geoserverclient.exception.GeoServerResponseException.class,
-                () -> manager.create("myws", CreateDataStoreRequest.of("myds")));
+                () -> manager.create("myws", CreateDataStoreRequest.builder("myds")));
     }
 }

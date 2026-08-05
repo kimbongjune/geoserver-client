@@ -15,7 +15,7 @@ public class ImportContextSummary {
 
     private long id;
     private String href;
-    private String state;
+    private ImportState state;
 
     /** Constructs an empty {@code ImportContextSummary} for deserialization. */
     public ImportContextSummary() {}
@@ -28,8 +28,8 @@ public class ImportContextSummary {
     public String getHref() {
         return href;
     }
-    /** @return the import state (e.g. {@code "READY"}, {@code "COMPLETE"}) */
-    public String getState() {
+    /** @return the import state */
+    public ImportState getState() {
         return state;
     }
 

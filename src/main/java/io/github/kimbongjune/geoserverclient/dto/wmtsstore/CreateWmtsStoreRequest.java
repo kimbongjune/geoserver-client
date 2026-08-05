@@ -8,10 +8,10 @@ import java.util.Objects;
  *
  * <pre>{@code
  * // Minimal (name + capabilitiesURL)
- * CreateWmtsStoreRequest.of("remote_wmts", "http://wmts-server/wmts?REQUEST=GetCapabilities")
+ * CreateWmtsStoreRequest.builder("remote_wmts", "http://wmts-server/wmts?REQUEST=GetCapabilities")
  *
  * // All fields
- * CreateWmtsStoreRequest.of("remote_wmts", "http://wmts-server/wmts?REQUEST=GetCapabilities")
+ * CreateWmtsStoreRequest.builder("remote_wmts", "http://wmts-server/wmts?REQUEST=GetCapabilities")
  *     .description("My cascading WMTS")
  *     .enabled(true)
  *     .user("remoteUser")
@@ -64,20 +64,8 @@ public class CreateWmtsStoreRequest {
      * @param capabilitiesURL the WMTS GetCapabilities URL (must not be null or empty)
      * @return a new request instance
      */
-    public static CreateWmtsStoreRequest of(String name, String capabilitiesURL) {
-        return new CreateWmtsStoreRequest(name, capabilitiesURL);
-    }
-
-    /**
-     * Alias for {@link #of(String, String)}, for callers who prefer the
-     * {@code builder(...)...build()} spelling used by every {@code UpdateXxxRequest} in this
-     * library. {@link #build()} is a no-op terminal call.
-     * @param name            the WMTS store name
-     * @param capabilitiesURL the WMTS GetCapabilities URL
-     * @return a new request instance
-     */
     public static CreateWmtsStoreRequest builder(String name, String capabilitiesURL) {
-        return of(name, capabilitiesURL);
+        return new CreateWmtsStoreRequest(name, capabilitiesURL);
     }
 
     /**

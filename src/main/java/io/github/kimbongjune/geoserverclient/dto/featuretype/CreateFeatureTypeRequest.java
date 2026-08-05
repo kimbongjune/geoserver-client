@@ -1,5 +1,6 @@
 package io.github.kimbongjune.geoserverclient.dto.featuretype;
 
+import io.github.kimbongjune.geoserverclient.dto.common.ProjectionPolicy;
 import io.github.kimbongjune.geoserverclient.exception.InvalidParameterException;
 
 import java.util.ArrayList;
@@ -12,13 +13,13 @@ import java.util.Collections;
  *
  * <pre>{@code
  * // Minimal (auto table creation in H2/PostGIS)
- * CreateFeatureTypeRequest.of("mypoints")
+ * CreateFeatureTypeRequest.builder("mypoints")
  *     .srs("EPSG:4326")
  *     .attribute("the_geom", "org.locationtech.jts.geom.Point")
  *     .attribute("name", "java.lang.String")
  *
  * // With title and abstract
- * CreateFeatureTypeRequest.of("mypoints")
+ * CreateFeatureTypeRequest.builder("mypoints")
  *     .srs("EPSG:4326")
  *     .title("My Points")
  *     .abstractText("A point layer")
@@ -34,7 +35,7 @@ public class CreateFeatureTypeRequest {
     private String title;
     private String abstractText;
     private String srs;
-    private String projectionPolicy;
+    private ProjectionPolicy projectionPolicy;
     private Boolean enabled;
     private final List<AttributeDef> attributes = new ArrayList<>();
 
@@ -51,20 +52,8 @@ public class CreateFeatureTypeRequest {
      * @param name the feature type name (must not be null or empty)
      * @return a new request instance
      */
-    public static CreateFeatureTypeRequest of(String name) {
-        return new CreateFeatureTypeRequest(name);
-    }
-
-    /**
-     * Alias for {@link #of(String)}, for callers who prefer the {@code builder(...)...build()}
-     * spelling used by every {@code UpdateXxxRequest} in this library. {@link #build()} is a
-     * no-op terminal call.
-     *
-     * @param name the feature type name
-     * @return a new request instance
-     */
     public static CreateFeatureTypeRequest builder(String name) {
-        return of(name);
+        return new CreateFeatureTypeRequest(name);
     }
 
     /**
@@ -112,7 +101,7 @@ public class CreateFeatureTypeRequest {
      * @param projectionPolicy the projection policy
      * @return this request
      */
-    public CreateFeatureTypeRequest projectionPolicy(String projectionPolicy) {
+    public CreateFeatureTypeRequest projectionPolicy(ProjectionPolicy projectionPolicy) {
         this.projectionPolicy = projectionPolicy;
         return this;
     }
@@ -184,7 +173,7 @@ public class CreateFeatureTypeRequest {
         return srs;
     }
     /** @return the projection policy */
-    public String getProjectionPolicy() {
+    public ProjectionPolicy getProjectionPolicy() {
         return projectionPolicy;
     }
     /** @return {@code true} if enabled */

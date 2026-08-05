@@ -1,5 +1,6 @@
 package io.github.kimbongjune.geoserverclient.dto.featuretype;
 
+import io.github.kimbongjune.geoserverclient.dto.common.ProjectionPolicy;
 import io.github.kimbongjune.geoserverclient.exception.InvalidParameterException;
 import java.util.Objects;
 
@@ -29,7 +30,7 @@ public class UpdateFeatureTypeRequest {
     private final String  title;
     private final String  abstractText;
     private final String  srs;
-    private final String  projectionPolicy;
+    private final ProjectionPolicy projectionPolicy;
     private final Boolean enabled;
     private final Integer maxFeatures;
     private final String  recalculate; // query parameter (null = no recalculation)
@@ -67,7 +68,7 @@ public class UpdateFeatureTypeRequest {
     public String  getSrs() {
         return srs;
     }
-    public String  getProjectionPolicy() {
+    public ProjectionPolicy getProjectionPolicy() {
         return projectionPolicy;
     }
     public Boolean getEnabled() {
@@ -85,7 +86,7 @@ public class UpdateFeatureTypeRequest {
         private String  title;
         private String  abstractText;
         private String  srs;
-        private String  projectionPolicy;
+        private ProjectionPolicy projectionPolicy;
         private Boolean enabled;
         private Integer maxFeatures;
         private String  recalculate;
@@ -102,7 +103,7 @@ public class UpdateFeatureTypeRequest {
         public Builder srs(String srs) {
             this.srs = srs;                           return this;
         }
-        public Builder projectionPolicy(String p) {
+        public Builder projectionPolicy(ProjectionPolicy p) {
             this.projectionPolicy = p;                return this;
         }
         public Builder enabled(Boolean enabled) {

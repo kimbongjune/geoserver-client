@@ -16,8 +16,8 @@ public class ImportTask {
 
     private long id;
     private String href;
-    private String state;
-    private String updateMode;
+    private ImportState state;
+    private ImportUpdateMode updateMode;
     private String progress;
 
     /** Constructs an empty {@code ImportTask} for deserialization. */
@@ -31,12 +31,12 @@ public class ImportTask {
     public String getHref() {
         return href;
     }
-    /** @return the task state (e.g. {@code "READY"}, {@code "COMPLETE"}) */
-    public String getState() {
+    /** @return the task state */
+    public ImportState getState() {
         return state;
     }
-    /** @return the update mode (e.g. {@code "CREATE"}, {@code "REPLACE"}) */
-    public String getUpdateMode() {
+    /** @return the update mode */
+    public ImportUpdateMode getUpdateMode() {
         return updateMode;
     }
     /** @return the progress URL for this task */

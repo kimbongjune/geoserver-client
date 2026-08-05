@@ -115,7 +115,7 @@ class CoverageManagerTest {
         when(httpClient.post(anyString(), anyString(), anyString(), anyString()))
                 .thenReturn(response(500, "Error occurred building a new coverage 'mycov': already exists"));
         assertThrows(ResourceAlreadyExistsException.class,
-                () -> manager.create("ws", "store", CreateCoverageRequest.isNew("mycov")));
+                () -> manager.create("ws", "store", CreateCoverageRequest.builder("mycov")));
     }
 
     // ── createByWorkspace() ──────────────────────────────────────────────
@@ -124,14 +124,14 @@ class CoverageManagerTest {
     @DisplayName("createByWorkspace(null, store, req) throws InvalidParameterException")
     void createByWorkspace_nullWorkspace_throwsInvalidParameter() {
         assertThrows(InvalidParameterException.class,
-                () -> manager.createByWorkspace(null, "store", CreateCoverageRequest.isNew("mycov")));
+                () -> manager.createByWorkspace(null, "store", CreateCoverageRequest.builder("mycov")));
     }
 
     @Test
     @DisplayName("createByWorkspace(ws, null, req) throws InvalidParameterException")
     void createByWorkspace_nullStore_throwsInvalidParameter() {
         assertThrows(InvalidParameterException.class,
-                () -> manager.createByWorkspace("ws", null, CreateCoverageRequest.isNew("mycov")));
+                () -> manager.createByWorkspace("ws", null, CreateCoverageRequest.builder("mycov")));
     }
 
     @Test
@@ -147,7 +147,7 @@ class CoverageManagerTest {
         when(httpClient.post(anyString(), anyString(), anyString(), anyString()))
                 .thenReturn(response(500, "Error occurred building a new coverage 'mycov': already exists"));
         assertThrows(ResourceAlreadyExistsException.class,
-                () -> manager.createByWorkspace("ws", "store", CreateCoverageRequest.isNew("mycov")));
+                () -> manager.createByWorkspace("ws", "store", CreateCoverageRequest.builder("mycov")));
     }
 
     @Test
@@ -161,7 +161,7 @@ class CoverageManagerTest {
                 .thenReturn(response(200, getBody));
 
         Coverage cov = manager.createByWorkspace("ws", "store",
-                CreateCoverageRequest.isNew("mycov").nativeCoverageName("mycov"));
+                CreateCoverageRequest.builder("mycov").nativeCoverageName("mycov"));
 
         assertNotNull(cov);
         assertEquals("mycov", cov.getName());
