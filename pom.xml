@@ -50,7 +50,7 @@
 
         <httpclient5.version>5.2.1</httpclient5.version>
         <jackson.version>2.15.2</jackson.version>
-        <slf4j.version>2.0.7</slf4j.version>
+        <slf4j.version>2.0.18</slf4j.version>
         <junit.version>5.9.3</junit.version>
         <!-- Mockito 5.x dropped Java 8 support (class files require JDK 11+ to even read);
              4.11.0 is the last 4.x release and the newest one that still compiles under a real
