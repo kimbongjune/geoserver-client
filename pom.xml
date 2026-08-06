@@ -56,7 +56,7 @@
              4.11.0 is the last 4.x release and the newest one that still compiles under a real
              JDK 8 (confirmed the hard way: 5.4.0 broke test compilation under this repo's JDK 8
              CI matrix job with "class file has wrong version 55.0, should be 52.0"). -->
-        <mockito.version>4.11.0</mockito.version>
+        <mockito.version>5.23.0</mockito.version>
     </properties>
 
     <dependencies>
