@@ -134,7 +134,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.11.0</version>
+                <version>3.15.0</version>
                 <!--
                   No configuration here on purpose: the "release" javac flag (JEP 247, JDK 9+)
                   does not exist on a real JDK 8 javac at all ("invalid flag" error, confirmed the
