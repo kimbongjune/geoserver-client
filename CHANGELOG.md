@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.1.2] - 2026-08-06
+
+### Fixed
+
+- **`SldBuilder.PolygonBuilder`**: added `opacity(double)` for symbolizer-level `<Opacity>`
+  (separate from `fillOpacity` which controls CSS `fill-opacity`).
+- **`SldBuilder.TextBuilder`**: added `priority(double)` / `priority(SldExpression)` for
+  GeoServer's label `<Priority>` extension; added `linePlacementRepeated(boolean, double, double)`
+  (`<IsRepeated>`, `<InitialGap>`, `<Gap>`) and `linePlacementAligned(boolean)` (`<IsAligned>`)
+  for full `<LinePlacement>` coverage.
+- **`SldBuilder.RasterBuilder`**: added `vendorOption(String, String)` for `<VendorOption>` tags
+  (e.g. `algorithm` for ContrastEnhancement).
+- **`GwcSeedRequest`**: added `gridSetId` field so callers can target a specific GridSet when
+  seeding (`POST /gwc/rest/seed/{layer}.xml`).
+- **`GwcLayer.GridSubset`**: added `zoomStart` / `zoomStop` fields to constrain the zoom range
+  per GridSet when configuring a GWC tile layer.
+
+---
+
 ## [1.1.1] - 2026-08-05
 
 ### Changed (breaking)
