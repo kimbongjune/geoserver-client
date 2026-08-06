@@ -13,6 +13,7 @@ import java.util.Objects;
 public class GwcSeedRequest {
 
     private String name;
+    private String gridSetId;
     private Integer srs;
     private Integer zoomStart;
     private Integer zoomStop;
@@ -48,6 +49,15 @@ public class GwcSeedRequest {
     /** @param name the layer name */
     public void setName(String name) {
         this.name = name;
+    }
+
+    /** @return the grid set ID (e.g. {@code "EPSG:4326"}); null means all grid sets */
+    public String getGridSetId() {
+        return gridSetId;
+    }
+    /** @param gridSetId the grid set ID to seed (null = all grid sets) */
+    public void setGridSetId(String gridSetId) {
+        this.gridSetId = gridSetId;
     }
 
     /** @return the EPSG SRS code */
@@ -121,6 +131,7 @@ public class GwcSeedRequest {
         }
         GwcSeedRequest that = (GwcSeedRequest) o;
         return Objects.equals(name, that.name)
+                && Objects.equals(gridSetId, that.gridSetId)
                 && Objects.equals(srs, that.srs)
                 && Objects.equals(zoomStart, that.zoomStart)
                 && Objects.equals(zoomStop, that.zoomStop)
@@ -131,13 +142,14 @@ public class GwcSeedRequest {
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, srs, zoomStart, zoomStop, format, type, threadCount);
+        return Objects.hash(name, gridSetId, srs, zoomStart, zoomStop, format, type, threadCount);
     }
 
     @Override
     public String toString() {
         return "GwcSeedRequest{" +
                 "name=" + name +
+                ", gridSetId=" + gridSetId +
                 ", srs=" + srs +
                 ", zoomStart=" + zoomStart +
                 ", zoomStop=" + zoomStop +

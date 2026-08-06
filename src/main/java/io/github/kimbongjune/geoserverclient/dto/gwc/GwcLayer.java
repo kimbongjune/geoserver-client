@@ -184,6 +184,8 @@ public class GwcLayer {
     public static class GridSubset {
         @JacksonXmlProperty(localName = "gridSetName")
         private String gridSetName;
+        private Integer zoomStart;
+        private Integer zoomStop;
 
         /** Constructs an empty {@code GridSubset} for deserialization. */
         public GridSubset() {}
@@ -204,6 +206,24 @@ public class GwcLayer {
             this.gridSetName = gridSetName;
         }
 
+        /** @return the minimum zoom level cached for this grid set (null = grid set default) */
+        public Integer getZoomStart() {
+            return zoomStart;
+        }
+        /** @param zoomStart the minimum zoom level to cache */
+        public void setZoomStart(Integer zoomStart) {
+            this.zoomStart = zoomStart;
+        }
+
+        /** @return the maximum zoom level cached for this grid set (null = grid set default) */
+        public Integer getZoomStop() {
+            return zoomStop;
+        }
+        /** @param zoomStop the maximum zoom level to cache */
+        public void setZoomStop(Integer zoomStop) {
+            this.zoomStop = zoomStop;
+        }
+
         @Override
         public boolean equals(Object o) {
             if (this == o) {
@@ -213,18 +233,22 @@ public class GwcLayer {
                 return false;
             }
             GridSubset that = (GridSubset) o;
-            return Objects.equals(gridSetName, that.gridSetName);
+            return Objects.equals(gridSetName, that.gridSetName)
+                    && Objects.equals(zoomStart, that.zoomStart)
+                    && Objects.equals(zoomStop, that.zoomStop);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(gridSetName);
+            return Objects.hash(gridSetName, zoomStart, zoomStop);
         }
 
         @Override
         public String toString() {
             return "GridSubset{" +
                     "gridSetName=" + gridSetName +
+                    ", zoomStart=" + zoomStart +
+                    ", zoomStop=" + zoomStop +
                     '}';
         }
     }

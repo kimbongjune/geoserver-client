@@ -1596,6 +1596,11 @@ public final class SldBuilder {
         private double  rotation       = 0.0;
         private double  perpOffset     = 0.0;
         private String  geometryProperty;
+        private SldExpression priorityExpr;
+        private Boolean lineIsRepeated;
+        private Double  lineGap;
+        private Double  lineInitialGap;
+        private Boolean lineIsAligned;
         private final LinkedHashMap<String, String> vendorOptions = new LinkedHashMap<>();
 
         TextBuilder(RuleBuilder parent, String label, boolean isLiteral) {
@@ -1696,6 +1701,26 @@ public final class SldBuilder {
             this.linePlacement = true; this.perpOffset = perpendicularOffset; return this;
         }
 
+        /** Repeat label along line at fixed intervals. */
+        public TextBuilder linePlacementRepeated(boolean isRepeated, double gap, double initialGap) {
+            this.lineIsRepeated = isRepeated; this.lineGap = gap; this.lineInitialGap = initialGap; return this;
+        }
+
+        /** Whether labels are aligned to the line direction (line placement only). */
+        public TextBuilder linePlacementAligned(boolean isAligned) {
+            this.lineIsAligned = isAligned; return this;
+        }
+
+        /** GeoServer label priority expression (higher value = rendered first). */
+        public TextBuilder priority(SldExpression expr) {
+            this.priorityExpr = expr; return this;
+        }
+
+        /** GeoServer label priority (higher value = rendered first). */
+        public TextBuilder priority(double value) {
+            this.priorityExpr = SldExpression.literal(value); return this;
+        }
+
         /** Geometry attribute to use (for multi-geometry features). */
         public TextBuilder geometry(String propertyName) {
             this.geometryProperty = propertyName; return this;
@@ -1733,7 +1758,8 @@ public final class SldBuilder {
                     color, fontFamily, extraFontFamilies, fontSize, fontStyle, fontWeight,
                     haloColor, haloRadius, linePlacement,
                     anchorX, anchorY, dispX, dispY, rotation, perpOffset,
-                    geometryProperty, vendorOptions.isEmpty() ? null : vendorOptions);
+                    geometryProperty, vendorOptions.isEmpty() ? null : vendorOptions,
+                    priorityExpr, lineIsRepeated, lineGap, lineInitialGap, lineIsAligned);
         }
 
         private static String buildTextXmlWithRawLabel(String rawLabelXml,
@@ -1745,7 +1771,9 @@ public final class SldBuilder {
                 double dispX, double dispY, double rotation,
                 double perpOffset,
                 String geometryProperty,
-                Map<String, String> vendorOptions) {
+                Map<String, String> vendorOptions,
+                SldExpression priorityExpr,
+                Boolean lineIsRepeated, Double lineGap, Double lineInitialGap, Boolean lineIsAligned) {
             StringBuilder sb = new StringBuilder();
             sb.append("          <TextSymbolizer>\n");
             if (geometryProperty != null)
@@ -1766,8 +1794,16 @@ public final class SldBuilder {
               .append("            <LabelPlacement>\n");
             if (linePlacement) {
                 sb.append("              <LinePlacement>\n")
-                  .append("                <PerpendicularOffset>").append(SldBuilder.fmt(perpOffset)).append("</PerpendicularOffset>\n")
-                  .append("              </LinePlacement>\n");
+                  .append("                <PerpendicularOffset>").append(SldBuilder.fmt(perpOffset)).append("</PerpendicularOffset>\n");
+                if (lineIsRepeated != null)
+                    sb.append("                <IsRepeated>").append(lineIsRepeated).append("</IsRepeated>\n");
+                if (lineInitialGap != null)
+                    sb.append("                <InitialGap>").append(SldBuilder.fmt(lineInitialGap)).append("</InitialGap>\n");
+                if (lineGap != null)
+                    sb.append("                <Gap>").append(SldBuilder.fmt(lineGap)).append("</Gap>\n");
+                if (lineIsAligned != null)
+                    sb.append("                <IsAligned>").append(lineIsAligned).append("</IsAligned>\n");
+                sb.append("              </LinePlacement>\n");
             } else {
                 sb.append("              <PointPlacement>\n")
                   .append("                <AnchorPoint>\n")
@@ -1794,6 +1830,11 @@ public final class SldBuilder {
             sb.append("            <Fill>\n")
               .append("              <CssParameter name=\"fill\">").append(SldBuilder.esc(color)).append("</CssParameter>\n")
               .append("            </Fill>\n");
+            if (priorityExpr != null) {
+                sb.append("            <Priority>");
+                priorityExpr.appendXml(sb);
+                sb.append("</Priority>\n");
+            }
             if (vendorOptions != null)
                 for (Map.Entry<String, String> e : vendorOptions.entrySet())
                     sb.append("            <VendorOption name=\"").append(SldBuilder.esc(e.getKey())).append("\">")
@@ -2074,6 +2115,7 @@ public final class SldBuilder {
         private String strokeGraphicFillXml;     // GraphicFill inside <Stroke>
         private String strokeGraphicStrokeXml;   // GraphicStroke inside <Stroke>
         private String geometryProperty;
+        private double opacity            = 1.0;
 
         PolygonBuilder(RuleBuilder parent, String fillColor) {
             this.parent    = parent;
@@ -2162,6 +2204,11 @@ public final class SldBuilder {
             this.geometryProperty = propertyName; return this;
         }
 
+        /** Overall symbolizer opacity (0.0–1.0). */
+        public PolygonBuilder opacity(double opacity) {
+            this.opacity = opacity; return this;
+        }
+
         /** Finalizes this PolygonSymbolizer and returns to the parent {@link RuleBuilder}. */
         public RuleBuilder end() {
             parent.symbolizerXmls.add(buildXml());
@@ -2226,6 +2273,8 @@ public final class SldBuilder {
                     sb.append("              <CssParameter name=\"stroke-linejoin\">").append(strokeLineJoin.getValue()).append("</CssParameter>\n");
                 sb.append("            </Stroke>\n");
             }
+            if (opacity != 1.0)
+                sb.append("            <Opacity>").append(SldBuilder.fmt(opacity)).append("</Opacity>\n");
             sb.append("          </PolygonSymbolizer>\n");
             return sb.toString();
         }
@@ -2288,6 +2337,8 @@ public final class SldBuilder {
 
         // ImageOutline (stores the inner symbolizer XML, either Line or Polygon)
         private String imageOutlineXml;
+
+        private final LinkedHashMap<String, String> vendorOptions = new LinkedHashMap<>();
 
         RasterBuilder(RuleBuilder parent) {
           this.parent = parent;
@@ -2389,6 +2440,11 @@ public final class SldBuilder {
             return this;
         }
 
+        /** Adds a GeoServer vendor option (e.g. ContrastEnhancement algorithm). */
+        public RasterBuilder vendorOption(String name, String value) {
+            this.vendorOptions.put(name, value); return this;
+        }
+
         /** Outline raster cells with a simple polygon symbolizer (fill + stroke). */
         public RasterBuilder imageOutlinePolygon(String fillColor, String strokeColor, double strokeWidth) {
             imageOutlineXml = "            <ImageOutline>\n" +
@@ -2488,6 +2544,10 @@ public final class SldBuilder {
             if (imageOutlineXml != null) {
                 sb.append(imageOutlineXml);
             }
+
+            for (Map.Entry<String, String> e : vendorOptions.entrySet())
+                sb.append("            <VendorOption name=\"").append(SldBuilder.esc(e.getKey())).append("\">")
+                  .append(SldBuilder.esc(e.getValue())).append("</VendorOption>\n");
 
             sb.append("          </RasterSymbolizer>\n");
             return sb.toString();

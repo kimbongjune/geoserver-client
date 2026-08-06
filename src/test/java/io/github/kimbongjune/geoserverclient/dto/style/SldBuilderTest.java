@@ -1422,6 +1422,62 @@ class SldBuilderTest {
         assertTrue(xml.contains("<CssParameter name=\"font-size\">14</CssParameter>"));
     }
 
+    // ── Gap fixes (1.1.2) ────────────────────────────────────────────────
+
+    @Test
+    void polygonBuilder_opacity() {
+        String xml = SldBuilder.create("l").rule()
+                .fill("#336699").fillOpacity(0.5).stroke("#000000", 1).opacity(0.7)
+                .end().build().getSldBody();
+        assertTrue(xml.contains("<Opacity>0.7</Opacity>"));
+        assertTrue(xml.contains("<PolygonSymbolizer>"));
+    }
+
+    @Test
+    void textBuilder_priority_literal() {
+        String xml = SldBuilder.create("l").rule()
+                .label("name")
+                .color("#000000").font("SansSerif", 12)
+                .priority(100.0)
+                .end().build().getSldBody();
+        assertTrue(xml.contains("<Priority><ogc:Literal>100.0</ogc:Literal></Priority>"));
+    }
+
+    @Test
+    void textBuilder_priority_expression() {
+        String xml = SldBuilder.create("l").rule()
+                .label("name")
+                .color("#000000").font("SansSerif", 12)
+                .priority(SldExpression.property("pop"))
+                .end().build().getSldBody();
+        assertTrue(xml.contains("<Priority><ogc:PropertyName>pop</ogc:PropertyName></Priority>"));
+    }
+
+    @Test
+    void textBuilder_linePlacement_repeated() {
+        String xml = SldBuilder.create("l").rule()
+                .label("name")
+                .color("#000000").font("SansSerif", 12)
+                .linePlacement(0).linePlacementRepeated(true, 400, 200).linePlacementAligned(true)
+                .end().build().getSldBody();
+        assertTrue(xml.contains("<IsRepeated>true</IsRepeated>"));
+        assertTrue(xml.contains("<Gap>400</Gap>"));
+        assertTrue(xml.contains("<InitialGap>200</InitialGap>"));
+        assertTrue(xml.contains("<IsAligned>true</IsAligned>"));
+    }
+
+    @Test
+    void rasterBuilder_vendorOption() {
+        String xml = SldBuilder.create("l").rule()
+                .rasterBuilder()
+                .opacity(1.0)
+                .channelGray("1")
+                .vendorOption("algorithm", "StretchToMinimumMaximum")
+                .end().build().getSldBody();
+        assertTrue(xml.contains("<VendorOption name=\"algorithm\">StretchToMinimumMaximum</VendorOption>"));
+        assertTrue(xml.contains("<RasterSymbolizer>"));
+    }
+
     // ── Helper ───────────────────────────────────────────────────────────
 
     private static String build(SldBuilder.RuleBuilder rb) {
