@@ -180,6 +180,18 @@ loadScripts(document, 'script');</script>
 <div class="block">Line placement — label follows the line geometry.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="SldBuilder.TextBuilder.html" title="class in io.github.kimbongjune.geoserverclient.dto.style">SldBuilder.TextBuilder</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#linePlacementAligned(boolean)" class="member-name-link">linePlacementAligned</a><wbr>(boolean&nbsp;isAligned)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Whether labels are aligned to the line direction (line placement only).</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="SldBuilder.TextBuilder.html" title="class in io.github.kimbongjune.geoserverclient.dto.style">SldBuilder.TextBuilder</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#linePlacementRepeated(boolean,double,double)" class="member-name-link">linePlacementRepeated</a><wbr>(boolean&nbsp;isRepeated,
+ double&nbsp;gap,
+ double&nbsp;initialGap)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Repeat label along line at fixed intervals.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="SldBuilder.TextBuilder.html" title="class in io.github.kimbongjune.geoserverclient.dto.style">SldBuilder.TextBuilder</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#oblique()" class="member-name-link">oblique</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Oblique font style.</div>
@@ -194,6 +206,16 @@ loadScripts(document, 'script');</script>
  double&nbsp;anchorY)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Point placement with explicit anchor.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="SldBuilder.TextBuilder.html" title="class in io.github.kimbongjune.geoserverclient.dto.style">SldBuilder.TextBuilder</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#priority(double)" class="member-name-link">priority</a><wbr>(double&nbsp;value)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">GeoServer label priority (higher value = rendered first).</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="SldBuilder.TextBuilder.html" title="class in io.github.kimbongjune.geoserverclient.dto.style">SldBuilder.TextBuilder</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#priority(io.github.kimbongjune.geoserverclient.dto.style.SldExpression)" class="member-name-link">priority</a><wbr>(<a href="SldExpression.html" title="class in io.github.kimbongjune.geoserverclient.dto.style">SldExpression</a>&nbsp;expr)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">GeoServer label priority expression (higher value = rendered first).</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="SldBuilder.TextBuilder.html" title="class in io.github.kimbongjune.geoserverclient.dto.style">SldBuilder.TextBuilder</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#rotation(double)" class="member-name-link">rotation</a><wbr>(double&nbsp;degrees)</code></div>
@@ -330,6 +352,36 @@ loadScripts(document, 'script');</script>
 <dt>Parameters:</dt>
 <dd><code>perpendicularOffset</code> - offset from line in pixels (0 = on the line)</dd>
 </dl>
+</section>
+</li>
+<li>
+<section class="detail" id="linePlacementRepeated(boolean,double,double)">
+<h3>linePlacementRepeated</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="SldBuilder.TextBuilder.html" title="class in io.github.kimbongjune.geoserverclient.dto.style">SldBuilder.TextBuilder</a></span>&nbsp;<span class="element-name">linePlacementRepeated</span><wbr><span class="parameters">(boolean&nbsp;isRepeated,
+ double&nbsp;gap,
+ double&nbsp;initialGap)</span></div>
+<div class="block">Repeat label along line at fixed intervals.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="linePlacementAligned(boolean)">
+<h3>linePlacementAligned</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="SldBuilder.TextBuilder.html" title="class in io.github.kimbongjune.geoserverclient.dto.style">SldBuilder.TextBuilder</a></span>&nbsp;<span class="element-name">linePlacementAligned</span><wbr><span class="parameters">(boolean&nbsp;isAligned)</span></div>
+<div class="block">Whether labels are aligned to the line direction (line placement only).</div>
+</section>
+</li>
+<li>
+<section class="detail" id="priority(io.github.kimbongjune.geoserverclient.dto.style.SldExpression)">
+<h3>priority</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="SldBuilder.TextBuilder.html" title="class in io.github.kimbongjune.geoserverclient.dto.style">SldBuilder.TextBuilder</a></span>&nbsp;<span class="element-name">priority</span><wbr><span class="parameters">(<a href="SldExpression.html" title="class in io.github.kimbongjune.geoserverclient.dto.style">SldExpression</a>&nbsp;expr)</span></div>
+<div class="block">GeoServer label priority expression (higher value = rendered first).</div>
+</section>
+</li>
+<li>
+<section class="detail" id="priority(double)">
+<h3>priority</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="SldBuilder.TextBuilder.html" title="class in io.github.kimbongjune.geoserverclient.dto.style">SldBuilder.TextBuilder</a></span>&nbsp;<span class="element-name">priority</span><wbr><span class="parameters">(double&nbsp;value)</span></div>
+<div class="block">GeoServer label priority (higher value = rendered first).</div>
 </section>
 </li>
 <li>
