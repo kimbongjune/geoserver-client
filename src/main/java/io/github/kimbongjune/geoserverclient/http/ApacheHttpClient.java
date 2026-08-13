@@ -10,7 +10,8 @@ import org.apache.hc.client5.http.classic.methods.HttpUriRequestBase;
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
-import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
+import org.apache.hc.client5.http.ssl.DefaultClientTlsStrategy;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
@@ -20,14 +21,13 @@ import org.apache.hc.core5.util.Timeout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.net.ssl.SSLContext;
 import java.io.File;
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
-import java.util.HashMap;
 import java.util.Map;
-import java.io.UnsupportedEncodingException;
+import java.util.TreeMap;
 
 /**
  * Apache HttpClient 5 implementation of {@link GeoServerHttpClient}.
@@ -80,6 +80,24 @@ public class ApacheHttpClient implements GeoServerHttpClient {
      */
     public ApacheHttpClient(String baseUrl, String username, String password,
                             int connectTimeoutMs, int responseTimeoutMs, int maxConnections) {
+        this(baseUrl, username, password, connectTimeoutMs, responseTimeoutMs, maxConnections, null);
+    }
+
+    /**
+     * Creates a new Apache HTTP client for GeoServer communication with a custom TLS context.
+     *
+     * @param baseUrl           GeoServer base URL (e.g., "https://geoserver.internal/geoserver")
+     * @param username          GeoServer username
+     * @param password          GeoServer password
+     * @param connectTimeoutMs  connection timeout in milliseconds
+     * @param responseTimeoutMs response timeout in milliseconds
+     * @param maxConnections    max concurrent connections to the GeoServer host
+     * @param sslContext        TLS context for HTTPS connections (e.g. one trusting a
+     *                          self-signed certificate), or {@code null} for the JVM default
+     */
+    public ApacheHttpClient(String baseUrl, String username, String password,
+                            int connectTimeoutMs, int responseTimeoutMs, int maxConnections,
+                            SSLContext sslContext) {
         this.baseUrl = normalizeUrl(baseUrl);
         this.authHeader = createBasicAuthHeader(username, password);
 
@@ -89,12 +107,16 @@ public class ApacheHttpClient implements GeoServerHttpClient {
                 .setConnectionRequestTimeout(Timeout.ofMilliseconds(connectTimeoutMs))
                 .build();
 
-        PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
-        connectionManager.setMaxTotal(maxConnections);
-        connectionManager.setDefaultMaxPerRoute(maxConnections);
+        PoolingHttpClientConnectionManagerBuilder connectionManager =
+                PoolingHttpClientConnectionManagerBuilder.create()
+                        .setMaxConnTotal(maxConnections)
+                        .setMaxConnPerRoute(maxConnections);
+        if (sslContext != null) {
+            connectionManager.setTlsSocketStrategy(new DefaultClientTlsStrategy(sslContext));
+        }
 
         this.httpClient = HttpClients.custom()
-                .setConnectionManager(connectionManager)
+                .setConnectionManager(connectionManager.build())
                 .setDefaultRequestConfig(config)
                 .build();
     }
@@ -195,7 +217,9 @@ public class ApacheHttpClient implements GeoServerHttpClient {
                         ? EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8)
                         : null;
 
-                Map<String, String> headers = new HashMap<>();
+                // Case-insensitive: HTTP header names are case-insensitive and HTTP/2
+                // (or a fronting proxy) may lowercase them.
+                Map<String, String> headers = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
                 for (Header header : response.getHeaders()) {
                     headers.put(header.getName(), header.getValue());
                 }
@@ -218,7 +242,9 @@ public class ApacheHttpClient implements GeoServerHttpClient {
         try {
             return httpClient.execute(request, response -> {
                 int statusCode = response.getCode();
-                Map<String, String> headers = new HashMap<>();
+                // Case-insensitive: HTTP header names are case-insensitive and HTTP/2
+                // (or a fronting proxy) may lowercase them.
+                Map<String, String> headers = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
                 for (Header header : response.getHeaders()) {
                     headers.put(header.getName(), header.getValue());
                 }
@@ -254,19 +280,27 @@ public class ApacheHttpClient implements GeoServerHttpClient {
     }
 
     private String buildUrl(String path) {
-        // Percent-encode non-ASCII path segments so GeoServer's REST API handles them correctly.
-        String encodedPath = encodeNonAsciiPathSegments(path);
+        // Percent-encode path segments so GeoServer's REST API handles special characters correctly.
+        String encodedPath = encodePathSegments(path);
         return encodedPath.startsWith("/") ? baseUrl + encodedPath : baseUrl + "/" + encodedPath;
     }
 
     /**
-     * Percent-encodes non-ASCII characters in each path segment.
-     * Delimiters '/', '?', and '=' are left unencoded.
+     * Percent-encodes each path segment per RFC 3986: every character outside the
+     * unreserved set (plus ':' and '@', which are legal raw in a path segment and
+     * load-bearing in GeoServer qualified names like {@code topp:roads}) is encoded —
+     * covering non-ASCII as well as ASCII specials such as space, '%', and '#'.
+     * An existing valid percent-triplet ({@code %XX}) is passed through untouched, so
+     * callers that pre-encode (the documented contract for GWC layer names, e.g.
+     * {@code sf%3Aarchsites}) are not double-encoded.
+     * The query string (everything after the first '?') is passed through untouched,
+     * so a literal '?' inside a resource name cannot be distinguished from the start
+     * of a query and must be avoided by callers.
      *
      * <p>"/rest/workspaces".split("/", -1) produces ["", "rest", "workspaces"];
      * empty segments from leading slashes are skipped to prevent double slashes.
      */
-    private static String encodeNonAsciiPathSegments(String path) {
+    static String encodePathSegments(String path) { // package-private for tests
         // Separate path from query string
         int qIdx = path.indexOf('?');
         String pathPart = qIdx >= 0 ? path.substring(0, qIdx) : path;
@@ -287,22 +321,51 @@ public class ApacheHttpClient implements GeoServerHttpClient {
     }
 
     private static String encodeSegment(String segment) {
-        // Fast path: return as-is when segment contains only ASCII characters.
-        boolean hasNonAscii = false;
-        for (char c : segment.toCharArray()) {
-            if (c > 127) {
-              hasNonAscii = true; break;
-          }
+        // Fast path: return as-is when every character is segment-safe.
+        boolean safe = true;
+        for (int i = 0; i < segment.length(); i++) {
+            if (!isSegmentSafe(segment.charAt(i))) {
+                safe = false;
+                break;
+            }
         }
-        if (!hasNonAscii) {
+        if (safe) {
             return segment;
         }
-        try {
-            return URLEncoder.encode(segment, StandardCharsets.UTF_8.name()).replace("+", "%20");
-        } catch (UnsupportedEncodingException e) {
-            // UTF-8 is guaranteed by the JVM spec (Charset.forName contract).
-            throw new AssertionError("UTF-8 not supported", e);
+        StringBuilder sb = new StringBuilder(segment.length() + 8);
+        int i = 0;
+        while (i < segment.length()) {
+            char c = segment.charAt(i);
+            if (isSegmentSafe(c)) {
+                sb.append(c);
+                i++;
+            } else if (c == '%' && i + 2 < segment.length()
+                    && isHexDigit(segment.charAt(i + 1)) && isHexDigit(segment.charAt(i + 2))) {
+                // Valid percent-triplet already present (pre-encoded caller input) — pass through.
+                sb.append(segment, i, i + 3);
+                i += 3;
+            } else {
+                // Percent-encode the UTF-8 bytes of this code point (handles surrogate pairs).
+                int cp = segment.codePointAt(i);
+                for (byte b : new String(Character.toChars(cp)).getBytes(StandardCharsets.UTF_8)) {
+                    sb.append('%')
+                      .append(Character.toUpperCase(Character.forDigit((b >> 4) & 0xF, 16)))
+                      .append(Character.toUpperCase(Character.forDigit(b & 0xF, 16)));
+                }
+                i += Character.charCount(cp);
+            }
         }
+        return sb.toString();
+    }
+
+    private static boolean isHexDigit(char c) {
+        return (c >= '0' && c <= '9') || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f');
+    }
+
+    /** RFC 3986 unreserved characters, plus ':' and '@' (legal raw within a path segment). */
+    private static boolean isSegmentSafe(char c) {
+        return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9')
+                || c == '-' || c == '.' || c == '_' || c == '~' || c == ':' || c == '@';
     }
 
     private static String normalizeUrl(String url) {

@@ -52,6 +52,7 @@ import io.github.kimbongjune.geoserverclient.http.GeoServerHttpClient;
 import io.github.kimbongjune.geoserverclient.serialization.DataFormat;
 import io.github.kimbongjune.geoserverclient.serialization.SerializerFactory;
 
+import javax.net.ssl.SSLContext;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Collections;
@@ -907,6 +908,7 @@ public class GeoServerClient implements Closeable {
         private int connectTimeoutMs = 60_000;
         private int responseTimeoutMs = 120_000;
         private int maxConnections = ApacheHttpClient.DEFAULT_MAX_CONNECTIONS;
+        private SSLContext sslContext;
 
         /** Package-private — obtain via {@link GeoServerClient#builder()}. */
         private Builder() {}
@@ -1020,6 +1022,36 @@ public class GeoServerClient implements Closeable {
         }
 
         /**
+         * Sets a custom TLS context for HTTPS connections.
+         *
+         * <p>Use this when the GeoServer endpoint presents a certificate the default JVM
+         * trust store does not accept — most commonly a self-signed or internal-CA
+         * certificate on an intranet GeoServer. Build an {@link SSLContext} that trusts
+         * the certificate (e.g. via {@code SSLContextBuilder} or a custom
+         * {@code TrustManager}) and pass it here. Has no effect on plain {@code http://}
+         * URLs. When not set, the JVM default TLS configuration is used.
+         *
+         * <pre>{@code
+         * SSLContext ctx = SSLContexts.custom()
+         *     .loadTrustMaterial(trustStoreFile, trustStorePassword)
+         *     .build();
+         * GeoServerClient client = GeoServerClient.builder()
+         *     .url("https://geoserver.internal/geoserver")
+         *     .credentials("admin", "geoserver")
+         *     .sslContext(ctx)
+         *     .build();
+         * }</pre>
+         *
+         * @param sslContext the TLS context to use, or {@code null} for the JVM default
+         * @return this builder for chaining
+         * @since 1.2.0
+         */
+        public Builder sslContext(SSLContext sslContext) {
+            this.sslContext = sslContext;
+            return this;
+        }
+
+        /**
          * Builds the GeoServerClient.
          *
          * @return configured GeoServerClient instance
@@ -1057,7 +1089,8 @@ public class GeoServerClient implements Closeable {
             }
 
             GeoServerHttpClient httpClient = new ApacheHttpClient(
-                    url, username, password, connectTimeoutMs, responseTimeoutMs, maxConnections);
+                    url, username, password, connectTimeoutMs, responseTimeoutMs, maxConnections,
+                    sslContext);
 
             return new GeoServerClient(httpClient, defaultFormat);
         }

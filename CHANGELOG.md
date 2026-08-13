@@ -7,6 +7,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.2.0] - 2026-08-13
+
+### Added
+
+- **`GeoServerClient.Builder.sslContext(SSLContext)`**: custom TLS context for HTTPS endpoints —
+  primarily for self-signed / internal-CA certificates on intranet GeoServer instances. Optional;
+  when omitted (or `null`) the JVM default TLS configuration is used, exactly as before.
+  A matching `ApacheHttpClient` constructor overload taking an `SSLContext` was added; all
+  existing constructors delegate with `null` and are unchanged.
+
+### Fixed
+
+- **URL path encoding now covers ASCII special characters** (`ApacheHttpClient`): previously only
+  non-ASCII characters were percent-encoded, so a resource name containing a space, `%`, `#`, etc.
+  produced a malformed request URL. Path segments are now encoded per RFC 3986 (unreserved set
+  plus `:` and `@` kept raw — `:` is load-bearing in qualified names like `topp:roads`). Existing
+  valid `%XX` triplets pass through untouched, preserving the documented GWC contract where
+  callers pre-encode layer names (`sf%3Aarchsites`); a bare `%` not followed by two hex digits is
+  treated as a literal and encoded. Verified against a live GeoServer 2.28.2 (972 tests, 0 failures).
+- **Response header lookup is now case-insensitive** (`ApacheHttpClient`): headers were collected
+  into a case-sensitive `HashMap`, so `getHeader("Content-Type")` returned `null` when the server
+  (or an HTTP/2 connection / fronting proxy, which lowercase header names) sent `content-type`.
+  This was reachable in practice via `ResourceManager`'s use of `Content-Type` /
+  `Content-Disposition` response headers. Headers are now stored in a
+  `TreeMap(String.CASE_INSENSITIVE_ORDER)`.
+
+### Changed
+
+- **Dependencies bumped** (all verified Java 8 bytecode, class file major 52):
+  Apache HttpClient5 5.2.1 → 5.6.1 (httpcore5 now pinned independently at 5.4, matching what
+  httpclient5 5.6.1 is built against — the two artifacts do not share a version line),
+  Jackson 2.15.2 → 2.19.0, SLF4J 2.0.7 → 2.0.17. The connection manager is now built via
+  `PoolingHttpClientConnectionManagerBuilder` (required for the TLS strategy wiring).
+- Javadoc `windowtitle`/`doctitle` now use `${project.version}` instead of a hardcoded version
+  (they had silently sat at 1.1.1 through two releases).
+
+---
+
 ## [1.1.2] - 2026-08-06
 
 ### Fixed
