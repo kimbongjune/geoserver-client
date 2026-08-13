@@ -53,7 +53,7 @@
              is built against (see httpclient5-parent 5.6.1 pom). Both are Java 8 bytecode. -->
         <httpcore5.version>5.4</httpcore5.version>
         <jackson.version>2.19.0</jackson.version>
-        <slf4j.version>2.0.17</slf4j.version>
+        <slf4j.version>2.0.18</slf4j.version>
         <junit.version>5.9.3</junit.version>
         <!-- Mockito 5.x dropped Java 8 support (class files require JDK 11+ to even read);
              4.11.0 is the last 4.x release and the newest one that still compiles under a real
