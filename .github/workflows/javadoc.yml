@@ -21,8 +21,8 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Generate Javadoc
-        run: mvn javadoc:javadoc -DskipTests --no-transfer-progress
+      - name: Generate Javadoc (with UML class diagrams — javadoc-uml profile, JDK 11+ only)
+        run: mvn javadoc:javadoc -P javadoc-uml -DskipTests --no-transfer-progress
 
       - name: Assemble Pages site (root redirect + apidocs/)
         run: |
