@@ -57,4 +57,23 @@ class GeoServerClientBuilderTest {
         GeoServerClient.Builder builder = GeoServerClient.builder().credentials("admin", "geoserver");
         assertThrows(InvalidParameterException.class, builder::build);
     }
+
+    @Test
+    @DisplayName("sslContext is optional — omitted builds fine, custom context builds fine, null builds fine")
+    void sslContext_optional() throws Exception {
+        // Omitted (the default) — must keep working exactly as before.
+        try (GeoServerClient client = validBuilder().build()) {
+            assertEquals(DataFormat.JSON, client.getDefaultFormat());
+        }
+        // Explicit null — same as omitted (JVM default TLS).
+        try (GeoServerClient client = validBuilder().sslContext(null).build()) {
+            assertEquals(DataFormat.JSON, client.getDefaultFormat());
+        }
+        // Custom context — accepted and wired without error.
+        javax.net.ssl.SSLContext ctx = javax.net.ssl.SSLContext.getInstance("TLS");
+        ctx.init(null, null, null);
+        try (GeoServerClient client = validBuilder().sslContext(ctx).build()) {
+            assertEquals(DataFormat.JSON, client.getDefaultFormat());
+        }
+    }
 }
