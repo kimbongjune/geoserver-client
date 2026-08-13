@@ -77,6 +77,7 @@ loadScripts(document, 'script');</script>
 </div>
 <section class="class-description" id="class-description">
 <hr>
+<object type="image/svg+xml" data="UpdateNamespaceRequest.svg"  style="max-width:60%;float:right;"></object>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">UpdateNamespaceRequest</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">Request DTO for updating a namespace. Supports partial updates.
@@ -84,7 +85,7 @@ loadScripts(document, 'script');</script>
  <p><b>Important:</b> the prefix cannot be changed — GeoServer returns 403 on PUT.
  Only <code>uri</code> and <code>isolated</code> can be modified.
 
- <pre><code>
+ <pre style="white-space:pre-wrap;"><code>
  // Change URI only
  UpdateNamespaceRequest.builder().uri("http://new.example.com").build()
 

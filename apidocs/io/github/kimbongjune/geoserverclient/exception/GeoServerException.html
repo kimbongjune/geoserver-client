@@ -87,6 +87,7 @@ loadScripts(document, 'script');</script>
 <dd><code><a href="ConnectionException.html" title="class in io.github.kimbongjune.geoserverclient.exception">ConnectionException</a></code>, <code><a href="GeoServerResponseException.html" title="class in io.github.kimbongjune.geoserverclient.exception">GeoServerResponseException</a></code>, <code><a href="InvalidParameterException.html" title="class in io.github.kimbongjune.geoserverclient.exception">InvalidParameterException</a></code>, <code><a href="SerializationException.html" title="class in io.github.kimbongjune.geoserverclient.exception">SerializationException</a></code></dd>
 </dl>
 <hr>
+<object type="image/svg+xml" data="GeoServerException.svg"  style="max-width:60%;float:right;"></object>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">GeoServerException</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/RuntimeException.html" title="class or interface in java.lang" class="external-link">RuntimeException</a></span></div>
 <div class="block">Base exception for all GeoServer REST API client errors.
@@ -94,7 +95,7 @@ loadScripts(document, 'script');</script>
  Unchecked (RuntimeException) to avoid forcing callers to handle every error,
  while still providing a clear exception hierarchy for selective catching.
 
- <pre>
+ <pre style="white-space:pre-wrap;">
  GeoServerException
   GeoServerResponseException  (HTTP 4xx/5xx)
      ResourceNotFoundException       (404)

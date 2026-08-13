@@ -77,6 +77,7 @@ loadScripts(document, 'script');</script>
 </div>
 <section class="class-description" id="class-description">
 <hr>
+<object type="image/svg+xml" data="AclRules.svg"  style="max-width:60%;float:right;"></object>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">AclRules</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">DTO for ACL rule sets used by the GeoServer layer, service, and REST ACL APIs.
@@ -90,7 +91,7 @@ loadScripts(document, 'script');</script>
  The value is a comma-separated role list or <code>"*"</code> to allow everyone.
 
  <p><b>Usage:</b>
- <pre><code>
+ <pre style="white-space:pre-wrap;"><code>
  // Single rule
  AclRules rule = AclRules.of("*.*.r", "*");
 

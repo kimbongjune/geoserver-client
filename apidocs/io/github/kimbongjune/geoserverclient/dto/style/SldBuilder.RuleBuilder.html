@@ -81,6 +81,7 @@ loadScripts(document, 'script');</script>
 <dd><a href="SldBuilder.html" title="class in io.github.kimbongjune.geoserverclient.dto.style">SldBuilder</a></dd>
 </dl>
 <hr>
+<object type="image/svg+xml" data="SldBuilder.RuleBuilder.svg"  style="max-width:60%;float:right;"></object>
 <div class="type-signature"><span class="modifiers">public static final class </span><span class="element-name type-name-label">SldBuilder.RuleBuilder</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">Fluent builder for an SLD <code>&lt;Rule&gt;</code> element.
@@ -686,7 +687,7 @@ loadScripts(document, 'script');</script>
  (e.g. an OGC function such as <code>strConcat</code>, <code>numberFormat</code>).
  Call <a href="SldBuilder.TextBuilder.html#end()"><code>SldBuilder.TextBuilder.end()</code></a> to return to this rule.
 
- <pre><code>
+ <pre style="white-space:pre-wrap;"><code>
  .label(SldExpression.function("strConcat",
          SldExpression.property("name"),
          SldExpression.literal(" ("),

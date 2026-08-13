@@ -81,6 +81,7 @@ loadScripts(document, 'script');</script>
 <dd><code><a href="https://docs.oracle.com/javase/8/docs/api/java/io/Closeable.html" title="class or interface in java.io" class="external-link">Closeable</a></code>, <code><a href="https://docs.oracle.com/javase/8/docs/api/java/lang/AutoCloseable.html" title="class or interface in java.lang" class="external-link">AutoCloseable</a></code></dd>
 </dl>
 <hr>
+<object type="image/svg+xml" data="GeoServerClient.svg"  style="max-width:60%;float:right;"></object>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">GeoServerClient</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>
 implements <a href="https://docs.oracle.com/javase/8/docs/api/java/io/Closeable.html" title="class or interface in java.io" class="external-link">Closeable</a></span></div>
@@ -94,7 +95,7 @@ implements <a href="https://docs.oracle.com/javase/8/docs/api/java/io/Closeable.
  the application shuts down to release underlying HTTP connections.
 
  <h2>Typical usage</h2>
- <pre><code>
+ <pre style="white-space:pre-wrap;"><code>
  // 1. Build the client once per JVM lifecycle
  try (GeoServerClient client = GeoServerClient.builder()
          .url("http://localhost:8080/geoserver")
