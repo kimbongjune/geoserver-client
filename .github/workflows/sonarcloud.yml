@@ -59,9 +59,10 @@ jobs:
           mvn --batch-mode --no-transfer-progress \
             clean verify \
             org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-            -Dsonar.projectKey=geoserver-client \
+            -Dsonar.projectKey=kimbongjune_geoserver-client \
             -Dsonar.organization=kimbongjune \
-            -Dsonar.host.url=https://sonarcloud.io
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
 
       - name: Stop docker-compose
         if: always()

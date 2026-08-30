@@ -68,6 +68,18 @@ jobs:
       - name: mvn clean verify
         run: mvn --batch-mode --no-transfer-progress clean verify
 
+      # The examples module is a separate Maven project, so `mvn verify` above never touches it.
+      # An API change in the library can therefore leave it uncompilable without CI noticing —
+      # which is exactly what happened when closed-set fields became enums in #29 and
+      # Ex10_Importer kept passing a String to ImportTaskUpdate. Install the freshly built
+      # library first so the examples compile against THIS commit rather than the last release
+      # on Maven Central.
+      - name: Compile examples against the freshly built library
+        if: matrix.java == '17'
+        run: |
+          mvn --batch-mode --no-transfer-progress -DskipTests install
+          mvn --batch-mode --no-transfer-progress -f examples/pom.xml -DskipTests compile
+
       - name: Upload surefire reports
         if: always()
         uses: actions/upload-artifact@v4

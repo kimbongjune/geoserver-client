@@ -14,6 +14,7 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+import java.nio.file.Files;
 
 /**
  * <h2>What this covers</h2>
@@ -135,7 +136,7 @@ public class Ex03_CoverageUploadAndLayer {
 
     /** Zips the bundled small_world.png with its hand-authored small_world.pgw world file. */
     private static File zipWorldImage() throws Exception {
-        File zip = File.createTempFile("geoserver-client-example-worldimage", ".zip");
+        File zip = Files.createTempFile("geoserver-client-example-worldimage", ".zip").toFile();
         zip.deleteOnExit();
         try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zip))) {
             addToZip(out, "src/main/resources/small_world.png", "small_world.png");
@@ -158,7 +159,7 @@ public class Ex03_CoverageUploadAndLayer {
 
     /** Copies the tiny bundled sample.tif out of the classpath to a real file uploadFile() can read. */
     private static File extractBundledSample() throws Exception {
-        File tmp = File.createTempFile("geoserver-client-example-sample", ".tif");
+        File tmp = Files.createTempFile("geoserver-client-example-sample", ".tif").toFile();
         tmp.deleteOnExit();
         try (InputStream in = Ex03_CoverageUploadAndLayer.class.getClassLoader().getResourceAsStream("sample.tif");
              OutputStream out = new FileOutputStream(tmp)) {

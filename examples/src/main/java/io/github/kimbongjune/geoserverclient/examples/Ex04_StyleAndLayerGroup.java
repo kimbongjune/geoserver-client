@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Collections;
 import java.util.List;
+import java.nio.file.Files;
 
 /**
  * <h2>What this covers</h2>
@@ -134,7 +135,7 @@ public class Ex04_StyleAndLayerGroup {
     }
 
     private static File extractBundledSample() throws Exception {
-        File tmp = File.createTempFile("geoserver-client-example-sample", ".tif");
+        File tmp = Files.createTempFile("geoserver-client-example-sample", ".tif").toFile();
         tmp.deleteOnExit();
         try (InputStream in = Ex04_StyleAndLayerGroup.class.getClassLoader().getResourceAsStream("sample.tif");
              OutputStream out = new FileOutputStream(tmp)) {
