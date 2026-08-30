@@ -305,7 +305,7 @@ public class DataStoreManager extends AbstractManager {
 
         boolean first = true;
         if (configure != null) {
-            path.append(first ? "?" : "&").append("configure=").append(configure); first = false;
+            path.append('?').append("configure=").append(configure); first = false;
         }
         if (update != null) {
             path.append(first ? "?" : "&").append("update=").append(update); first = false;
@@ -389,9 +389,10 @@ public class DataStoreManager extends AbstractManager {
         if (request.getDefaultStore() != null)          ds.put("_default",             request.getDefaultStore());
         if (request.getType() != null)                  ds.put("type",                 request.getType());
         if (request.getDisableOnConnFailure() != null)  ds.put("disableOnConnFailure", request.getDisableOnConnFailure());
-        if (!request.getConnectionParams().isEmpty()) {
+        List<DataStore.Entry> createParams = request.getConnectionParams();
+        if (createParams != null && !createParams.isEmpty()) {
             ds.put("connectionParameters",
-                    Collections.singletonMap("entry", request.getConnectionParams()));
+                    Collections.singletonMap("entry", createParams));
         }
         return serializeToJson(Collections.singletonMap("dataStore", ds));
     }
@@ -403,9 +404,10 @@ public class DataStoreManager extends AbstractManager {
         if (request.getEnabled() != null)               ds.put("enabled",              request.getEnabled());
         if (request.getDefaultStore() != null)          ds.put("_default",             request.getDefaultStore());
         if (request.getDisableOnConnFailure() != null)  ds.put("disableOnConnFailure", request.getDisableOnConnFailure());
-        if (!request.getConnectionParams().isEmpty()) {
+        List<DataStore.Entry> updateParams = request.getConnectionParams();
+        if (updateParams != null && !updateParams.isEmpty()) {
             ds.put("connectionParameters",
-                    Collections.singletonMap("entry", request.getConnectionParams()));
+                    Collections.singletonMap("entry", updateParams));
         }
         return serializeToJson(Collections.singletonMap("dataStore", ds));
     }

@@ -342,6 +342,9 @@ public class LayerGroupManager extends AbstractManager {
             List<CreateLayerGroupRequest.PublishableEntry> entries) {
         List<Map<String, Object>> list =
                 new ArrayList<Map<String, Object>>();
+        if (entries == null) {
+            return Collections.singletonMap("published", (Object) list);
+        }
         for (CreateLayerGroupRequest.PublishableEntry e : entries) {
             Map<String, Object> p = new LinkedHashMap<String, Object>();
             p.put("@type", e.getType());

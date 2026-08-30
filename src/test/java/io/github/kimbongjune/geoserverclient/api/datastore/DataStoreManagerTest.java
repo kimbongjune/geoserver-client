@@ -1,6 +1,7 @@
 package io.github.kimbongjune.geoserverclient.api.datastore;
 
 import io.github.kimbongjune.geoserverclient.dto.datastore.CreateDataStoreRequest;
+import io.github.kimbongjune.geoserverclient.dto.datastore.UpdateDataStoreRequest;
 import io.github.kimbongjune.geoserverclient.exception.DataStoreNotFoundException;
 import io.github.kimbongjune.geoserverclient.exception.InvalidParameterException;
 import io.github.kimbongjune.geoserverclient.exception.ResourceAlreadyExistsException;
@@ -133,5 +134,73 @@ class DataStoreManagerTest {
                 .thenReturn(response(500, "Connection refused to PostGIS"));
         assertThrows(io.github.kimbongjune.geoserverclient.exception.GeoServerResponseException.class,
                 () -> manager.create("myws", CreateDataStoreRequest.builder("myds")));
+    }
+
+    // -- payload builders: null / empty connectionParams -------------------
+    //
+    // getConnectionParams() returns null when its backing field is null, so the
+    // payload builders have to tolerate that rather than dereference it directly.
+
+    @Test
+    @DisplayName("create() omits connectionParameters when getConnectionParams() is null")
+    void create_nullConnectionParams_omitsConnectionParameters() {
+        CreateDataStoreRequest request = org.mockito.Mockito.mock(CreateDataStoreRequest.class);
+        when(request.getName()).thenReturn("myds");
+        when(request.getConnectionParams()).thenReturn(null);
+
+        org.mockito.ArgumentCaptor<String> body = org.mockito.ArgumentCaptor.forClass(String.class);
+        when(httpClient.post(anyString(), body.capture(), anyString(), anyString()))
+                .thenReturn(response(201, ""));
+        when(httpClient.get(anyString(), anyString())).thenReturn(response(404, ""));
+
+        assertNull(manager.create("myws", request));
+        assertFalse(body.getValue().contains("connectionParameters"));
+        assertTrue(body.getValue().contains("myds"));
+    }
+
+    @Test
+    @DisplayName("create() omits connectionParameters when none were added")
+    void create_emptyConnectionParams_omitsConnectionParameters() {
+        org.mockito.ArgumentCaptor<String> body = org.mockito.ArgumentCaptor.forClass(String.class);
+        when(httpClient.post(anyString(), body.capture(), anyString(), anyString()))
+                .thenReturn(response(201, ""));
+        when(httpClient.get(anyString(), anyString())).thenReturn(response(404, ""));
+
+        manager.create("myws", CreateDataStoreRequest.builder("myds"));
+        assertFalse(body.getValue().contains("connectionParameters"));
+    }
+
+    @Test
+    @DisplayName("create() writes connectionParameters when params are present")
+    void create_withConnectionParams_writesConnectionParameters() {
+        org.mockito.ArgumentCaptor<String> body = org.mockito.ArgumentCaptor.forClass(String.class);
+        when(httpClient.post(anyString(), body.capture(), anyString(), anyString()))
+                .thenReturn(response(201, ""));
+        when(httpClient.get(anyString(), anyString())).thenReturn(response(404, ""));
+
+        manager.create("myws", CreateDataStoreRequest.builder("myds")
+                .connectionParam("dbtype", "postgis")
+                .build());
+        assertTrue(body.getValue().contains("connectionParameters"));
+        assertTrue(body.getValue().contains("postgis"));
+    }
+
+    @Test
+    @DisplayName("update() omits connectionParameters when getConnectionParams() is null")
+    void update_nullConnectionParams_omitsConnectionParameters() {
+        UpdateDataStoreRequest request = org.mockito.Mockito.mock(UpdateDataStoreRequest.class);
+        when(request.getConnectionParams()).thenReturn(null);
+
+        org.mockito.ArgumentCaptor<String> body = org.mockito.ArgumentCaptor.forClass(String.class);
+        when(httpClient.put(anyString(), body.capture(), anyString(), anyString()))
+                .thenReturn(response(200, ""));
+        when(httpClient.get(anyString(), anyString())).thenReturn(response(404, ""));
+
+        try {
+            manager.update("myws", "myds", request);
+        } catch (RuntimeException ignored) {
+            // the follow-up GET is not the subject of this test
+        }
+        assertFalse(body.getValue().contains("connectionParameters"));
     }
 }

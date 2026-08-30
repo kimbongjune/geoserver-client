@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.nio.file.Files;
 
 @Service
 public class RasterDataServiceImpl implements RasterDataService {
@@ -114,7 +115,7 @@ public class RasterDataServiceImpl implements RasterDataService {
 
     @Override
     public void uploadFile(String ws, String storeName, String format, MultipartFile file) throws Exception {
-        File tmp = File.createTempFile("upload-", "-" + file.getOriginalFilename());
+        File tmp = Files.createTempFile("upload-", "-" + file.getOriginalFilename()).toFile();
         file.transferTo(tmp);
         tmp.deleteOnExit();
         client.coverageStores().uploadFile(ws, storeName, "file", format, tmp, "first", null, null);
@@ -122,7 +123,7 @@ public class RasterDataServiceImpl implements RasterDataService {
 
     @Override
     public void harvest(String ws, String store, String format, MultipartFile file) throws Exception {
-        File tmp = File.createTempFile("harvest-", "-" + file.getOriginalFilename());
+        File tmp = Files.createTempFile("harvest-", "-" + file.getOriginalFilename()).toFile();
         file.transferTo(tmp);
         tmp.deleteOnExit();
         // Pass the granule's own format (e.g. "geotiff"), not "imagemosaic" — see

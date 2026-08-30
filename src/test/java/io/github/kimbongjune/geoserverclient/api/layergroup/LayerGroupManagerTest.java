@@ -92,4 +92,27 @@ class LayerGroupManagerTest {
         assertEquals(2, list.size());
         assertEquals("g1", list.get(0).getName());
     }
+
+    // -- payload builder: null publishables --------------------------------
+    //
+    // getPublishables() returns null when its backing field is null, and
+    // buildCreatePayload passes it straight into buildPublishablesMap.
+
+    @Test
+    @DisplayName("create() with null publishables writes an empty published list")
+    void create_nullPublishables_writesEmptyPublishedList() {
+        io.github.kimbongjune.geoserverclient.dto.layergroup.CreateLayerGroupRequest request =
+                org.mockito.Mockito.mock(
+                        io.github.kimbongjune.geoserverclient.dto.layergroup.CreateLayerGroupRequest.class);
+        when(request.getName()).thenReturn("mygroup");
+        when(request.getPublishables()).thenReturn(null);
+
+        org.mockito.ArgumentCaptor<String> body = org.mockito.ArgumentCaptor.forClass(String.class);
+        when(httpClient.post(anyString(), body.capture(), anyString(), anyString()))
+                .thenReturn(response(201, ""));
+
+        manager.create(request);
+        assertTrue(body.getValue().contains("mygroup"));
+        assertTrue(body.getValue().contains("published"));
+    }
 }

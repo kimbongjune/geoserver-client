@@ -25,6 +25,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.nio.file.Files;
 
 @Service
 public class VectorDataServiceImpl implements VectorDataService {
@@ -136,7 +137,7 @@ public class VectorDataServiceImpl implements VectorDataService {
 
     @Override
     public void uploadFile(String ws, String storeName, String format, MultipartFile file) throws Exception {
-        File tmp = File.createTempFile("upload-", "-" + file.getOriginalFilename());
+        File tmp = Files.createTempFile("upload-", "-" + file.getOriginalFilename()).toFile();
         file.transferTo(tmp);
         tmp.deleteOnExit();
         client.datastores().uploadFile(ws, storeName, "file", format, tmp, "first", null, null);
