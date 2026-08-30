@@ -385,7 +385,7 @@ public class FeatureTypeManager extends AbstractManager {
             if (request.getProjectionPolicy() != null) ft.put("projectionPolicy", request.getProjectionPolicy().name());
             if (request.getEnabled() != null)          ft.put("enabled", request.getEnabled());
 
-            if (request.getAttributes() != null && !request.getAttributes().isEmpty()) {
+            if (!request.getAttributes().isEmpty()) {
                 ObjectNode attrs = getObjectMapper().createObjectNode();
                 ArrayNode attrArray = getObjectMapper().createArrayNode();
                 for (CreateFeatureTypeRequest.AttributeDef a : request.getAttributes()) {

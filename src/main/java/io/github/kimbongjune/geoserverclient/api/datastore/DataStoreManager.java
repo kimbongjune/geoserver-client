@@ -390,7 +390,7 @@ public class DataStoreManager extends AbstractManager {
         if (request.getType() != null)                  ds.put("type",                 request.getType());
         if (request.getDisableOnConnFailure() != null)  ds.put("disableOnConnFailure", request.getDisableOnConnFailure());
         List<DataStore.Entry> createParams = request.getConnectionParams();
-        if (createParams != null && !createParams.isEmpty()) {
+        if (!createParams.isEmpty()) {
             ds.put("connectionParameters",
                     Collections.singletonMap("entry", createParams));
         }

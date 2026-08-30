@@ -44,7 +44,9 @@ jobs:
           EOF
 
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+        # Pinned to a commit SHA rather than a moving tag: this action receives
+        # GITHUB_TOKEN and publishes to Pages, so it should not change under us.
+        uses: peaceiris/actions-gh-pages@4a2e02b36f31d8974a0d09d3bb9f3172aa2d0d0d # v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./target/site/pages-root

@@ -152,7 +152,7 @@ public class CreateDataStoreRequest {
     }
     /** @return the connection parameters */
     public List<DataStore.Entry> getConnectionParams() {
-        return connectionParams == null ? null : Collections.unmodifiableList(connectionParams);
+        return Collections.unmodifiableList(connectionParams);
     }
 
     @Override

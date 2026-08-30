@@ -208,7 +208,7 @@ public class AboutManager extends AbstractManager {
         StringBuilder sb = new StringBuilder(base);
         boolean first = true;
         if (manifest != null && !manifest.isEmpty()) {
-            sb.append(first ? "?" : "&").append("manifest=").append(enc(manifest));
+            sb.append('?').append("manifest=").append(enc(manifest));
             first = false;
         }
         if (from != null && !from.isEmpty()) {
