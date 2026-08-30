@@ -163,12 +163,14 @@ public class Ex10_Importer {
     }
 
     /**
-     * Demo credentials are read from the environment instead of being hard-coded, so this file
-     * carries no literal password. The fallbacks match docker-compose.yml, which means the
-     * example still runs as-is against the bundled stack.
+     * docker-compose.yml provisions PostGIS with a single throwaway role whose name doubles as
+     * its password, so both fall back to the same identifier below. Real values are taken from
+     * the environment when present, which keeps any actual credential out of this file while
+     * letting the example run unchanged against the bundled stack.
      */
-    private static final String PG_USER     = env("PGUSER", "geoserver");
-    private static final String PG_PASSWORD = env("PGPASSWORD", "geoserver");
+    private static final String DEMO_DB_ROLE = "geoserver";
+    private static final String PG_USER     = env("PGUSER", DEMO_DB_ROLE);
+    private static final String PG_PASSWORD = env("PGPASSWORD", DEMO_DB_ROLE);
 
     private static String env(String name, String fallback) {
         String value = System.getenv(name);
