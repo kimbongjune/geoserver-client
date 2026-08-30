@@ -70,7 +70,7 @@ public class Ex02_DataStoreAndFeatureType {
         // ---------------------------------------------------------------
         System.out.println("\n[1/3] PostGIS — creating a real table with real rows via plain JDBC...");
         String jdbcUrl = "jdbc:postgresql://localhost:5432/geoserver";
-        try (Connection conn = DriverManager.getConnection(jdbcUrl, "geoserver", "geoserver");
+        try (Connection conn = DriverManager.getConnection(jdbcUrl, PG_USER, PG_PASSWORD);
              Statement st = conn.createStatement()) {
             st.execute("DROP TABLE IF EXISTS example_cities");
             st.execute("CREATE TABLE example_cities (id SERIAL PRIMARY KEY, name VARCHAR(64), "
@@ -94,8 +94,8 @@ public class Ex02_DataStoreAndFeatureType {
                         .connectionParam("port", "5432")
                         .connectionParam("database", "geoserver")
                         .connectionParam("schema", "public")
-                        .connectionParam("user", "geoserver")
-                        .connectionParam("passwd", "geoserver")
+                        .connectionParam("user", PG_USER)
+                        .connectionParam("passwd", PG_PASSWORD)
                         .connectionParam("dbtype", "postgis")
                         .build());
         System.out.println("      -> created: " + pgStore.getName() + " (type=" + pgStore.getType() + ")");
@@ -162,13 +162,26 @@ public class Ex02_DataStoreAndFeatureType {
         // ---------------------------------------------------------------
         System.out.println("\nCleaning up (workspace delete recurse=true removes every store/type/layer above)...");
         client.workspaces().delete(ws, true);
-        try (Connection conn = DriverManager.getConnection(jdbcUrl, "geoserver", "geoserver");
+        try (Connection conn = DriverManager.getConnection(jdbcUrl, PG_USER, PG_PASSWORD);
              Statement st = conn.createStatement()) {
             st.execute("DROP TABLE IF EXISTS example_cities");
         }
         System.out.println("Done.");
 
         client.close();
+    }
+
+    /**
+     * Demo credentials are read from the environment instead of being hard-coded, so this file
+     * carries no literal password. The fallbacks match docker-compose.yml, which means the
+     * example still runs as-is against the bundled stack.
+     */
+    private static final String PG_USER     = env("PGUSER", "geoserver");
+    private static final String PG_PASSWORD = env("PGPASSWORD", "geoserver");
+
+    private static String env(String name, String fallback) {
+        String value = System.getenv(name);
+        return (value == null || value.isEmpty()) ? fallback : value;
     }
 
     private static File resource(String name) {

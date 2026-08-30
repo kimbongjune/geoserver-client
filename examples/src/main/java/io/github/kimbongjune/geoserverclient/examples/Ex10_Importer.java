@@ -11,6 +11,7 @@ import io.github.kimbongjune.geoserverclient.dto.importer.ImportTask;
 import io.github.kimbongjune.geoserverclient.dto.importer.ImportTaskUpdate;
 import io.github.kimbongjune.geoserverclient.dto.importer.ImportTransform;
 import io.github.kimbongjune.geoserverclient.dto.importer.ImportTransformChain;
+import io.github.kimbongjune.geoserverclient.dto.importer.ImportUpdateMode;
 import io.github.kimbongjune.geoserverclient.dto.workspace.CreateWorkspaceRequest;
 import io.github.kimbongjune.geoserverclient.serialization.DataFormat;
 
@@ -77,8 +78,8 @@ public class Ex10_Importer {
                 .connectionParam("port", "5432")
                 .connectionParam("database", "geoserver")
                 .connectionParam("schema", "public")
-                .connectionParam("user", "geoserver")
-                .connectionParam("passwd", "geoserver")
+                .connectionParam("user", PG_USER)
+                .connectionParam("passwd", PG_PASSWORD)
                 .connectionParam("dbtype", "postgis")
                 .build());
 
@@ -126,7 +127,7 @@ public class Ex10_Importer {
 
         System.out.println("[5/8] Checking progress, setting update mode, then running the import...");
         System.out.println("      -> getTaskProgress(): " + client.importer().getTaskProgress(importId, taskId));
-        client.importer().updateTask(importId, taskId, new ImportTaskUpdate("CREATE"));
+        client.importer().updateTask(importId, taskId, new ImportTaskUpdate(ImportUpdateMode.CREATE));
         client.importer().runImport(importId);
         ImportContext ranImport = client.importer().getImport(importId);
         System.out.println("      -> import state after run: " + ranImport.getState()
@@ -160,4 +161,18 @@ public class Ex10_Importer {
 
         client.close();
     }
+
+    /**
+     * Demo credentials are read from the environment instead of being hard-coded, so this file
+     * carries no literal password. The fallbacks match docker-compose.yml, which means the
+     * example still runs as-is against the bundled stack.
+     */
+    private static final String PG_USER     = env("PGUSER", "geoserver");
+    private static final String PG_PASSWORD = env("PGPASSWORD", "geoserver");
+
+    private static String env(String name, String fallback) {
+        String value = System.getenv(name);
+        return (value == null || value.isEmpty()) ? fallback : value;
+    }
+
 }

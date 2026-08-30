@@ -12,6 +12,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+import java.nio.file.Files;
 
 /**
  * <h2>What this covers</h2>
@@ -101,7 +102,7 @@ public class Ex14_ImageMosaicAndStructuredCoverage {
 
     /** Zips a single file under a chosen entry name, the shape ImageMosaic/Shapefile uploads expect. */
     private static File zipSingleFile(String sourcePath, String entryName) throws Exception {
-        File zip = File.createTempFile("geoserver-client-example-mosaic", ".zip");
+        File zip = Files.createTempFile("geoserver-client-example-mosaic", ".zip").toFile();
         zip.deleteOnExit();
         try (ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zip))) {
             out.putNextEntry(new ZipEntry(entryName));
