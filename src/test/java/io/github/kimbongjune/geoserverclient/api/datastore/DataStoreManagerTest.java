@@ -138,25 +138,8 @@ class DataStoreManagerTest {
 
     // -- payload builders: null / empty connectionParams -------------------
     //
-    // getConnectionParams() returns null when its backing field is null, so the
-    // payload builders have to tolerate that rather than dereference it directly.
-
-    @Test
-    @DisplayName("create() omits connectionParameters when getConnectionParams() is null")
-    void create_nullConnectionParams_omitsConnectionParameters() {
-        CreateDataStoreRequest request = org.mockito.Mockito.mock(CreateDataStoreRequest.class);
-        when(request.getName()).thenReturn("myds");
-        when(request.getConnectionParams()).thenReturn(null);
-
-        org.mockito.ArgumentCaptor<String> body = org.mockito.ArgumentCaptor.forClass(String.class);
-        when(httpClient.post(anyString(), body.capture(), anyString(), anyString()))
-                .thenReturn(response(201, ""));
-        when(httpClient.get(anyString(), anyString())).thenReturn(response(404, ""));
-
-        assertNull(manager.create("myws", request));
-        assertFalse(body.getValue().contains("connectionParameters"));
-        assertTrue(body.getValue().contains("myds"));
-    }
+    // CreateDataStoreRequest always holds a list, but UpdateDataStoreRequest builds its
+    // own from a builder field, so that getter still has to be treated as nullable.
 
     @Test
     @DisplayName("create() omits connectionParameters when none were added")

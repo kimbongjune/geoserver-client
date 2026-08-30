@@ -291,7 +291,7 @@ public class CoverageStoreManager extends AbstractManager {
 
         boolean first = true;
         if (configure != null) {
-            path.append(first ? "?" : "&").append("configure=").append(configure); first = false;
+            path.append('?').append("configure=").append(configure); first = false;
         }
         if (coverageName != null) {
             path.append(first ? "?" : "&").append("coverageName=").append(coverageName); first = false;
@@ -348,7 +348,7 @@ public class CoverageStoreManager extends AbstractManager {
 
         boolean first = true;
         if (filename != null) {
-            path.append(first ? "?" : "&").append("filename=").append(filename); first = false;
+            path.append('?').append("filename=").append(filename); first = false;
         }
         if (updateBBox) {
             path.append(first ? "?" : "&").append("updateBBox=true");

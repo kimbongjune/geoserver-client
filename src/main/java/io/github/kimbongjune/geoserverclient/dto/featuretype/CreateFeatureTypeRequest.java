@@ -182,7 +182,7 @@ public class CreateFeatureTypeRequest {
     }
     /** @return the attribute definitions */
     public List<AttributeDef> getAttributes() {
-        return attributes == null ? null : Collections.unmodifiableList(attributes);
+        return Collections.unmodifiableList(attributes);
     }
 
     /** Definition of a single attribute. */
