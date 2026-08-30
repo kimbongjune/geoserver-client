@@ -305,7 +305,7 @@ public class DataStoreManager extends AbstractManager {
 
         boolean first = true;
         if (configure != null) {
-            path.append(first ? "?" : "&").append("configure=").append(configure); first = false;
+            path.append('?').append("configure=").append(configure); first = false;
         }
         if (update != null) {
             path.append(first ? "?" : "&").append("update=").append(update); first = false;
